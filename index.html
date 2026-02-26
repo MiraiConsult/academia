@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iA Coach — Head Coach Virtual</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#43f320",
+            "bg-dark": "#0d1a0b",
+            "bg-card": "#111f0e",
+            "bg-card2": "#162813",
+          },
+          fontFamily: {
+            display: ["Syne", "sans-serif"],
+            body: ["DM Sans", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    * { font-family: 'DM Sans', sans-serif; }
+    h1,h2,h3,h4,h5,h6,.font-display { font-family: 'Syne', sans-serif !important; }
+    body { background: #0d1a0b; color: #e2e8f0; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0d1a0b; }
+    ::-webkit-scrollbar-thumb { background: #2a4025; border-radius: 3px; }
+    .glow { box-shadow: 0 0 20px rgba(67,243,32,0.15); }
+    .glow-border { border: 1px solid rgba(67,243,32,0.35); box-shadow: 0 0 12px rgba(67,243,32,0.1); }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .fade-in { animation: fadeIn 0.3s ease forwards; }
+    @keyframes pulse-green { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+    .pulse-green { animation: pulse-green 2s infinite; }
+    .nav-link { transition: all 0.2s; }
+    .nav-link:hover { background: rgba(67,243,32,0.08); color: #43f320; }
+    .nav-active { background: rgba(67,243,32,0.12); color: #43f320; }
+    .btn-primary { background: #43f320; color: #0d1a0b; font-weight: 700; transition: all 0.2s; }
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-ghost { border: 1px solid rgba(67,243,32,0.3); color: #43f320; transition: all 0.2s; }
+    .btn-ghost:hover { background: rgba(67,243,32,0.1); }
+    .card { background: #111f0e; border: 1px solid rgba(67,243,32,0.08); border-radius: 12px; }
+    .card-ai { background: #111f0e; border: 2px solid rgba(67,243,32,0.35); border-radius: 12px; box-shadow: 0 0 20px rgba(67,243,32,0.08); }
+    input, select, textarea { background: #0d1a0b !important; border: 1px solid rgba(67,243,32,0.2) !important; color: #e2e8f0 !important; border-radius: 8px; padding: 10px 14px; width: 100%; outline: none; transition: border-color 0.2s; }
+    input:focus, select:focus, textarea:focus { border-color: rgba(67,243,32,0.6) !important; }
+    select option { background: #0d1a0b; }
+    .tag { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .tag-green { background: rgba(67,243,32,0.15); color: #43f320; }
+    .tag-red { background: rgba(239,68,68,0.15); color: #f87171; }
+    .tag-yellow { background: rgba(234,179,8,0.15); color: #facc15; }
+    .tag-blue { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .sidebar { width: 240px; min-width: 240px; }
+    .loading-spinner { width: 36px; height: 36px; border: 3px solid rgba(67,243,32,0.2); border-top-color: #43f320; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .wod-bar { background: rgba(67,243,32,0.1); border-radius: 4px; display: flex; align-items: flex-end; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .modal-box { background: #111f0e; border: 1px solid rgba(67,243,32,0.2); border-radius: 16px; max-width: 640px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 32px; }
+    .progress-bar { height: 6px; background: rgba(67,243,32,0.1); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: #43f320; border-radius: 3px; transition: width 0.5s ease; }
+    .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: #2a3828; border-radius: 24px; transition: 0.3s; }
+    .toggle-slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+    .toggle input:checked + .toggle-slider { background: #43f320; }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(20px); background: #0d1a0b; }
+    .gantt-bar { height: 28px; border-radius: 6px; display: flex; align-items: center; padding: 0 10px; font-size: 11px; font-weight: 700; cursor: pointer; transition: filter 0.2s; }
+    .gantt-bar:hover { filter: brightness(1.2); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+    const { useState, useEffect, useCallback, useMemo } = React;
+
+    // ─── Supabase ──────────────────────────────────────────────────────────────
+    const SUPABASE_URL = 'https://bpmbwwfpjpvgamhuvwps.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwbWJ3d2ZwanB2Z2FtaHV2d3BzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjYwNjMsImV4cCI6MjA4NzcwMjA2M30.Em0hb-RsA6qMvBy8ftxMU0kDIFg7wVtfn6zwWsoSCyI';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const ACADEMIA_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
+    const COACH_ID = 'b1c2d3e4-f5a6-7890-abcd-ef1234567891';
+    const DONO_ID = 'c2d3e4f5-a6b7-8901-bcde-f12345678902';
+
+    // ─── Helpers ───────────────────────────────────────────────────────────────
+    const hoje = () => new Date().toISOString().split('T')[0];
+    const fmtDate = (d) => d ? new Date(d).toLocaleDateString('pt-BR', {day:'2-digit',month:'long',year:'numeric'}) : '';
+    const diasSemana = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    const metLabels = { crossfit: 'CrossFit', hyrox: 'Hyrox', bootcamp: 'Bootcamp' };
+    const intensidadeColor = { alta: 'tag-red', media: 'tag-yellow', baixa: 'tag-green' };
+
+    // ─── Icons ─────────────────────────────────────────────────────────────────
+    const Icon = ({ name, size = 20, className = '' }) => (
+      <span className={`material-symbols-outlined ${className}`} style={{ fontSize: size, lineHeight: 1, userSelect: 'none' }}>{name}</span>
+    );
+
+    // ─── Loading ───────────────────────────────────────────────────────────────
+    const Loading = () => (
+      <div className="flex items-center justify-center h-48">
+        <div className="loading-spinner" />
+      </div>
+    );
+
+    // ─── Modal ─────────────────────────────────────────────────────────────────
+    const Modal = ({ open, onClose, title, children }) => {
+      if (!open) return null;
+      return (
+        <div className="modal-overlay" onClick={onClose}>
+          <div className="modal-box fade-in" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-display font-bold">{title}</h3>
+              <button onClick={onClose} className="p-1 hover:text-red-400 transition-colors"><Icon name="close" /></button>
+            </div>
+            {children}
+          </div>
+        </div>
+      );
+    };
+
+    // ─── Toast ─────────────────────────────────────────────────────────────────
+    const Toast = ({ msg, type, onClose }) => {
+      useEffect(() => { const t = setTimeout(onClose, 3500); return () => clearTimeout(t); }, []);
+      const bg = type === 'error' ? 'bg-red-900 border-red-600' : 'bg-bg-card glow-border';
+      return (
+        <div className={`fixed bottom-6 right-6 z-50 ${bg} border rounded-xl px-5 py-3 flex items-center gap-3 fade-in`} style={{maxWidth:340}}>
+          <Icon name={type==='error'?'error':'check_circle'} className={type==='error'?'text-red-400':'text-primary'} />
+          <span className="text-sm font-medium">{msg}</span>
+          <button onClick={onClose} className="ml-2 opacity-60 hover:opacity-100"><Icon name="close" size={16}/></button>
+        </div>
+      );
+    };
+
+    // ─── Login Page ────────────────────────────────────────────────────────────
+    const LoginPage = ({ onLogin }) => {
+      const [email, setEmail] = useState('');
+      const [senha, setSenha] = useState('');
+      const [err, setErr] = useState('');
+      const [loading, setLoading] = useState(false);
+
+      const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true); setErr('');
+        const { data, error } = await sb.from('usuarios').select('*').eq('email', email.trim()).single();
+        if (error || !data) { setErr('E-mail não encontrado.'); setLoading(false); return; }
+        onLogin(data);
+        setLoading(false);
+      };
+
+      const quickLogin = async (perfil) => {
+        const emailMap = { head_coach: 'coach@crossfititron.com', dono: 'dono@crossfititron.com' };
+        const { data } = await sb.from('usuarios').select('*').eq('email', emailMap[perfil]).single();
+        if (data) onLogin(data);
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{background:'#0d1a0b'}}>
+          <div style={{maxWidth:960, width:'100%'}}>
+            {/* Header */}
+            <div className="text-center mb-12">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                  <Icon name="bolt" className="text-bg-dark" size={22}/>
+                </div>
+                <span className="font-display text-3xl font-bold">iA Coach</span>
+              </div>
+              <p className="text-slate-400">Head Coach Virtual — Plataforma de Gestão Fitness com IA</p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Login Form */}
+              <div className="card p-8">
+                <h2 className="font-display font-bold text-xl mb-6 flex items-center gap-2">
+                  <Icon name="login" className="text-primary" />Acessar sua Conta
+                </h2>
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div>
+                    <label className="text-sm text-slate-400 mb-1 block">E-mail</label>
+                    <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="seu@email.com" required/>
+                  </div>
+                  <div>
+                    <label className="text-sm text-slate-400 mb-1 block">Senha</label>
+                    <input type="password" value={senha} onChange={e=>setSenha(e.target.value)} placeholder="••••••••"/>
+                  </div>
+                  {err && <p className="text-red-400 text-sm">{err}</p>}
+                  <button type="submit" disabled={loading} className="btn-primary w-full py-3 rounded-xl mt-2 flex items-center justify-center gap-2">
+                    {loading ? <div className="loading-spinner" style={{width:20,height:20,borderWidth:2}}/> : <><Icon name="login" size={18}/>Entrar na Plataforma</>}
+                  </button>
+                  <p className="text-center text-slate-500 text-xs">Acesso rápido para demo:</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button type="button" onClick={()=>quickLogin('head_coach')} className="btn-ghost rounded-lg py-2 text-sm flex items-center justify-center gap-2">
+                      <Icon name="sports_gymnastics" size={16}/>Head Coach
+                    </button>
+                    <button type="button" onClick={()=>quickLogin('dono')} className="btn-ghost rounded-lg py-2 text-sm flex items-center justify-center gap-2">
+                      <Icon name="corporate_fare" size={16}/>Dono
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Perfis */}
+              <div className="space-y-4">
+                <h3 className="font-display font-bold text-lg">Selecione seu perfil</h3>
+                <div className="grid grid-cols-1 gap-4">
+                  <div onClick={()=>quickLogin('head_coach')} className="card p-6 cursor-pointer hover:glow-border transition-all group">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <Icon name="sports_gymnastics" className="text-primary" size={26}/>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-display font-bold text-lg">Head Coach</h4>
+                        <p className="text-slate-400 text-sm">Gere treinos, analise programações e gerencie periodização com IA.</p>
+                      </div>
+                      <Icon name="arrow_forward" className="text-slate-600 group-hover:text-primary transition-colors"/>
+                    </div>
+                  </div>
+                  <div onClick={()=>quickLogin('dono')} className="card p-6 cursor-pointer hover:glow-border transition-all group">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <Icon name="corporate_fare" className="text-primary" size={26}/>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-display font-bold text-lg">Dono da Academia</h4>
+                        <p className="text-slate-400 text-sm">Visão estratégica, métricas, benchmarking e gestão de coaches.</p>
+                      </div>
+                      <Icon name="arrow_forward" className="text-slate-600 group-hover:text-primary transition-colors"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ─── Sidebar ───────────────────────────────────────────────────────────────
+    const Sidebar = ({ user, page, setPage, onLogout, academia }) => {
+      const coachLinks = [
+        { id: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
+        { id: 'gerar', icon: 'auto_awesome', label: 'Gerar Treino' },
+        { id: 'analise', icon: 'monitoring', label: 'Análise' },
+        { id: 'periodizacao', icon: 'calendar_month', label: 'Periodização' },
+        { id: 'seguranca', icon: 'verified_user', label: 'Segurança' },
+      ];
+      const donoLinks = [
+        { id: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
+        { id: 'estrategico', icon: 'insights', label: 'Visão Estratégica' },
+        { id: 'coaches', icon: 'groups', label: 'Gestão Coaches' },
+        { id: 'configuracoes', icon: 'settings', label: 'Configurações' },
+      ];
+      const links = user.perfil === 'head_coach' ? coachLinks : donoLinks;
+
+      return (
+        <aside className="sidebar flex flex-col border-r border-white/5 h-screen sticky top-0">
+          <div className="p-5 flex items-center gap-3 border-b border-white/5">
+            <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center">
+              <Icon name="bolt" className="text-bg-dark" size={20}/>
+            </div>
+            <div>
+              <div className="font-display font-bold text-base leading-none">iA Coach</div>
+              <div className="text-primary text-xs mt-0.5">{academia?.nome || 'CrossFit Iron'}</div>
+            </div>
+          </div>
+          <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+            {links.map(l => (
+              <button key={l.id} onClick={() => setPage(l.id)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium nav-link ${page===l.id?'nav-active':''}`}>
+                <Icon name={l.icon} size={20}/>{l.label}
+              </button>
+            ))}
+          </nav>
+          <div className="p-3 border-t border-white/5">
+            <div className="flex items-center gap-3 p-2 rounded-lg">
+              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+                <Icon name="person" className="text-primary" size={18}/>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold truncate">{user.nome}</p>
+                <p className="text-xs text-slate-500">{user.perfil === 'head_coach' ? 'Head Coach' : 'Dono'}</p>
+              </div>
+              <button onClick={onLogout} className="p-1 text-slate-500 hover:text-red-400 transition-colors">
+                <Icon name="logout" size={18}/>
+              </button>
+            </div>
+          </div>
+        </aside>
+      );
+    };
+
+    // ─── Topbar ────────────────────────────────────────────────────────────────
+    const Topbar = ({ title, subtitle, actions, alertCount }) => (
+      <header className="flex items-center justify-between px-8 py-4 border-b border-white/5">
+        <div>
+          <h1 className="font-display font-bold text-2xl leading-tight">{title}</h1>
+          {subtitle && <p className="text-slate-400 text-sm mt-0.5">{subtitle}</p>}
+        </div>
+        <div className="flex items-center gap-3">
+          {alertCount > 0 && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+              <Icon name="warning" size={16}/>{alertCount} alerta{alertCount>1?'s':''}
+            </div>
+          )}
+          {actions}
+        </div>
+      </header>
+    );
+
+    // ─── Dashboard Head Coach ──────────────────────────────────────────────────
+    const DashboardCoach = ({ setPage, toast }) => {
+      const [treinos, setTreinos] = useState([]);
+      const [alertas, setAlertas] = useState([]);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        const load = async () => {
+          const [{ data: t }, { data: a }] = await Promise.all([
+            sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', { ascending: false }).limit(7),
+            sb.from('alertas_seguranca').select('*').eq('academia_id', ACADEMIA_ID).eq('resolvido', false),
+          ]);
+          setTreinos(t || []);
+          setAlertas(a || []);
+          setLoading(false);
+        };
+        load();
+      }, []);
+
+      const treino_hoje = treinos.find(t => t.data_treino === hoje());
+      const semana = Array.from({length:7}, (_,i) => {
+        const d = new Date(); d.setDate(d.getDate() - d.getDay() + i);
+        const dateStr = d.toISOString().split('T')[0];
+        return { dia: diasSemana[i], date: dateStr, treino: treinos.find(t => t.data_treino === dateStr) };
+      });
+
+      if (loading) return <Loading/>;
+      return (
+        <div className="p-8 space-y-6 fade-in">
+          {/* Alerta banner */}
+          {alertas.length > 0 && (
+            <div className="flex items-start gap-4 p-4 rounded-xl bg-red-500/8 border border-red-500/20">
+              <div className="w-10 h-10 rounded-lg bg-red-500 flex items-center justify-center shrink-0">
+                <Icon name="warning" className="text-white" size={20}/>
+              </div>
+              <div className="flex-1">
+                <p className="text-red-400 font-bold text-sm uppercase tracking-wide">Alerta de Segurança IA</p>
+                <p className="text-slate-300 text-sm mt-1">{alertas[0].descricao}</p>
+              </div>
+              <button onClick={() => setPage('seguranca')} className="shrink-0 px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-bold">
+                Ver Detalhes
+              </button>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* WOD Hoje */}
+            <div className="lg:col-span-2">
+              {treino_hoje ? (
+                <div className="card-ai p-6 h-full">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="tag tag-green">Treino de Hoje</span>
+                    <span className="text-slate-400 text-xs">{fmtDate(treino_hoje.data_treino)}</span>
+                  </div>
+                  <h2 className="font-display font-bold text-3xl mb-4">{treino_hoje.nome || 'WOD do Dia'}</h2>
+                  <div className="grid grid-cols-4 gap-3 mb-5 py-4 border-y border-white/5">
+                    {[
+                      {l:'Intensidade', v:treino_hoje.intensidade||'—', c:'text-primary'},
+                      {l:'Duração', v:`${treino_hoje.tempo_previsto_min||'—'} min`},
+                      {l:'Metodologia', v:metLabels[treino_hoje.metodologia]||'—'},
+                      {l:'Alunos', v:treino_hoje.num_alunos||'—'},
+                    ].map(({l,v,c}) => (
+                      <div key={l}>
+                        <p className="text-xs text-slate-500 uppercase font-bold tracking-tighter">{l}</p>
+                        <p className={`font-bold mt-0.5 ${c||''}`}>{v}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {treino_hoje.wod && (
+                    <div className="space-y-2 mb-4">
+                      <p className="text-sm font-bold text-primary">{treino_hoje.wod.formato}</p>
+                      {(treino_hoje.wod.movimentos||[]).slice(0,3).map((m,i) => (
+                        <div key={i} className="flex items-center gap-3 text-sm">
+                          <span className="text-2xl font-display font-bold text-primary/30 w-8">{m.reps}</span>
+                          <span className="font-medium">{m.nome}</span>
+                          {m.carga && <span className="text-slate-500">{m.carga}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="flex gap-3">
+                    <button onClick={() => setPage('gerar')} className="btn-primary px-5 py-2.5 rounded-xl text-sm">Ver Treino Completo</button>
+                    <button onClick={() => setPage('gerar')} className="btn-ghost px-5 py-2.5 rounded-xl text-sm">Editar WOD</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="card-ai p-8 h-full flex flex-col items-center justify-center text-center">
+                  <Icon name="fitness_center" className="text-primary/30" size={48}/>
+                  <h3 className="font-display font-bold text-xl mt-4 mb-2">Nenhum treino hoje</h3>
+                  <p className="text-slate-400 text-sm mb-5">Clique abaixo para gerar o treino do dia com IA</p>
+                  <button onClick={() => setPage('gerar')} className="btn-primary px-6 py-3 rounded-xl flex items-center gap-2">
+                    <Icon name="auto_awesome" size={18}/>Gerar Treino IA
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Stats */}
+            <div className="space-y-4">
+              {[
+                {l:'Check-ins Hoje', v:'84 / 120', i:'group'},
+                {l:'PRs Quebrados', v:'12', i:'emoji_events'},
+                {l:'Membros Ativos', v:'342', i:'fitness_center'},
+                {l:'Treinos Esta Semana', v: treinos.filter(t=> { const d=new Date(t.data_treino); const n=new Date(); return Math.abs(d-n)<7*86400000; }).length, i:'calendar_month'},
+              ].map(({l,v,i}) => (
+                <div key={l} className="card p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Icon name={i} className="text-primary" size={18}/>
+                    </div>
+                    <span className="text-sm font-medium text-slate-300">{l}</span>
+                  </div>
+                  <span className="font-display font-bold text-primary">{v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Calendário Semanal */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-display font-bold text-lg">Calendário Semanal</h2>
+              <button onClick={() => setPage('gerar')} className="btn-ghost px-4 py-1.5 rounded-lg text-sm flex items-center gap-1.5">
+                <Icon name="add" size={16}/>Novo Treino
+              </button>
+            </div>
+            <div className="grid grid-cols-7 gap-3">
+              {semana.map(({dia, date, treino}) => {
+                const isToday = date === hoje();
+                return (
+                  <div key={dia} className={`rounded-xl p-3 border transition-all cursor-pointer ${isToday ? 'bg-primary/10 border-primary/40' : 'card border-transparent hover:border-primary/20'}`}
+                    onClick={() => setPage('gerar')}>
+                    <p className={`text-xs font-bold uppercase text-center mb-2 ${isToday?'text-primary':'text-slate-500'}`}>{dia}</p>
+                    {treino ? (
+                      <div>
+                        <p className="text-xs font-bold truncate">{treino.nome}</p>
+                        <p className="text-xs text-slate-500 mt-1">{metLabels[treino.metodologia]}</p>
+                        {isToday && <div className="w-1.5 h-1.5 rounded-full bg-primary mx-auto mt-2 pulse-green"/>}
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-12 opacity-20">
+                        <Icon name={isToday?'add_circle':'remove'} size={20}/>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ─── Gerar Treino ──────────────────────────────────────────────────────────
+    const GerarTreino = ({ toast }) => {
+      const [form, setForm] = useState({ metodologia: 'crossfit', data: hoje(), num_alunos: 15, foco: 'LPO + Condicionamento', restritcoes: '', modo_duplas: false });
+      const [treino, setTreino] = useState(null);
+      const [loading, setLoading] = useState(false);
+      const [saved, setSaved] = useState(false);
+      const [treinos, setTreinos] = useState([]);
+      const [showList, setShowList] = useState(false);
+
+      useEffect(() => {
+        sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', {ascending:false}).limit(10)
+          .then(({data}) => { setTreinos(data||[]); if(data&&data.length) setTreino(data[0]); });
+      }, []);
+
+      const wods = {
+        crossfit: [
+          {nome:'The Iron Lung', formato:'AMRAP 18 min', movimentos:[{nome:'Wall Ball Shots',reps:20,carga:'20/14 lbs'},{nome:'Box Jumps',reps:15,carga:'24/20in'},{nome:'Power Snatches',reps:10,carga:'95/65 lbs'}]},
+          {nome:'Carbon',formato:'For Time',movimentos:[{nome:'Thrusters',reps:21,carga:'43/29kg'},{nome:'Pull-ups',reps:21,carga:''},{nome:'Thrusters',reps:15,carga:'43/29kg'}]},
+          {nome:'Engine Day',formato:'3 Rounds',movimentos:[{nome:'500m Row',reps:1,carga:''},{nome:'15 Burpees',reps:15,carga:''},{nome:'400m Run',reps:1,carga:''}]},
+        ],
+        hyrox: [
+          {nome:'Hyrox Sim',formato:'8 Stations',movimentos:[{nome:'1000m SkiErg',reps:1,carga:''},{nome:'50m Sled Push',reps:1,carga:'60/40kg'},{nome:'Sandbag Lunges',reps:100,carga:''}]},
+        ],
+        bootcamp: [
+          {nome:'Team Burner',formato:'EMOM 20min',movimentos:[{nome:'Kettlebell Swings',reps:15,carga:'24kg'},{nome:'Push-ups',reps:10,carga:''},{nome:'Jumping Jacks',reps:30,carga:''}]},
+        ],
+      };
+
+      const gerar = async () => {
+        setLoading(true); setSaved(false);
+        await new Promise(r => setTimeout(r, 1200));
+        const wodOpts = wods[form.metodologia] || wods.crossfit;
+        const wod = wodOpts[Math.floor(Math.random() * wodOpts.length)];
+        const novo = {
+          academia_id: ACADEMIA_ID, criado_por: COACH_ID,
+          data_treino: form.data, metodologia: form.metodologia,
+          nome: wod.nome, num_alunos: parseInt(form.num_alunos),
+          foco: form.foco, restritcoes: form.restritcoes,
+          modo_duplas: form.modo_duplas,
+          aquecimento: { descricao: '3 rounds: 400m corrida + 10 Air Squats + mobilidade', duracao_min: 12 },
+          skill: { nome: 'Front Squat', series: [{set:1,reps:5,pct:60},{set:2,reps:5,pct:70},{set:3,reps:3,pct:80}], duracao_min: 15 },
+          wod, cooldown: { descricao: '5 min caminhada leve + Foam Roller' },
+          adaptacoes: { iniciante: 'Reduza cargas 40% e substitua movimentos complexos', avancado: 'Mantenha RX + adicione colete 5kg' },
+          tempo_previsto_min: Math.floor(Math.random()*15)+25,
+          intensidade: form.foco.includes('Força')?'media':'alta',
+          status: 'rascunho',
+        };
+        setTreino(novo); setLoading(false);
+        toast('Treino gerado com IA! Revise e salve.', 'success');
+      };
+
+      const salvar = async () => {
+        if (!treino) return;
+        const { data, error } = await sb.from('treinos').insert([treino]).select().single();
+        if (error) { toast('Erro ao salvar: ' + error.message, 'error'); return; }
+        setSaved(true);
+        setTreinos(prev => [data, ...prev]);
+        setTreino(data);
+        toast('Treino salvo com sucesso!', 'success');
+      };
+
+      return (
+        <div className="flex h-full fade-in">
+          {/* Config Panel */}
+          <div className="w-80 min-w-80 border-r border-white/5 p-6 overflow-y-auto space-y-5">
+            <div>
+              <h2 className="font-display font-bold text-lg mb-1">Gerador IA</h2>
+              <p className="text-slate-400 text-xs">Configure os parâmetros para criar o treino otimizado.</p>
+            </div>
+
+            <div>
+              <label className="text-sm text-primary font-semibold mb-2 block">Metodologia</label>
+              <div className="grid grid-cols-3 gap-2">
+                {[{v:'crossfit',l:'CrossFit',i:'fitness_center'},{v:'hyrox',l:'Hyrox',i:'timer'},{v:'bootcamp',l:'Bootcamp',i:'groups'}].map(({v,l,i}) => (
+                  <button key={v} onClick={() => setForm(f=>({...f,metodologia:v}))}
+                    className={`flex flex-col items-center py-3 rounded-xl border text-xs font-bold transition-all ${form.metodologia===v?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
+                    <Icon name={i} size={20} className="mb-1"/>{l}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {[
+              {l:'Data do Treino', k:'data', type:'date'},
+              {l:'Número de Alunos', k:'num_alunos', type:'number', ph:'Ex: 15'},
+            ].map(({l,k,type,ph}) => (
+              <div key={k}>
+                <label className="text-sm font-medium mb-1.5 block">{l}</label>
+                <input type={type} value={form[k]} onChange={e=>setForm(f=>({...f,[k]:e.target.value}))} placeholder={ph}/>
+              </div>
+            ))}
+
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Foco da Sessão</label>
+              <select value={form.foco} onChange={e=>setForm(f=>({...f,foco:e.target.value}))}>
+                {['LPO + Condicionamento','Gymnastics Skill','Endurance','Força Pura','Mobilidade + Técnica'].map(o=><option key={o}>{o}</option>)}
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Restrições</label>
+              <textarea value={form.restritcoes} onChange={e=>setForm(f=>({...f,restritcoes:e.target.value}))} placeholder="Ex: Sem remo, sem box jump..." rows={3} style={{resize:'none'}}/>
+            </div>
+
+            <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/10">
+              <div>
+                <p className="text-sm font-bold">Treino em Duplas</p>
+                <p className="text-xs text-slate-400">Teams of 2</p>
+              </div>
+              <label className="toggle">
+                <input type="checkbox" checked={form.modo_duplas} onChange={e=>setForm(f=>({...f,modo_duplas:e.target.checked}))}/>
+                <span className="toggle-slider"/>
+              </label>
+            </div>
+
+            <button onClick={gerar} disabled={loading} className="btn-primary w-full py-3.5 rounded-xl flex items-center justify-center gap-2 font-display font-bold">
+              {loading ? <><div className="loading-spinner" style={{width:18,height:18,borderWidth:2}}/>Gerando...</> : <><Icon name="auto_awesome" size={18}/>GERAR COM IA</>}
+            </button>
+
+            {/* Histórico */}
+            <div>
+              <button onClick={() => setShowList(!showList)} className="text-xs text-slate-400 hover:text-primary flex items-center gap-1 transition-colors">
+                <Icon name={showList?'expand_less':'expand_more'} size={16}/>Treinos recentes ({treinos.length})
+              </button>
+              {showList && (
+                <div className="mt-2 space-y-2">
+                  {treinos.map(t => (
+                    <button key={t.id} onClick={() => setTreino(t)} className={`w-full text-left p-3 rounded-lg border transition-all text-xs ${treino?.id===t.id?'border-primary/40 bg-primary/5':'border-white/5 hover:border-white/15'}`}>
+                      <p className="font-bold truncate">{t.nome}</p>
+                      <p className="text-slate-500 mt-0.5">{fmtDate(t.data_treino)} · {metLabels[t.metodologia]}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Result Panel */}
+          <div className="flex-1 p-8 overflow-y-auto">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center h-full gap-4">
+                <div className="loading-spinner" style={{width:48,height:48,borderWidth:4}}/>
+                <p className="text-slate-400 font-medium">Gerando treino com IA...</p>
+              </div>
+            ) : treino ? (
+              <div className="space-y-5 max-w-2xl">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <span className="tag tag-green mb-2 inline-block">Resultado IA</span>
+                    <h2 className="font-display font-bold text-3xl">{treino.nome}</h2>
+                    <p className="text-slate-400 text-sm mt-1">{fmtDate(treino.data_treino)} · {metLabels[treino.metodologia]}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={gerar} className="btn-ghost p-2.5 rounded-lg" title="Regenerar"><Icon name="refresh" size={18}/></button>
+                    {!saved && <button onClick={salvar} className="btn-primary px-5 py-2 rounded-lg flex items-center gap-1.5 text-sm"><Icon name="save" size={16}/>Salvar</button>}
+                    {saved && <span className="tag tag-green flex items-center gap-1"><Icon name="check" size={14}/>Salvo</span>}
+                  </div>
+                </div>
+
+                {/* Aquecimento */}
+                {treino.aquecimento && (
+                  <div className="card-ai p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2"><Icon name="whatshot" className="text-orange-400" size={20}/><h3 className="font-display font-bold">Aquecimento</h3></div>
+                      <span className="text-xs text-slate-400">{treino.aquecimento.duracao_min} min</span>
+                    </div>
+                    <p className="text-slate-300 text-sm">{treino.aquecimento.descricao}</p>
+                  </div>
+                )}
+
+                {/* Skill */}
+                {treino.skill && (
+                  <div className="card p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2"><Icon name="fitness_center" className="text-primary" size={20}/><h3 className="font-display font-bold">Skill: {treino.skill.nome}</h3></div>
+                      <span className="text-xs text-slate-400">{treino.skill.duracao_min} min</span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {(treino.skill.series||[]).map((s,i) => (
+                        <div key={i} className="bg-primary/5 border border-primary/10 rounded-lg p-3 text-center">
+                          <p className="text-xs text-slate-400">Set {s.set}</p>
+                          <p className="font-bold text-sm">{s.reps}@{s.pct}%</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* WOD */}
+                {treino.wod && (
+                  <div className="card-ai p-5 border-2">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Icon name="timer" className="text-primary" size={24}/>
+                        <div>
+                          <h3 className="font-display font-bold text-xl">WOD: "{treino.wod.nome}"</h3>
+                          <span className="text-primary text-xs font-bold">{treino.wod.formato}</span>
+                        </div>
+                      </div>
+                      <div className="tag tag-green flex items-center gap-1">
+                        <Icon name="bolt" size={12}/>TEMPO: {treino.tempo_previsto_min}min
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      {(treino.wod.movimentos||[]).map((m,i) => (
+                        <div key={i} className="flex items-center gap-4 border-b border-white/5 pb-3">
+                          <span className="font-display font-bold text-3xl text-primary/25 w-12">{m.reps}</span>
+                          <div>
+                            <p className="font-bold">{m.nome}</p>
+                            {m.carga && <p className="text-xs text-slate-400">{m.carga}</p>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {form.modo_duplas && (
+                      <div className="mt-4 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center gap-2 text-sm text-blue-300">
+                        <Icon name="group" size={16}/>Adaptado para duplas — alternar movimentos por round
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Cooldown + Adaptações */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="card p-5">
+                    <div className="flex items-center gap-2 mb-3"><Icon name="self_improvement" className="text-primary" size={18}/><h3 className="font-bold text-sm">Cooldown</h3></div>
+                    <p className="text-xs text-slate-400">{treino.cooldown?.descricao}</p>
+                  </div>
+                  <div className="card p-5">
+                    <div className="flex items-center gap-2 mb-3"><Icon name="tune" className="text-primary" size={18}/><h3 className="font-bold text-sm">Adaptações (Scaling)</h3></div>
+                    <p className="text-xs text-slate-400 mb-1"><span className="text-slate-200 font-bold">Iniciante:</span> {treino.adaptacoes?.iniciante}</p>
+                    <p className="text-xs text-slate-400"><span className="text-slate-200 font-bold">Avançado:</span> {treino.adaptacoes?.avancado}</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
+                <Icon name="auto_awesome" className="text-primary/20" size={64}/>
+                <h3 className="font-display font-bold text-xl">Configure e gere seu treino</h3>
+                <p className="text-slate-400 text-sm max-w-xs">Ajuste os parâmetros no painel à esquerda e clique em "Gerar com IA"</p>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    // ─── Análise de Programação ────────────────────────────────────────────────
+    const Analise = ({ toast }) => {
+      const [treinos, setTreinos] = useState([]);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', {ascending:false})
+          .then(({data}) => { setTreinos(data||[]); setLoading(false); });
+      }, []);
+
+      const movFreq = [
+        {nome:'Squat', count:14}, {nome:'Pull-ups', count:8}, {nome:'Push-ups', count:11},
+        {nome:'Deadlift', count:6}, {nome:'Row', count:9}, {nome:'Run', count:12}, {nome:'Burpees', count:7},
+      ];
+      const maxCount = Math.max(...movFreq.map(m=>m.count));
+
+      const grupos = [{l:'Puxar',v:35},{l:'Empurrar',v:40},{l:'Pernas',v:55},{l:'Core',v:30},{l:'Cardio',v:60},{l:'LPO',v:25}];
+      const maxG = Math.max(...grupos.map(g=>g.v));
+
+      if (loading) return <Loading/>;
+
+      return (
+        <div className="p-8 space-y-6 fade-in">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Freq movimentos */}
+            <div className="card p-6">
+              <h3 className="font-display font-bold text-lg mb-5">Frequência de Movimentos</h3>
+              <div className="space-y-3">
+                {movFreq.sort((a,b)=>b.count-a.count).map(({nome,count}) => (
+                  <div key={nome} className="flex items-center gap-3">
+                    <span className="text-sm font-medium w-20 text-slate-300">{nome}</span>
+                    <div className="flex-1 bg-primary/5 rounded-full h-6 overflow-hidden">
+                      <div className="h-full bg-primary/30 border-r-2 border-primary flex items-center justify-end pr-2 rounded-full transition-all"
+                        style={{width:`${(count/maxCount)*100}%`}}>
+                        <span className="text-xs font-bold text-primary">{count}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Grupos Musculares */}
+            <div className="card p-6">
+              <h3 className="font-display font-bold text-lg mb-5">Grupos Musculares</h3>
+              <div className="space-y-3">
+                {grupos.map(({l,v}) => (
+                  <div key={l} className="flex items-center gap-3">
+                    <span className="text-sm font-medium w-20 text-slate-300">{l}</span>
+                    <div className="flex-1 bg-primary/5 rounded-full h-6 overflow-hidden">
+                      <div className={`h-full flex items-center justify-end pr-2 rounded-full transition-all ${v>50?'bg-red-500/20 border-r-2 border-red-500':'bg-primary/25 border-r-2 border-primary'}`}
+                        style={{width:`${(v/maxG)*100}%`}}>
+                        <span className={`text-xs font-bold ${v>50?'text-red-400':'text-primary'}`}>{v}%</span>
+                      </div>
+                    </div>
+                    {v>50 && <Icon name="warning" className="text-red-400" size={14}/>}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-red-400 mt-3 flex items-center gap-1"><Icon name="info" size={12}/>Vermelho indica sobrecarga potencial</p>
+            </div>
+
+            {/* Modalidades */}
+            <div className="card p-6">
+              <h3 className="font-display font-bold text-lg mb-5">Distribuição por Modalidade</h3>
+              <div className="flex items-center gap-6">
+                <div className="relative w-32 h-32 shrink-0">
+                  <svg viewBox="0 0 36 36" className="w-32 h-32 -rotate-90">
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(67,243,32,0.1)" strokeWidth="3"/>
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="#43f320" strokeWidth="3" strokeDasharray="45 100" strokeLinecap="round"/>
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(67,243,32,0.45)" strokeWidth="3" strokeDasharray="30 100" strokeDashoffset="-45" strokeLinecap="round"/>
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(67,243,32,0.65)" strokeWidth="3" strokeDasharray="25 100" strokeDashoffset="-75" strokeLinecap="round"/>
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="text-xs font-bold text-slate-400">Modal</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {[{l:'Ginástica',v:45,c:'bg-primary'},{l:'Levantamento',v:30,c:'bg-primary/60'},{l:'Monoestrutural',v:25,c:'bg-primary/35'}].map(({l,v,c}) => (
+                    <div key={l} className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${c}`}/>
+                      <span className="text-sm text-slate-300">{l}</span>
+                      <span className="font-bold text-primary ml-auto">{v}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Volume tempo */}
+            <div className="card p-6">
+              <h3 className="font-display font-bold text-lg mb-5">Volume Semanal (treinos)</h3>
+              <div className="flex items-end gap-2 h-32">
+                {[4,6,5,7,3,5,6].map((v,i) => (
+                  <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                    <div className="w-full bg-primary/15 border-t-2 border-primary rounded-sm transition-all hover:bg-primary/25"
+                      style={{height:`${(v/7)*100}%`}}/>
+                    <span className="text-xs text-slate-500">{diasSemana[i]}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Avaliação Crítica IA */}
+          <div className="card-ai p-6 relative overflow-hidden">
+            <div className="absolute -right-10 -top-10 w-48 h-48 bg-primary/5 rounded-full blur-2xl"/>
+            <div className="flex items-center gap-4 mb-6 relative">
+              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                <Icon name="psychology" className="text-bg-dark" size={24}/>
+              </div>
+              <div>
+                <h3 className="font-display font-bold text-xl">Avaliação Crítica da IA</h3>
+                <p className="text-primary text-xs font-bold uppercase tracking-widest">Análise Inteligente da Programação</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
+              <div>
+                <h4 className="font-bold flex items-center gap-2 mb-4"><Icon name="warning" className="text-red-400" size={18}/>Fraquezas Identificadas</h4>
+                <ul className="space-y-3">
+                  {[
+                    'Baixo volume de puxada vertical (Pull-ups) vs movimentos de empurrar.',
+                    'Alta carga lombar na Terça e Quinta — considere redistribuir.',
+                    'Lacuna de trabalho de potência (LPO) nos últimos 10 dias.',
+                  ].map((t,i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                      <Icon name="circle" className="text-primary mt-0.5" size={10}/>
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="border-l border-primary/15 pl-8">
+                <h4 className="font-bold flex items-center gap-2 mb-4"><Icon name="lightbulb" className="text-primary" size={18}/>Sugestões de Ajuste</h4>
+                <ul className="space-y-3">
+                  {[
+                    'Introduzir Ring Rows ou Scapular Pulls na Quinta.',
+                    'Redistribuir volume de agachamento entre Terça e Sexta.',
+                    'Adicionar 1 sessão de clean technique na próxima semana.',
+                  ].map((t,i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                      <Icon name="check_circle" className="text-primary mt-0.5" size={14}/>
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+                <button className="mt-5 text-primary text-sm font-bold underline decoration-primary/30 underline-offset-4 hover:decoration-primary">
+                  Aplicar sugestões automaticamente
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ─── Periodização ──────────────────────────────────────────────────────────
+    const Periodizacao = ({ toast }) => {
+      const [periodo, setPeriodo] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [showModal, setShowModal] = useState(false);
+      const [form, setForm] = useState({ nome: '', objetivo: '', data_inicio: hoje(), data_fim: '' });
+
+      useEffect(() => {
+        sb.from('periodizacoes').select('*').eq('academia_id', ACADEMIA_ID).eq('status','ativo').single()
+          .then(({data}) => { setPeriodo(data); setLoading(false); });
+      }, []);
+
+      const criar = async () => {
+        const semanas = Array.from({length:12},(_,i) => ({
+          semana: i+1,
+          fase: i<4?'Base Strength':i<8?'Hypertrophy Focus':'Open Prep / Peak',
+          volume: [70,75,80,50,75,80,85,50,80,85,90,30][i],
+          intensidade: [60,65,70,50,70,75,80,50,85,90,95,30][i],
+          deload: [false,false,false,true,false,false,false,true,false,false,false,true][i],
+        }));
+        const { data, error } = await sb.from('periodizacoes').insert([{
+          academia_id: ACADEMIA_ID, criado_por: COACH_ID,
+          nome: form.nome, objetivo: form.objetivo,
+          data_inicio: form.data_inicio, data_fim: form.data_fim || null,
+          semanas, status: 'ativo',
+        }]).select().single();
+        if (error) { toast('Erro: '+error.message,'error'); return; }
+        setPeriodo(data); setShowModal(false);
+        toast('Periodização criada com sucesso!','success');
+      };
+
+      const fases = ['Base Strength','Hypertrophy Focus','Open Prep / Peak'];
+      const faseColors = ['bg-primary/30 border-primary/50','bg-blue-500/20 border-blue-500/30','bg-purple-500/20 border-purple-500/30'];
+      const faseTextColors = ['text-primary','text-blue-400','text-purple-400'];
+
+      if (loading) return <Loading/>;
+
+      return (
+        <div className="p-8 space-y-6 fade-in">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-display font-bold text-2xl">{periodo?.nome || 'Planejamento de Periodização'}</h2>
+              <p className="text-slate-400 text-sm mt-0.5">{periodo ? `${fmtDate(periodo.data_inicio)} → ${fmtDate(periodo.data_fim)}` : 'Nenhum ciclo ativo'}</p>
+            </div>
+            <button onClick={() => setShowModal(true)} className="btn-primary px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm">
+              <Icon name="add" size={18}/>Novo Ciclo
+            </button>
+          </div>
+
+          {periodo ? (
+            <>
+              {/* Gantt */}
+              <div className="card overflow-x-auto">
+                <div className="min-w-[900px]">
+                  {/* Header semanas */}
+                  <div className="flex border-b border-white/5">
+                    <div className="w-40 shrink-0 p-3 text-xs font-bold text-slate-500 uppercase">Categoria</div>
+                    <div className="flex-1 grid grid-cols-12">
+                      {Array.from({length:12},(_,i) => (
+                        <div key={i} className={`p-3 text-center text-xs font-bold border-l border-white/5 ${i===3||i===7||i===11?'bg-blue-500/5 text-blue-400':'text-slate-400'}`}>
+                          {i===3||i===7||i===11?'DL':'W'}{i+1}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Fases */}
+                  <div className="flex border-b border-white/5">
+                    <div className="w-40 shrink-0 p-3 flex items-center gap-2 text-sm font-bold">
+                      <Icon name="settings_input_component" className="text-primary" size={16}/>Fases
+                    </div>
+                    <div className="flex-1 grid grid-cols-12 p-2 gap-1">
+                      {Array.from({length:12},(_,i) => {
+                        const s = (periodo.semanas||[])[i];
+                        const fi = fases.indexOf(s?.fase);
+                        return (
+                          <div key={i} className={`gantt-bar border ${faseColors[fi>=0?fi:0]} ${faseTextColors[fi>=0?fi:0]}`} title={s?.fase}>
+                            {i%4===0 && <span className="truncate text-xs">{s?.fase?.split(' ')[0]}</span>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Volume */}
+                  <div className="flex border-b border-white/5">
+                    <div className="w-40 shrink-0 p-3 flex items-center gap-2 text-sm font-bold">
+                      <Icon name="fitness_center" className="text-primary" size={16}/>Volume
+                    </div>
+                    <div className="flex-1 p-3 flex items-end gap-1 h-16">
+                      {(periodo.semanas||[]).map((s,i) => (
+                        <div key={i} className="flex-1 rounded-sm bg-primary/15 border-t border-primary/30 relative group"
+                          style={{height:`${s.volume}%`}} title={`${s.volume}%`}>
+                          <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-xs text-primary font-bold opacity-0 group-hover:opacity-100">{s.volume}%</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Intensidade */}
+                  <div className="flex border-b border-white/5">
+                    <div className="w-40 shrink-0 p-3 flex items-center gap-2 text-sm font-bold">
+                      <Icon name="bolt" className="text-primary" size={16}/>Intensidade
+                    </div>
+                    <div className="flex-1 p-3 flex items-end gap-1 h-16">
+                      {(periodo.semanas||[]).map((s,i) => (
+                        <div key={i} className="flex-1 rounded-sm bg-orange-500/15 border-t border-orange-400/40"
+                          style={{height:`${s.intensidade}%`}} title={`${s.intensidade}%`}/>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Deload */}
+                  <div className="flex">
+                    <div className="w-40 shrink-0 p-3 flex items-center gap-2 text-sm font-bold">
+                      <Icon name="rebase_edit" className="text-primary" size={16}/>Deload
+                    </div>
+                    <div className="flex-1 grid grid-cols-12 p-2 gap-1">
+                      {(periodo.semanas||[]).map((s,i) => (
+                        <div key={i} className={`h-10 rounded-lg flex items-center justify-center ${s.deload?'bg-blue-500/20 border border-blue-500/30':'bg-transparent'}`}>
+                          {s.deload && <Icon name="check_circle" className="text-blue-400" size={16}/>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Insights */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  {i:'psychology',t:'Recomendação IA', c:'text-primary', txt:'Detectamos fadiga acumulada na Semana 3. O bloco foi ajustado com 2 dias extras de mobilidade ativa.'},
+                  {i:'monitoring',t:'Prontidão Semana 4', c:'text-blue-400', txt:'88% — Capacidade de carga otimizada para o final do mesociclo. +12% vs semana anterior.'},
+                  {i:'event_note',t:'Próximo Milestone', c:'text-purple-400', txt:'Open Qualifier #1 — Em 32 dias (Final da Fase 2). Progresso: 67%'},
+                ].map(({i,t,c,txt}) => (
+                  <div key={t} className="card p-5">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Icon name={i} className={c} size={18}/>
+                      <h4 className="font-bold text-sm uppercase tracking-wide">{t}</h4>
+                    </div>
+                    <p className="text-sm text-slate-400">{txt}</p>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="card p-12 flex flex-col items-center text-center">
+              <Icon name="calendar_month" className="text-primary/20" size={64}/>
+              <h3 className="font-display font-bold text-xl mt-4 mb-2">Nenhum ciclo ativo</h3>
+              <p className="text-slate-400 text-sm mb-5">Crie seu primeiro ciclo de periodização com IA</p>
+              <button onClick={() => setShowModal(true)} className="btn-primary px-6 py-3 rounded-xl">Criar Periodização</button>
+            </div>
+          )}
+
+          <Modal open={showModal} onClose={() => setShowModal(false)} title="Novo Ciclo de Periodização">
+            <div className="space-y-4">
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Nome do ciclo</label><input value={form.nome} onChange={e=>setForm(f=>({...f,nome:e.target.value}))} placeholder="Ex: Macrociclo Open 2025"/></div>
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Objetivo</label>
+                <select value={form.objetivo} onChange={e=>setForm(f=>({...f,objetivo:e.target.value}))}>
+                  {['Preparação para competição','Construção de base','Hypertrophy','Deload/Recuperação','Open Season Prep'].map(o=><option key={o}>{o}</option>)}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div><label className="text-sm text-slate-400 mb-1.5 block">Data Início</label><input type="date" value={form.data_inicio} onChange={e=>setForm(f=>({...f,data_inicio:e.target.value}))}/></div>
+                <div><label className="text-sm text-slate-400 mb-1.5 block">Data Fim</label><input type="date" value={form.data_fim} onChange={e=>setForm(f=>({...f,data_fim:e.target.value}))}/></div>
+              </div>
+              <p className="text-xs text-slate-500">A IA irá gerar automaticamente 12 semanas de periodização progressiva com deloads planejados.</p>
+              <div className="flex gap-3 mt-2">
+                <button onClick={() => setShowModal(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
+                <button onClick={criar} className="flex-1 btn-primary py-2.5 rounded-xl">Criar com IA</button>
+              </div>
+            </div>
+          </Modal>
+        </div>
+      );
+    };
+
+    // ─── Segurança ─────────────────────────────────────────────────────────────
+    const Seguranca = ({ toast }) => {
+      const [alertas, setAlertas] = useState([]);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        sb.from('alertas_seguranca').select('*, treinos(nome,data_treino)').eq('academia_id', ACADEMIA_ID)
+          .order('created_at', {ascending:false})
+          .then(({data}) => { setAlertas(data||[]); setLoading(false); });
+      }, []);
+
+      const resolver = async (id) => {
+        await sb.from('alertas_seguranca').update({resolvido:true}).eq('id',id);
+        setAlertas(prev => prev.map(a => a.id===id ? {...a,resolvido:true} : a));
+        toast('Alerta marcado como resolvido.','success');
+      };
+
+      const grupos_risco = [
+        {nome:'Ombros',nivel:85,cor:'bg-red-500'},{nome:'Lombar',nivel:72,cor:'bg-red-400'},
+        {nome:'Joelhos',nivel:45,cor:'bg-yellow-500'},{nome:'Core',nivel:38,cor:'bg-primary'},
+        {nome:'Quadris',nivel:30,cor:'bg-primary'},{nome:'Tornozelos',nivel:22,cor:'bg-primary'},
+      ];
+
+      if (loading) return <Loading/>;
+      return (
+        <div className="p-8 space-y-6 fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
+            {[
+              {l:'Alertas Ativos', v: alertas.filter(a=>!a.resolvido).length, i:'warning', c:'text-red-400', bg:'bg-red-500/10'},
+              {l:'Resolvidos', v: alertas.filter(a=>a.resolvido).length, i:'check_circle', c:'text-primary', bg:'bg-primary/10'},
+              {l:'Score Segurança', v: '74/100', i:'shield', c:'text-yellow-400', bg:'bg-yellow-500/10'},
+            ].map(({l,v,i,c,bg}) => (
+              <div key={l} className={`card p-5 flex items-center gap-4 ${bg} border-none`}>
+                <Icon name={i} className={c} size={28}/>
+                <div>
+                  <p className="text-3xl font-display font-bold">{v}</p>
+                  <p className="text-sm text-slate-400">{l}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Mapa de calor */}
+            <div className="card p-6">
+              <h3 className="font-display font-bold text-lg mb-5">Mapa de Carga Muscular</h3>
+              <div className="space-y-3">
+                {grupos_risco.map(({nome,nivel,cor}) => (
+                  <div key={nome}>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="font-medium">{nome}</span>
+                      <span className={`font-bold ${nivel>70?'text-red-400':nivel>50?'text-yellow-400':'text-primary'}`}>{nivel}%</span>
+                    </div>
+                    <div className="progress-bar"><div className={`progress-fill ${cor}`} style={{width:`${nivel}%`}}/></div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-red-400 mt-4 flex items-center gap-1"><Icon name="info" size={12}/>Acima de 70% indica risco de sobrecarga</p>
+            </div>
+
+            {/* Alertas */}
+            <div className="card p-6">
+              <h3 className="font-display font-bold text-lg mb-5">Alertas da Semana</h3>
+              {alertas.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-32 text-center">
+                  <Icon name="check_circle" className="text-primary/30" size={40}/>
+                  <p className="text-slate-400 text-sm mt-2">Nenhum alerta ativo</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {alertas.map(a => (
+                    <div key={a.id} className={`p-4 rounded-xl border ${a.resolvido?'border-white/5 opacity-50':'border-red-500/20 bg-red-500/5'}`}>
+                      <div className="flex items-start gap-3">
+                        <Icon name={a.resolvido?'check_circle':'warning'} className={a.resolvido?'text-primary':'text-red-400'} size={18}/>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium leading-relaxed">{a.descricao}</p>
+                          {a.treinos && <p className="text-xs text-slate-500 mt-1">Treino: {a.treinos.nome}</p>}
+                        </div>
+                        {!a.resolvido && (
+                          <button onClick={() => resolver(a.id)} className="shrink-0 tag tag-green cursor-pointer hover:opacity-80">
+                            Resolver
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Combinações perigosas */}
+          <div className="card-ai p-6">
+            <h3 className="font-display font-bold text-lg mb-4 flex items-center gap-2">
+              <Icon name="dangerous" className="text-red-400" size={20}/>Combinações Perigosas Detectadas
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                {d:'Seg + Qua', t:'Deadlift + Pull-ups seguidos', l:'Evitar puxada pesada no dia seguinte ao DL'},
+                {d:'Ter + Qui', t:'Overhead Press + HSPU', l:'Sobrecarga de ombro em dias consecutivos'},
+              ].map(({d,t,l}) => (
+                <div key={d} className="p-4 rounded-xl bg-red-500/5 border border-red-500/15">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="tag tag-red">{d}</span>
+                    <span className="text-sm font-bold">{t}</span>
+                  </div>
+                  <p className="text-xs text-slate-400 flex items-center gap-1"><Icon name="lightbulb" className="text-yellow-400" size={12}/>{l}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ─── Dashboard Dono ────────────────────────────────────────────────────────
+    const DashboardDono = ({ setPage }) => {
+      const [treinos, setTreinos] = useState([]);
+      const [loading, setLoading] = useState(true);
+
+      useEffect(() => {
+        sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID)
+          .then(({data}) => { setTreinos(data||[]); setLoading(false); });
+      }, []);
+
+      if (loading) return <Loading/>;
+      return (
+        <div className="p-8 space-y-6 fade-in">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              {l:'Treinos Gerados', v: treinos.length, i:'auto_awesome', d:'+8 essa semana'},
+              {l:'Taxa Retenção', v:'88.4%', i:'group', d:'-2.1% vs mês ant.'},
+              {l:'Sugestões Aceitas', v:'76%', i:'thumb_up', d:'IA Coach'},
+              {l:'Receita Projetada', v:'R$142k', i:'payments', d:'+5.8% MoM'},
+            ].map(({l,v,i,d}) => (
+              <div key={l} className="card p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm text-slate-400">{l}</p>
+                  <Icon name={i} className="text-primary" size={18}/>
+                </div>
+                <p className="font-display font-bold text-2xl">{v}</p>
+                <p className="text-xs text-slate-500 mt-1">{d}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Volume chart */}
+          <div className="card p-6">
+            <h3 className="font-display font-bold text-lg mb-5">Progressão de Volume — Últimos 6 meses</h3>
+            <div className="relative h-40">
+              <svg className="w-full h-full" viewBox="0 0 800 160" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="areaGrad" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%" stopColor="#43f320" stopOpacity="0.25"/>
+                    <stop offset="100%" stopColor="#43f320" stopOpacity="0"/>
+                  </linearGradient>
+                </defs>
+                <line x1="0" x2="800" y1="40" y2="40" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+                <line x1="0" x2="800" y1="80" y2="80" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+                <line x1="0" x2="800" y1="120" y2="120" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
+                <path d="M0,120 C120,100 200,130 300,70 C400,90 500,45 600,55 C700,60 800,20 L800,160 L0,160Z" fill="url(#areaGrad)"/>
+                <path d="M0,120 C120,100 200,130 300,70 C400,90 500,45 600,55 C700,60 800,20" fill="none" stroke="#43f320" strokeWidth="3" strokeLinecap="round"/>
+                {[[300,70],[800,20]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r="5" fill="#43f320"/>)}
+              </svg>
+            </div>
+            <div className="flex justify-between mt-2 px-1 text-xs font-bold text-slate-500">
+              {['JAN','FEV','MAR','ABR','MAI','JUN'].map(m=><span key={m}>{m}</span>)}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="card p-6">
+              <h3 className="font-display font-bold text-lg mb-5">Equilíbrio de Programação</h3>
+              <div className="space-y-4">
+                {[{l:'Força & Potência',v:42},{l:'Condicionamento',v:38},{l:'Técnica & Skill',v:20}].map(({l,v}) => (
+                  <div key={l}>
+                    <div className="flex justify-between text-sm mb-1.5"><span>{l}</span><span className="text-primary font-bold">{v}%</span></div>
+                    <div className="progress-bar"><div className="progress-fill" style={{width:`${v}%`}}/></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="card-ai p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Icon name="auto_awesome" className="text-primary" size={20}/>
+                <h3 className="font-display font-bold text-lg">Recomendações IA</h3>
+              </div>
+              <div className="space-y-3">
+                {[
+                  {i:'trending_up',t:'Expansão Hyrox',d:'Demanda crescente às 18h. Aumentar grade de aulas em 20%.'},
+                  {i:'group',t:'Alerta de Churn',d:'Padrão de evasão em alunos de 3-6 meses. Iniciar reengajamento.'},
+                  {i:'balance',t:'Ajuste de Programação',d:'Volume de força superou condicionamento. Rebalancear.'},
+                ].map(({i,t,d}) => (
+                  <div key={t} className="flex gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer" onClick={() => setPage('estrategico')}>
+                    <Icon name={i} className="text-primary mt-0.5" size={18}/>
+                    <div>
+                      <p className="text-sm font-bold">{t}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{d}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button onClick={() => setPage('estrategico')} className="mt-4 w-full btn-ghost rounded-lg py-2 text-sm">Ver Todos os Insights</button>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ─── Estratégico ───────────────────────────────────────────────────────────
+    const Estrategico = () => (
+      <div className="p-8 space-y-6 fade-in">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            {l:'Volume Mensal', v:'2.480 check-ins', d:'+12.5%', pos:true},
+            {l:'Taxa de Retenção', v:'88.4%', d:'-2.1%', pos:false},
+            {l:'Receita Projetada', v:'R$ 142.500', d:'+5.8%', pos:true},
+          ].map(({l,v,d,pos}) => (
+            <div key={l} className="card p-5">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-slate-400 text-sm">{l}</p>
+                <span className={`tag ${pos?'tag-green':'tag-red'}`}>{d}</span>
+              </div>
+              <p className="font-display font-bold text-2xl">{v}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="card p-6">
+            <h3 className="font-display font-bold text-lg mb-4">Benchmarking Local (IA)</h3>
+            <p className="text-slate-400 text-sm mb-5">Comparativo com boxes em raio de 5km</p>
+            {[
+              {l:'Ticket Médio',v:'+R$45,00',i:'expand_less',pos:true},
+              {l:'Ocupação Horários Nobres',v:'92%',i:'check_circle',pos:true},
+              {l:'Custo de Aquisição (CAC)',v:'-12%',i:'expand_more',pos:false},
+            ].map(({l,v,i,pos}) => (
+              <div key={l} className="flex items-center justify-between p-3 rounded-lg bg-bg-dark mb-2">
+                <span className="text-slate-300 text-sm">{l}</span>
+                <div className="flex items-center gap-1">
+                  <span className="font-bold">{v}</span>
+                  <Icon name={i} className={pos?'text-primary':'text-red-400'} size={18}/>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="card-ai p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Icon name="psychology" className="text-primary" size={20}/>
+              <h3 className="font-display font-bold text-lg">Ações Estratégicas IA</h3>
+            </div>
+            <div className="space-y-3">
+              {[
+                {i:'trending_up',t:'Expansão de Hyrox',d:'Demanda crescente às 18h. Aumentar grade em 20%.'},
+                {i:'balance',t:'Rebalancear Programação',d:'Peso superou condicionamento nas últimas 3 semanas.'},
+                {i:'group',t:'Campanha de Reengajamento',d:'23 alunos com padrão de evasão identificado.'},
+                {i:'school',t:'Workshop de Movimento',d:'Skill técnico abaixo da média — sugestão de evento.'},
+              ].map(({i,t,d}) => (
+                <div key={t} className="flex gap-3 p-3 rounded-lg bg-bg-dark hover:bg-primary/5 transition-colors cursor-pointer">
+                  <Icon name={i} className="text-primary shrink-0 mt-0.5" size={16}/>
+                  <div>
+                    <p className="text-sm font-bold">{t}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    // ─── Coaches ───────────────────────────────────────────────────────────────
+    const Coaches = () => {
+      const [usuarios, setUsuarios] = useState([]);
+      useEffect(() => {
+        sb.from('usuarios').select('*').eq('academia_id', ACADEMIA_ID)
+          .then(({data}) => setUsuarios(data||[]));
+      }, []);
+      return (
+        <div className="p-8 space-y-6 fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {usuarios.map(u => (
+              <div key={u.id} className="card p-6">
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
+                    <Icon name="person" className="text-primary" size={22}/>
+                  </div>
+                  <div>
+                    <h4 className="font-display font-bold text-lg">{u.nome}</h4>
+                    <p className="text-sm text-slate-400">{u.email}</p>
+                  </div>
+                  <span className={`tag ml-auto ${u.perfil==='head_coach'?'tag-green':'tag-blue'}`}>
+                    {u.perfil==='head_coach'?'Head Coach':'Dono'}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {[{l:'Treinos',v:'24'},{l:'Sugestões Aceitas',v:'78%'},{l:'Score IA',v:'8.7'}].map(({l,v}) => (
+                    <div key={l} className="text-center p-3 rounded-lg bg-bg-dark">
+                      <p className="font-display font-bold text-lg text-primary">{v}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{l}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    // ─── Configurações ─────────────────────────────────────────────────────────
+    const Configuracoes = ({ toast }) => {
+      const [academia, setAcademia] = useState(null);
+      const [equipamentos, setEquipamentos] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [saving, setSaving] = useState(false);
+
+      useEffect(() => {
+        Promise.all([
+          sb.from('academias').select('*').eq('id', ACADEMIA_ID).single(),
+          sb.from('equipamentos').select('*').eq('academia_id', ACADEMIA_ID),
+        ]).then(([{data:a},{data:e}]) => { setAcademia(a); setEquipamentos(e||[]); setLoading(false); });
+      }, []);
+
+      const salvar = async () => {
+        setSaving(true);
+        await sb.from('academias').update({ nome: academia.nome, max_alunos_por_aula: academia.max_alunos_por_aula, dias_treino_semana: academia.dias_treino_semana }).eq('id', ACADEMIA_ID);
+        setSaving(false);
+        toast('Configurações salvas!','success');
+      };
+
+      if (loading) return <Loading/>;
+      return (
+        <div className="p-8 space-y-6 fade-in max-w-2xl">
+          <div className="card p-6 space-y-4">
+            <h3 className="font-display font-bold text-lg">Perfil da Academia</h3>
+            <div><label className="text-sm text-slate-400 mb-1.5 block">Nome</label>
+              <input value={academia?.nome||''} onChange={e=>setAcademia(a=>({...a,nome:e.target.value}))}/></div>
+            <div className="grid grid-cols-2 gap-4">
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Máx. Alunos/Aula</label>
+                <input type="number" value={academia?.max_alunos_por_aula||''} onChange={e=>setAcademia(a=>({...a,max_alunos_por_aula:parseInt(e.target.value)}))}/></div>
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Dias/Semana</label>
+                <input type="number" value={academia?.dias_treino_semana||''} onChange={e=>setAcademia(a=>({...a,dias_treino_semana:parseInt(e.target.value)}))}/></div>
+            </div>
+            <button onClick={salvar} disabled={saving} className="btn-primary px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm">
+              {saving?<><div className="loading-spinner" style={{width:16,height:16,borderWidth:2}}/>Salvando...</>:<><Icon name="save" size={16}/>Salvar Alterações</>}
+            </button>
+          </div>
+
+          <div className="card p-6">
+            <h3 className="font-display font-bold text-lg mb-4">Equipamentos</h3>
+            <div className="space-y-2">
+              {equipamentos.map(eq => (
+                <div key={eq.id} className="flex items-center justify-between p-3 rounded-lg bg-bg-dark">
+                  <span className="text-sm font-medium">{eq.nome}</span>
+                  <span className="tag tag-green">{eq.quantidade} unid.</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ─── App Root ──────────────────────────────────────────────────────────────
+    const App = () => {
+      const [user, setUser] = useState(null);
+      const [page, setPage] = useState('dashboard');
+      const [academia, setAcademia] = useState(null);
+      const [toastState, setToastState] = useState(null);
+      const [alertCount, setAlertCount] = useState(0);
+
+      const toast = (msg, type='success') => setToastState({msg, type, key: Date.now()});
+
+      useEffect(() => {
+        if (!user) return;
+        sb.from('academias').select('*').eq('id', ACADEMIA_ID).single().then(({data}) => setAcademia(data));
+        sb.from('alertas_seguranca').select('*',{count:'exact'}).eq('academia_id', ACADEMIA_ID).eq('resolvido',false)
+          .then(({count}) => setAlertCount(count||0));
+      }, [user]);
+
+      useEffect(() => { setPage('dashboard'); }, [user]);
+
+      const logout = () => { setUser(null); setPage('dashboard'); };
+
+      if (!user) return <LoginPage onLogin={setUser}/>;
+
+      const isCoach = user.perfil === 'head_coach';
+      const pageMap = {
+        dashboard: isCoach ? <DashboardCoach setPage={setPage} toast={toast}/> : <DashboardDono setPage={setPage}/>,
+        gerar: <GerarTreino toast={toast}/>,
+        analise: <Analise toast={toast}/>,
+        periodizacao: <Periodizacao toast={toast}/>,
+        seguranca: <Seguranca toast={toast}/>,
+        estrategico: <Estrategico/>,
+        coaches: <Coaches/>,
+        configuracoes: <Configuracoes toast={toast}/>,
+      };
+
+      const titleMap = {
+        dashboard: ['Dashboard', isCoach ? 'Visão geral do dia e performance' : 'Métricas e gestão da academia'],
+        gerar: ['Gerar Treino', 'Inteligência artificial para criar sessões otimizadas'],
+        analise: ['Análise de Programação', 'Estatísticas detalhadas da programação'],
+        periodizacao: ['Periodização', 'Planejamento estratégico de macrociclos'],
+        seguranca: ['Verificação de Segurança', 'Auditoria de segurança e riscos da semana'],
+        estrategico: ['Visão Estratégica', 'Insights de IA para gestão do negócio'],
+        coaches: ['Gestão de Coaches', 'Performance e métricas dos professores'],
+        configuracoes: ['Configurações', 'Perfil e dados da academia'],
+      };
+
+      const [title, subtitle] = titleMap[page] || ['iA Coach',''];
+
+      return (
+        <div className="flex h-screen overflow-hidden">
+          <Sidebar user={user} page={page} setPage={setPage} onLogout={logout} academia={academia}/>
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <Topbar title={title} subtitle={subtitle} alertCount={isCoach ? alertCount : 0}/>
+            <div className="flex-1 overflow-y-auto">
+              {pageMap[page] || pageMap.dashboard}
+            </div>
+          </div>
+          {toastState && <Toast key={toastState.key} msg={toastState.msg} type={toastState.type} onClose={() => setToastState(null)}/>}
+          {isCoach && (
+            <button onClick={() => setPage('gerar')} title="Gerar Novo Treino"
+              className="fixed bottom-7 right-7 w-14 h-14 bg-primary text-bg-dark rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50"
+              style={{boxShadow:'0 0 30px rgba(67,243,32,0.4)'}}>
+              <Icon name="auto_awesome" size={24}/>
+            </button>
+          )}
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>
