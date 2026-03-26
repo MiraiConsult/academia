@@ -1432,6 +1432,14 @@
 
       const toast = (msg, type='success') => setToastState({msg, type, key: Date.now()});
 
+      // Auto-login: entra direto como head_coach
+      useEffect(() => {
+        if (!user) {
+          sb.from('usuarios').select('*').eq('email', 'coach@crossfititron.com').single()
+            .then(({data}) => { if (data) setUser(data); });
+        }
+      }, []);
+
       useEffect(() => {
         if (!user) return;
         sb.from('academias').select('*').eq('id', ACADEMIA_ID).single().then(({data}) => setAcademia(data));
@@ -1443,7 +1451,7 @@
 
       const logout = () => { setUser(null); setPage('dashboard'); };
 
-      if (!user) return <LoginPage onLogin={setUser}/>;
+      if (!user) return <div className="min-h-screen flex items-center justify-center" style={{background:'#0d1a0b'}}><div className="loading-spinner" style={{width:40,height:40,borderWidth:3}}/></div>;
 
       const isCoach = user.perfil === 'head_coach';
       const pageMap = {
