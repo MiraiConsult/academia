@@ -81,6 +81,9 @@
     .toggle input:checked + .toggle-slider:before { transform: translateX(20px); background: #0d1a0b; }
     .gantt-bar { height: 28px; border-radius: 6px; display: flex; align-items: center; padding: 0 10px; font-size: 11px; font-weight: 700; cursor: pointer; transition: filter 0.2s; }
     .gantt-bar:hover { filter: brightness(1.2); }
+    input[type="range"] { -webkit-appearance: none; height: 6px; background: var(--primary-bg) !important; border-radius: 3px !important; border: none !important; padding: 0 !important; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: var(--primary); border-radius: 50%; cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 8px rgba(67,243,32,0.3); }
+    input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: var(--primary); border-radius: 50%; cursor: pointer; border: 3px solid var(--bg-card); }
     [data-theme="light"] .border-white\/5 { border-color: #e0e8de !important; }
     [data-theme="light"] .text-slate-400, [data-theme="light"] .text-slate-500 { color: var(--text-muted) !important; }
     [data-theme="light"] .text-slate-600 { color: #4a5b4a !important; }
@@ -217,6 +220,74 @@
     };
 
     const WOD_FORMATOS = ['AMRAP','For Time','EMOM','Tabata','Chipper','RFT'];
+
+    // ─── Detalhes dos Exercícios ──────────────────────────────────────────────
+    const EXERCICIO_DETALHES = {
+      'Pull-ups': {desc:'Suspensão na barra com braços estendidos, puxar o corpo até o queixo ultrapassar a barra.',musculos:'Dorsais, bíceps, antebraço',erros:'Não completar a amplitude, kipping excessivo sem controle, ombros elevados',escala:'Ring Rows, Banded Pull-ups, Jumping Pull-ups',img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=400&h=300&fit=crop'},
+      'Chest-to-Bar Pull-ups': {desc:'Igual ao Pull-up, mas o peito deve tocar a barra no topo do movimento.',musculos:'Dorsais, bíceps, romboides',erros:'Falta de extensão no quadril no kip, não encostar o peito',escala:'Pull-ups regulares, Banded C2B',img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=400&h=300&fit=crop'},
+      'Toes-to-Bar': {desc:'Pendurado na barra, elevar os pés até tocar a barra com os dedos dos pés.',musculos:'Core, hip flexors, dorsais',erros:'Usar apenas os braços, perder o ritmo do kip, pernas dobradas',escala:'Knees-to-Elbows, Hanging Knee Raises, Sit-ups',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop'},
+      'Bar Muscle-ups': {desc:'Combina pull-up com dip na barra — puxar e transicionar acima da barra.',musculos:'Dorsais, peitorais, tríceps, core',erros:'Falta de kip, braços muito abertos, transição lenta',escala:'Pull-ups + Dips separados, Jumping Muscle-ups',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Ring Muscle-ups': {desc:'Muscle-up nas argolas — requer false grip e transição suave.',musculos:'Dorsais, peitorais, tríceps, core, estabilizadores de ombro',erros:'Perder o false grip, cotovelos abertos, falta de profundidade no dip',escala:'Ring Dips + Ring Rows, Banded Ring MU',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Ring Dips': {desc:'Dips nas argolas — descer até o ombro ficar abaixo do cotovelo, estender completamente.',musculos:'Tríceps, peitorais, deltóides anteriores',erros:'Argolas instáveis, amplitude incompleta, ombros internamente rotados',escala:'Box Dips, Banded Ring Dips, Bar Dips',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Push-ups': {desc:'Posição de prancha, descer o peito ao chão e empurrar de volta mantendo o corpo rígido.',musculos:'Peitorais, tríceps, deltóides, core',erros:'Quadril caído, cotovelos muito abertos, amplitude parcial',escala:'Push-ups de joelho, Push-ups inclinados (em box)',img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=400&h=300&fit=crop'},
+      'Handstand Push-ups': {desc:'Invertido contra a parede, descer a cabeça ao chão e empurrar até extensão total.',musculos:'Deltóides, tríceps, trapézio superior',erros:'Cabeça muito à frente, kip descontrolado, cotovelos abertos',escala:'Pike Push-ups, Box HSPU, Dumbbell Press',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop'},
+      'Air Squats': {desc:'Agachamento completo com peso corporal — quadril abaixo dos joelhos, peito erguido.',musculos:'Quadríceps, glúteos, isquiotibiais',erros:'Joelhos para dentro (valgo), calcanhar saindo do chão, lombar arredondada',escala:'Squat to box, Air Squat parcial',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
+      'Box Jumps': {desc:'Saltar sobre o box com os dois pés, estendendo completamente o quadril no topo.',musculos:'Quadríceps, glúteos, panturrilhas',erros:'Não estender o quadril em cima, pousar com os pés na borda, não absorver o impacto',escala:'Step-ups, Box Jump baixo (50cm)',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Burpees': {desc:'Do pé, mãos no chão, peito ao chão, levantar e saltar com palma acima da cabeça.',musculos:'Corpo inteiro: peitorais, quadríceps, deltóides, core',erros:'Não deitar completamente, pular sem extensão, ritmo inconsistente',escala:'Burpees step-back, Burpees sem salto',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop'},
+      'Double Unders': {desc:'Pular corda com duas passagens por salto.',musculos:'Panturrilhas, ombros, core, coordenação',erros:'Braços muito abertos, salto muito alto, pulsos rígidos',escala:'Single Unders (2:1 ou 3:1)',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Sit-ups': {desc:'Deitado, mãos atrás da cabeça ou acima, sentar completamente tocando os pés.',musculos:'Reto abdominal, hip flexors',erros:'Usar impulso, tensão no pescoço, pés saindo do chão',escala:'Crunches, Sit-ups com Abmat',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop'},
+      'Rope Climbs': {desc:'Subir a corda até o topo usando braços e pernas, técnica de wrap com os pés.',musculos:'Dorsais, bíceps, antebraço, core',erros:'Não travar os pés, descer sem controle, braços sobrecarregados',escala:'Rope Pulls deitado, Rope Climbs até metade',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Lunges': {desc:'Passo à frente ou atrás, joelho traseiro toca o chão, voltar à posição inicial.',musculos:'Quadríceps, glúteos, isquiotibiais',erros:'Joelho passando do pé, tronco inclinado, passos curtos',escala:'Lunges com apoio, Step-ups',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
+      'Deadlift': {desc:'Levantar a barra do chão até extensão completa do quadril e joelhos. Rei dos levantamentos.',musculos:'Posterior de coxa, glúteos, lombar, trapézio, antebraço',erros:'Lombar arredondada, barra longe do corpo, joelhos para dentro',escala:'Sumo Deadlift, Kettlebell Deadlift, carga reduzida',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Back Squat': {desc:'Barra apoiada nos trapézios, agachamento completo abaixo do paralelo.',musculos:'Quadríceps, glúteos, core, eretores da coluna',erros:'Joelhos para dentro, inclinar excessivamente, não atingir profundidade',escala:'Goblet Squat, Front Squat, Air Squat com peso',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
+      'Front Squat': {desc:'Barra na posição de rack frontal, agachamento completo mantendo o tronco vertical.',musculos:'Quadríceps, glúteos, core, deltóides anteriores',erros:'Cotovelos caindo, peso nos dedos, perda de posição do rack',escala:'Goblet Squat, Front Squat com halteres',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
+      'Overhead Squat': {desc:'Agachamento com barra travada acima da cabeça com braços estendidos.',musculos:'Quadríceps, glúteos, deltóides, core, mobilidade de ombro e tornozelo',erros:'Barra à frente, joelhos colapsando, perda de linha média',escala:'Overhead Squat com PVC, Overhead Squat parcial',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
+      'Snatch': {desc:'Levantar a barra do chão até acima da cabeça em um único movimento contínuo.',musculos:'Corpo inteiro: pernas, quadril, dorsais, ombros, core',erros:'Puxar com os braços cedo, não estender o quadril, receber com braços dobrados',escala:'Power Snatch, Hang Snatch, Snatch com barra vazia',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Power Snatch': {desc:'Snatch recebendo acima do paralelo — sem agachamento completo.',musculos:'Quadríceps, glúteos, trapézio, deltóides',erros:'Puxar com braços, não estender quadril, barra longe do corpo',escala:'Hang Power Snatch, Dumbbell Snatch',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Clean': {desc:'Levantar a barra do chão até a posição de rack frontal nos ombros.',musculos:'Quadríceps, glúteos, trapézio, deltóides anteriores',erros:'Puxar com braços, não usar quadril, cotovelos baixos no rack',escala:'Power Clean, Hang Clean, Kettlebell Clean',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Power Clean': {desc:'Clean recebendo acima do paralelo — sem agachamento completo.',musculos:'Quadríceps, glúteos, trapézio, core',erros:'Puxar cedo com braços, barra longe, recepção rígida',escala:'Hang Power Clean, Dumbbell Clean',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Clean & Jerk': {desc:'Clean seguido de Jerk — levantar até os ombros e depois acima da cabeça.',musculos:'Corpo inteiro: pernas, quadril, ombros, tríceps',erros:'Separar muito os dois movimentos, dip de jerk instável',escala:'Power Clean + Push Press, carga reduzida',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Push Press': {desc:'Da posição de rack, usar dip de pernas para impulsionar a barra acima da cabeça.',musculos:'Deltóides, tríceps, quadríceps, core',erros:'Dip muito profundo, peso nos dedos, não travar braços em cima',escala:'Strict Press, Dumbbell Press',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Thrusters': {desc:'Front Squat direto em Push Press — movimento fluído do agachamento ao overhead.',musculos:'Quadríceps, glúteos, deltóides, tríceps, core',erros:'Parar entre squat e press, cotovelos caindo, amplitude parcial',escala:'Dumbbell Thrusters, carga reduzida, Wall Ball Shots',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
+      'Wall Ball Shots': {desc:'Squat com medicine ball e arremessar ao alvo na parede (3m/2.7m).',musculos:'Quadríceps, glúteos, deltóides, tríceps',erros:'Não atingir profundidade, não acertar o alvo, perder sequência',escala:'Wall Ball mais leve, alvo mais baixo',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
+      'Kettlebell Swings': {desc:'Swing do kettlebell entre as pernas até acima da cabeça (americano) ou na altura dos olhos (russo).',musculos:'Posterior de coxa, glúteos, core, deltóides',erros:'Agachar ao invés de fazer hip hinge, usar braços, lombar arredondada',escala:'Russian Swing (altura dos olhos), KB mais leve',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Dumbbell Snatch': {desc:'Snatch com halter — do chão ao overhead com um braço.',musculos:'Deltóides, trapézio, quadríceps, core',erros:'Usar só o braço, não estender quadril, rotação excessiva',escala:'DB Snatch mais leve, Hang DB Snatch',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Run 400m': {desc:'Corrida de 400 metros — sprint de meia distância.',musculos:'Quadríceps, panturrilhas, glúteos, core',erros:'Sair muito rápido, postura curvada, braços cruzando a linha média',escala:'Run 200m, Row 500m, Bike 1000m',img:'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=400&h=300&fit=crop'},
+      'Row 500m': {desc:'Remo ergômetro por 500 metros — puxada com pernas, quadril e braços.',musculos:'Dorsais, quadríceps, bíceps, core',erros:'Puxar só com braços, não usar pernas, costas arredondadas',escala:'Row 400m, Bike 1000m',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Row 1000m': {desc:'Remo ergômetro por 1000 metros — foco em ritmo sustentável.',musculos:'Dorsais, quadríceps, bíceps, core',erros:'Sair muito forte, perder ritmo, técnica deteriorando com fadiga',escala:'Row 750m, Bike 2000m',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+    };
+
+    // ─── Biblioteca de WODs Clássicos (Benchmarks) ────────────────────────────
+    const BENCHMARK_WODS = [
+      {nome:'Fran', formato:'21-15-9', tempo_est:4, intensidade:'alta', descricao:'O WOD mais icônico do CrossFit. Rápido e brutal.',
+        movimentos:[{nome:'Thrusters',reps:'21-15-9',carga:'43/29kg',modalidade:'levantamento'},{nome:'Pull-ups',reps:'21-15-9',carga:'',modalidade:'ginastica'}]},
+      {nome:'Grace', formato:'For Time — 30 reps', tempo_est:3, intensidade:'alta', descricao:'30 Clean & Jerks o mais rápido possível.',
+        movimentos:[{nome:'Clean & Jerk',reps:30,carga:'61/43kg',modalidade:'levantamento'}]},
+      {nome:'Helen', formato:'3 Rounds For Time', tempo_est:10, intensidade:'media', descricao:'Combinação clássica de corrida, swing e pull-up.',
+        movimentos:[{nome:'Run 400m',reps:1,carga:'',modalidade:'monoestrutural'},{nome:'Kettlebell Swings',reps:21,carga:'24/16kg',modalidade:'levantamento'},{nome:'Pull-ups',reps:12,carga:'',modalidade:'ginastica'}]},
+      {nome:'Diane', formato:'21-15-9', tempo_est:6, intensidade:'alta', descricao:'Deadlift pesado combinado com HSPU.',
+        movimentos:[{nome:'Deadlift',reps:'21-15-9',carga:'102/70kg',modalidade:'levantamento'},{nome:'Handstand Push-ups',reps:'21-15-9',carga:'',modalidade:'ginastica'}]},
+      {nome:'Elizabeth', formato:'21-15-9', tempo_est:8, intensidade:'alta', descricao:'Cleans pesados com ring dips.',
+        movimentos:[{nome:'Clean',reps:'21-15-9',carga:'61/43kg',modalidade:'levantamento'},{nome:'Ring Dips',reps:'21-15-9',carga:'',modalidade:'ginastica'}]},
+      {nome:'Isabel', formato:'For Time — 30 reps', tempo_est:4, intensidade:'alta', descricao:'30 Snatches pesados contra o relógio.',
+        movimentos:[{nome:'Snatch',reps:30,carga:'61/43kg',modalidade:'levantamento'}]},
+      {nome:'Jackie', formato:'For Time', tempo_est:8, intensidade:'media', descricao:'Remo, thrusters e pull-ups — teste de engine.',
+        movimentos:[{nome:'Row 1000m',reps:1,carga:'',modalidade:'monoestrutural'},{nome:'Thrusters',reps:50,carga:'20/15kg',modalidade:'levantamento'},{nome:'Pull-ups',reps:30,carga:'',modalidade:'ginastica'}]},
+      {nome:'Karen', formato:'For Time — 150 reps', tempo_est:10, intensidade:'media', descricao:'150 Wall Balls — resistência mental e física.',
+        movimentos:[{nome:'Wall Ball Shots',reps:150,carga:'9/6kg',modalidade:'levantamento'}]},
+      {nome:'DT', formato:'5 Rounds For Time', tempo_est:10, intensidade:'alta', descricao:'Homenagem ao herói. Complexo de barra pesado.',
+        movimentos:[{nome:'Deadlift',reps:12,carga:'70/47kg',modalidade:'levantamento'},{nome:'Power Clean',reps:9,carga:'70/47kg',modalidade:'levantamento'},{nome:'Push Jerk',reps:6,carga:'70/47kg',modalidade:'levantamento'}]},
+      {nome:'Murph', formato:'For Time', tempo_est:45, intensidade:'alta', descricao:'Hero WOD clássico. Corrida + calistenia + corrida. Com colete (RX+).',
+        movimentos:[{nome:'Run 400m',reps:'1 milha',carga:'',modalidade:'monoestrutural'},{nome:'Pull-ups',reps:100,carga:'',modalidade:'ginastica'},{nome:'Push-ups',reps:200,carga:'',modalidade:'ginastica'},{nome:'Air Squats',reps:300,carga:'',modalidade:'ginastica'},{nome:'Run 400m',reps:'1 milha',carga:'',modalidade:'monoestrutural'}]},
+      {nome:'Cindy', formato:'AMRAP 20 min', tempo_est:20, intensidade:'media', descricao:'20 minutos de pull-ups, push-ups e squats. Teste de capacidade aeróbia.',
+        movimentos:[{nome:'Pull-ups',reps:5,carga:'',modalidade:'ginastica'},{nome:'Push-ups',reps:10,carga:'',modalidade:'ginastica'},{nome:'Air Squats',reps:15,carga:'',modalidade:'ginastica'}]},
+      {nome:'Annie', formato:'50-40-30-20-10', tempo_est:8, intensidade:'media', descricao:'Double unders e sit-ups em escada descendente.',
+        movimentos:[{nome:'Double Unders',reps:'50-40-30-20-10',carga:'',modalidade:'ginastica'},{nome:'Sit-ups',reps:'50-40-30-20-10',carga:'',modalidade:'ginastica'}]},
+      {nome:'Nancy', formato:'5 Rounds For Time', tempo_est:18, intensidade:'media', descricao:'Corrida com overhead squats — mobilidade e engine.',
+        movimentos:[{nome:'Run 400m',reps:1,carga:'',modalidade:'monoestrutural'},{nome:'Overhead Squat',reps:15,carga:'43/29kg',modalidade:'levantamento'}]},
+      {nome:'Amanda', formato:'9-7-5', tempo_est:6, intensidade:'alta', descricao:'Muscle-ups e Snatches — movimentos complexos.',
+        movimentos:[{nome:'Ring Muscle-ups',reps:'9-7-5',carga:'',modalidade:'ginastica'},{nome:'Snatch',reps:'9-7-5',carga:'61/43kg',modalidade:'levantamento'}]},
+    ];
 
     // Função para verificar se equipamento está disponível
     const temEquip = (equipamentos, needed) => {
@@ -709,8 +780,39 @@
     };
 
     // ─── Gerar Treino ──────────────────────────────────────────────────────────
+    // ─── Modal de Detalhes do Exercício ──────────────────────────────────────
+    const ExercicioModal = ({ nome, onClose }) => {
+      const det = EXERCICIO_DETALHES[nome];
+      if (!det) return null;
+      return (
+        <Modal open={true} onClose={onClose} title={nome}>
+          <div className="space-y-4">
+            {det.img && <img src={det.img} alt={nome} className="w-full h-48 object-cover rounded-xl"/>}
+            <div>
+              <h4 className="font-bold text-sm mb-1 flex items-center gap-2"><Icon name="description" size={16} className="text-primary"/>Execução</h4>
+              <p className="text-sm text-slate-300 leading-relaxed">{det.desc}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h4 className="font-bold text-sm mb-1 flex items-center gap-2"><Icon name="fitness_center" size={16} className="text-primary"/>Músculos</h4>
+                <p className="text-xs text-slate-400">{det.musculos}</p>
+              </div>
+              <div>
+                <h4 className="font-bold text-sm mb-1 flex items-center gap-2"><Icon name="warning" size={16} className="text-red-400"/>Erros Comuns</h4>
+                <p className="text-xs text-slate-400">{det.erros}</p>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-bold text-sm mb-1 flex items-center gap-2"><Icon name="tune" size={16} className="text-primary"/>Escala / Substituições</h4>
+              <p className="text-xs text-slate-400">{det.escala}</p>
+            </div>
+          </div>
+        </Modal>
+      );
+    };
+
     const GerarTreino = ({ toast }) => {
-      const [form, setForm] = useState({ metodologia: 'crossfit', data: hoje(), num_alunos: 15, foco: 'LPO + Condicionamento', restritcoes: '', modo_duplas: false });
+      const [form, setForm] = useState({ metodologia: 'crossfit', data: hoje(), num_alunos: 15, foco: 'LPO + Condicionamento', restritcoes: '', modo_duplas: false, duracao: 55 });
       const [treino, setTreino] = useState(null);
       const [loading, setLoading] = useState(false);
       const [saved, setSaved] = useState(false);
@@ -718,6 +820,9 @@
       const [equipamentos, setEquipamentos] = useState([]);
       const [academia, setAcademia] = useState(null);
       const [showList, setShowList] = useState(false);
+      const [showBenchmarks, setShowBenchmarks] = useState(false);
+      const [editando, setEditando] = useState(false);
+      const [exercicioModal, setExercicioModal] = useState(null);
 
       useEffect(() => {
         Promise.all([
@@ -733,29 +838,32 @@
       }, []);
 
       const gerar = async () => {
-        setLoading(true); setSaved(false);
+        setLoading(true); setSaved(false); setEditando(false);
         await new Promise(r => setTimeout(r, 800));
 
         const numAlunos = parseInt(form.num_alunos) || 15;
         const foco = form.foco;
+        const duracaoAlvo = parseInt(form.duracao) || 55;
 
-        // Aquecimento
+        // Distribuir o tempo: ~20% aquecimento, ~25% skill, ~45% WOD, ~10% cooldown
+        const cooldownMin = 5;
+        const aquecMin = Math.round(duracaoAlvo * 0.2);
+        const skillMin = Math.round(duracaoAlvo * 0.25);
+        const wodMin = duracaoAlvo - aquecMin - skillMin - cooldownMin;
+
         const aquecOpts = AQUECIMENTOS[foco] || AQUECIMENTOS['LPO + Condicionamento'];
         const aquecDesc = aquecOpts[Math.floor(Math.random() * aquecOpts.length)];
-        const aquecimento = { descricao: aquecDesc, duracao_min: 10 + Math.floor(Math.random()*3) };
+        const aquecimento = { descricao: aquecDesc, duracao_min: aquecMin };
 
-        // Skill
         const skillOpts = SKILLS[foco] || SKILLS['Força Pura'];
         const skillBase = skillOpts[Math.floor(Math.random() * skillOpts.length)];
-        const skill = { ...skillBase, duracao_min: 12 + Math.floor(Math.random()*4) };
+        const skill = { ...skillBase, duracao_min: skillMin };
 
-        // WOD
         const wod = gerarWodInteligente(foco, numAlunos, equipamentos, form.restritcoes, form.modo_duplas);
+        wod.tempo_wod_min = wodMin;
 
-        // Tempo total: aquecimento + skill + wod + cooldown (~5min) = target 50-60min
-        const tempoTotal = aquecimento.duracao_min + skill.duracao_min + wod.tempo_wod_min + 5;
+        const tempoTotal = aquecMin + skillMin + wodMin + cooldownMin;
 
-        // Adaptações inteligentes baseadas nos movimentos
         const temLPO = wod.movimentos.some(m => m.modalidade === 'levantamento');
         const temGinastica = wod.movimentos.some(m => m.modalidade === 'ginastica');
         const adaptacoes = {
@@ -769,7 +877,6 @@
             : 'Mantenha RX. Adicione colete de 9kg e aumente reps em 20%.',
         };
 
-        // Intensidade
         const intensidade = foco.includes('Força') || foco.includes('Resistência') ? 'alta' : 'media';
 
         const novo = {
@@ -779,26 +886,88 @@
           foco, restritcoes: form.restritcoes,
           modo_duplas: form.modo_duplas,
           aquecimento, skill, wod,
-          cooldown: { descricao: '3-5 min caminhada leve + Foam Roller (quadríceps, lombar, dorsais) + alongamento estático 2min' },
-          adaptacoes,
-          tempo_previsto_min: tempoTotal,
-          intensidade,
-          logistica_nota: wod.logistica_nota || '',
+          cooldown: { descricao: '3-5 min caminhada leve + Foam Roller (quadríceps, lombar, dorsais) + alongamento estático' },
+          adaptacoes, tempo_previsto_min: tempoTotal,
+          intensidade, logistica_nota: wod.logistica_nota || '',
           status: 'rascunho',
         };
         setTreino(novo); setLoading(false);
-        toast(`Treino gerado! Duração prevista: ${tempoTotal} min. Revise e salve.`, 'success');
+        toast(`Treino gerado! Duração: ${tempoTotal} min. Edite e salve.`, 'success');
+      };
+
+      // Usar WOD clássico (benchmark)
+      const usarBenchmark = (bm) => {
+        setSaved(false); setEditando(false); setShowBenchmarks(false);
+        const duracaoAlvo = parseInt(form.duracao) || 55;
+        const aquecMin = Math.round(duracaoAlvo * 0.2);
+        const foco = form.foco;
+        const aquecOpts = AQUECIMENTOS[foco] || AQUECIMENTOS['LPO + Condicionamento'];
+        const aquecDesc = aquecOpts[Math.floor(Math.random() * aquecOpts.length)];
+        const cooldownMin = 5;
+        const skillMin = Math.max(duracaoAlvo - aquecMin - (bm.tempo_est || 15) - cooldownMin, 8);
+
+        const skillOpts = SKILLS[foco] || SKILLS['Força Pura'];
+        const skillBase = skillOpts[Math.floor(Math.random() * skillOpts.length)];
+
+        const novo = {
+          academia_id: ACADEMIA_ID, criado_por: COACH_ID,
+          data_treino: form.data, metodologia: form.metodologia,
+          nome: bm.nome, num_alunos: parseInt(form.num_alunos) || 15,
+          foco, restritcoes: '',
+          modo_duplas: false,
+          aquecimento: { descricao: aquecDesc, duracao_min: aquecMin },
+          skill: { ...skillBase, duracao_min: skillMin },
+          wod: { nome: bm.nome, formato: bm.formato, movimentos: bm.movimentos, tempo_wod_min: bm.tempo_est },
+          cooldown: { descricao: '3-5 min caminhada leve + Foam Roller + alongamento estático' },
+          adaptacoes: { iniciante: 'Reduza cargas em 30-40% e substitua movimentos complexos por versões simplificadas.', avancado: 'Mantenha RX. Adicione colete de 9kg se aplicável.' },
+          tempo_previsto_min: aquecMin + skillMin + (bm.tempo_est||15) + cooldownMin,
+          intensidade: bm.intensidade || 'alta',
+          logistica_nota: '', status: 'rascunho',
+        };
+        setTreino(novo);
+        toast(`WOD "${bm.nome}" carregado! Edite conforme necessário.`, 'success');
+      };
+
+      // Edição inline dos movimentos do WOD
+      const editarMovimento = (idx, campo, valor) => {
+        setTreino(prev => {
+          const novosMovs = [...(prev.wod?.movimentos || [])];
+          novosMovs[idx] = { ...novosMovs[idx], [campo]: valor };
+          return { ...prev, wod: { ...prev.wod, movimentos: novosMovs } };
+        });
+      };
+
+      const removerMovimento = (idx) => {
+        setTreino(prev => {
+          const novosMovs = (prev.wod?.movimentos || []).filter((_,i) => i !== idx);
+          return { ...prev, wod: { ...prev.wod, movimentos: novosMovs } };
+        });
+      };
+
+      const adicionarMovimento = () => {
+        setTreino(prev => ({
+          ...prev, wod: { ...prev.wod, movimentos: [...(prev.wod?.movimentos||[]), {nome:'Air Squats', reps:10, carga:'', modalidade:'ginastica'}] }
+        }));
       };
 
       const salvar = async () => {
         if (!treino) return;
         const { data, error } = await sb.from('treinos').insert([treino]).select().single();
         if (error) { toast('Erro ao salvar: ' + error.message, 'error'); return; }
-        setSaved(true);
+        setSaved(true); setEditando(false);
         setTreinos(prev => [data, ...prev]);
         setTreino(data);
         toast('Treino salvo com sucesso!', 'success');
       };
+
+      // Lista de todos os movimentos para o seletor
+      const todosMovimentos = useMemo(() => {
+        const all = [];
+        MOVIMENTOS.ginastica.forEach(m => all.push({...m, modalidade:'ginastica'}));
+        MOVIMENTOS.levantamento.forEach(m => all.push({...m, modalidade:'levantamento'}));
+        MOVIMENTOS.monoestrutural.forEach(m => all.push({...m, modalidade:'monoestrutural'}));
+        return all;
+      }, []);
 
       return (
         <div className="flex h-full fade-in">
@@ -806,7 +975,7 @@
           <div className="w-80 min-w-80 border-r border-white/5 p-6 overflow-y-auto space-y-5">
             <div>
               <h2 className="font-display font-bold text-lg mb-1">Gerador IA</h2>
-              <p className="text-slate-400 text-xs">Configure os parâmetros para criar o treino otimizado.</p>
+              <p className="text-slate-400 text-xs">Configure e gere treinos otimizados para sua academia.</p>
             </div>
 
             <div>
@@ -819,6 +988,14 @@
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Duração do Treino */}
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Duração Total <span className="text-primary font-bold">{form.duracao} min</span></label>
+              <input type="range" min="40" max="75" value={form.duracao} onChange={e=>setForm(f=>({...f,duracao:parseInt(e.target.value)}))}
+                style={{background:'transparent',border:'none',padding:0,width:'100%',accentColor:'var(--primary)'}} className="!border-none !bg-transparent"/>
+              <div className="flex justify-between text-xs text-slate-500 mt-1"><span>40 min</span><span>60 min</span><span>75 min</span></div>
             </div>
 
             {[
@@ -840,7 +1017,7 @@
 
             <div>
               <label className="text-sm font-medium mb-1.5 block">Restrições</label>
-              <textarea value={form.restritcoes} onChange={e=>setForm(f=>({...f,restritcoes:e.target.value}))} placeholder="Ex: Sem remo, sem box jump..." rows={3} style={{resize:'none'}}/>
+              <textarea value={form.restritcoes} onChange={e=>setForm(f=>({...f,restritcoes:e.target.value}))} placeholder="Ex: Sem remo, sem box jump..." rows={2} style={{resize:'none'}}/>
             </div>
 
             <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/10">
@@ -854,9 +1031,33 @@
               </label>
             </div>
 
-            <button onClick={gerar} disabled={loading} className="btn-primary w-full py-3.5 rounded-xl flex items-center justify-center gap-2 font-display font-bold">
-              {loading ? <><div className="loading-spinner" style={{width:18,height:18,borderWidth:2}}/>Gerando...</> : <><Icon name="auto_awesome" size={18}/>GERAR COM IA</>}
-            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button onClick={gerar} disabled={loading} className="btn-primary py-3 rounded-xl flex items-center justify-center gap-1.5 font-display font-bold text-sm">
+                {loading ? <div className="loading-spinner" style={{width:16,height:16,borderWidth:2}}/> : <><Icon name="auto_awesome" size={16}/>GERAR</>}
+              </button>
+              <button onClick={() => setShowBenchmarks(!showBenchmarks)} className="btn-ghost py-3 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold">
+                <Icon name="emoji_events" size={16}/>CLÁSSICOS
+              </button>
+            </div>
+
+            {/* Benchmarks */}
+            {showBenchmarks && (
+              <div className="space-y-2">
+                <p className="text-xs text-primary font-bold uppercase tracking-wide">WODs Clássicos</p>
+                <div className="max-h-64 overflow-y-auto space-y-1.5">
+                  {BENCHMARK_WODS.map(bm => (
+                    <button key={bm.nome} onClick={() => usarBenchmark(bm)}
+                      className="w-full text-left p-3 rounded-lg border border-white/5 hover:border-primary/30 hover:bg-primary/5 transition-all">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-sm">{bm.nome}</span>
+                        <span className={`tag ${bm.intensidade==='alta'?'tag-red':'tag-yellow'}`}>{bm.tempo_est}min</span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">{bm.formato} · {bm.descricao}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Histórico */}
             <div>
@@ -866,7 +1067,7 @@
               {showList && (
                 <div className="mt-2 space-y-2">
                   {treinos.map(t => (
-                    <button key={t.id} onClick={() => setTreino(t)} className={`w-full text-left p-3 rounded-lg border transition-all text-xs ${treino?.id===t.id?'border-primary/40 bg-primary/5':'border-white/5 hover:border-white/15'}`}>
+                    <button key={t.id} onClick={() => { setTreino(t); setSaved(true); setEditando(false); }} className={`w-full text-left p-3 rounded-lg border transition-all text-xs ${treino?.id===t.id?'border-primary/40 bg-primary/5':'border-white/5 hover:border-white/15'}`}>
                       <p className="font-bold truncate">{t.nome}</p>
                       <p className="text-slate-500 mt-0.5">{fmtDate(t.data_treino)} · {metLabels[t.metodologia]}</p>
                     </button>
@@ -892,6 +1093,9 @@
                     <p className="text-slate-400 text-sm mt-1">{fmtDate(treino.data_treino)} · {metLabels[treino.metodologia]}</p>
                   </div>
                   <div className="flex gap-2">
+                    <button onClick={() => setEditando(!editando)} className={`p-2.5 rounded-lg transition-all ${editando?'btn-primary':'btn-ghost'}`} title={editando?'Sair da edição':'Editar treino'}>
+                      <Icon name="edit" size={18}/>
+                    </button>
                     <button onClick={gerar} className="btn-ghost p-2.5 rounded-lg" title="Regenerar"><Icon name="refresh" size={18}/></button>
                     {!saved && <button onClick={salvar} className="btn-primary px-5 py-2 rounded-lg flex items-center gap-1.5 text-sm"><Icon name="save" size={16}/>Salvar</button>}
                     {saved && <span className="tag tag-green flex items-center gap-1"><Icon name="check" size={14}/>Salvo</span>}
@@ -928,7 +1132,12 @@
                       <div className="flex items-center gap-2"><Icon name="whatshot" className="text-orange-400" size={20}/><h3 className="font-display font-bold">Aquecimento / Mobilidade</h3></div>
                       <span className="text-xs text-slate-400">{treino.aquecimento.duracao_min} min</span>
                     </div>
-                    <p className="text-slate-300 text-sm leading-relaxed">{treino.aquecimento.descricao}</p>
+                    {editando ? (
+                      <textarea value={treino.aquecimento.descricao} onChange={e => setTreino(prev => ({...prev, aquecimento: {...prev.aquecimento, descricao: e.target.value}}))}
+                        rows={3} className="text-sm" style={{resize:'vertical'}}/>
+                    ) : (
+                      <p className="text-slate-300 text-sm leading-relaxed">{treino.aquecimento.descricao}</p>
+                    )}
                   </div>
                 )}
 
@@ -963,25 +1172,57 @@
                         </div>
                       </div>
                       <div className="tag tag-green flex items-center gap-1">
-                        <Icon name="bolt" size={12}/>TEMPO: {treino.tempo_previsto_min}min
+                        <Icon name="bolt" size={12}/>~{treino.wod.tempo_wod_min||treino.tempo_previsto_min}min
                       </div>
                     </div>
                     <div className="space-y-3">
                       {(treino.wod.movimentos||[]).map((m,i) => {
                         const modTag = m.modalidade === 'ginastica' ? {l:'G',c:'tag-blue'} : m.modalidade === 'levantamento' ? {l:'W',c:'tag-red'} : m.modalidade === 'monoestrutural' ? {l:'M',c:'tag-yellow'} : null;
+                        const temDetalhe = !!EXERCICIO_DETALHES[m.nome];
                         return (
-                          <div key={i} className="flex items-center gap-4 border-b border-white/5 pb-3">
-                            <span className="font-display font-bold text-3xl text-primary/25 w-12">{m.reps}</span>
-                            <div className="flex-1">
-                              <p className="font-bold">{m.nome}</p>
-                              {m.carga && <p className="text-xs text-slate-400">{m.carga}</p>}
-                            </div>
-                            {modTag && <span className={`tag ${modTag.c}`}>{modTag.l}</span>}
+                          <div key={i} className="flex items-center gap-3 border-b border-white/5 pb-3">
+                            {editando ? (
+                              <>
+                                <input type="text" value={m.reps} onChange={e => editarMovimento(i,'reps',e.target.value)}
+                                  className="!w-16 text-center font-bold text-sm !p-2"/>
+                                <select value={m.nome} onChange={e => {
+                                  const found = todosMovimentos.find(mv => mv.nome === e.target.value);
+                                  editarMovimento(i,'nome',e.target.value);
+                                  if(found) { editarMovimento(i,'modalidade',found.modalidade); if(found.rx_m) editarMovimento(i,'carga',`${found.rx_m}/${found.rx_f}`); }
+                                }} className="flex-1 text-sm !p-2">
+                                  {todosMovimentos.map(mv => <option key={mv.nome} value={mv.nome}>{mv.nome}</option>)}
+                                </select>
+                                <input type="text" value={m.carga||''} onChange={e => editarMovimento(i,'carga',e.target.value)}
+                                  placeholder="Carga" className="!w-24 text-sm !p-2"/>
+                                <button onClick={() => removerMovimento(i)} className="text-red-400 hover:text-red-300 p-1"><Icon name="close" size={16}/></button>
+                              </>
+                            ) : (
+                              <>
+                                <span className="font-display font-bold text-3xl text-primary/25 w-12">{m.reps}</span>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <p className="font-bold">{m.nome}</p>
+                                    {temDetalhe && (
+                                      <button onClick={() => setExercicioModal(m.nome)} className="text-primary/50 hover:text-primary transition-colors" title="Ver detalhes do exercício">
+                                        <Icon name="info" size={16}/>
+                                      </button>
+                                    )}
+                                  </div>
+                                  {m.carga && <p className="text-xs text-slate-400">{m.carga}</p>}
+                                </div>
+                                {modTag && <span className={`tag ${modTag.c}`}>{modTag.l}</span>}
+                              </>
+                            )}
                           </div>
                         );
                       })}
                     </div>
-                    {form.modo_duplas && (
+                    {editando && (
+                      <button onClick={adicionarMovimento} className="mt-3 w-full py-2 rounded-lg border border-dashed border-primary/30 text-primary text-sm font-bold hover:bg-primary/5 transition-colors flex items-center justify-center gap-1">
+                        <Icon name="add" size={16}/>Adicionar Movimento
+                      </button>
+                    )}
+                    {treino.modo_duplas && (
                       <div className="mt-4 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center gap-2 text-sm text-blue-300">
                         <Icon name="group" size={16}/>Adaptado para duplas — alternar movimentos por rodada
                       </div>
@@ -993,7 +1234,12 @@
                 <div className="grid grid-cols-2 gap-4">
                   <div className="card p-5">
                     <div className="flex items-center gap-2 mb-3"><Icon name="self_improvement" className="text-primary" size={18}/><h3 className="font-bold text-sm">Volta à Calma</h3></div>
-                    <p className="text-xs text-slate-400">{treino.cooldown?.descricao}</p>
+                    {editando ? (
+                      <textarea value={treino.cooldown?.descricao||''} onChange={e => setTreino(prev => ({...prev, cooldown: {...prev.cooldown, descricao: e.target.value}}))}
+                        rows={3} className="text-xs" style={{resize:'vertical'}}/>
+                    ) : (
+                      <p className="text-xs text-slate-400">{treino.cooldown?.descricao}</p>
+                    )}
                   </div>
                   <div className="card p-5">
                     <div className="flex items-center gap-2 mb-3"><Icon name="tune" className="text-primary" size={18}/><h3 className="font-bold text-sm">Adaptações</h3></div>
@@ -1006,10 +1252,13 @@
               <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
                 <Icon name="auto_awesome" className="text-primary/20" size={64}/>
                 <h3 className="font-display font-bold text-xl">Configure e gere seu treino</h3>
-                <p className="text-slate-400 text-sm max-w-xs">Ajuste os parâmetros no painel à esquerda e clique em "Gerar com IA"</p>
+                <p className="text-slate-400 text-sm max-w-xs">Ajuste os parâmetros no painel à esquerda e clique em "Gerar" ou escolha um WOD clássico</p>
               </div>
             )}
           </div>
+
+          {/* Modal de exercício */}
+          {exercicioModal && <ExercicioModal nome={exercicioModal} onClose={() => setExercicioModal(null)}/>}
         </div>
       );
     };
