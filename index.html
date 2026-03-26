@@ -110,6 +110,225 @@
     const metLabels = { crossfit: 'CrossFit', hyrox: 'Hyrox', bootcamp: 'Bootcamp' };
     const intensidadeColor = { alta: 'tag-red', media: 'tag-yellow', baixa: 'tag-green' };
 
+    // ─── Base de Movimentos CrossFit ──────────────────────────────────────────
+    // Classificação: G = Ginástica, W = Levantamento de Peso, M = Monoestrutural (Cárdio)
+    const MOVIMENTOS = {
+      ginastica: [
+        {nome:'Pull-ups', grupo:'puxar', equip:['barra fixa'], carga:false},
+        {nome:'Chest-to-Bar Pull-ups', grupo:'puxar', equip:['barra fixa'], carga:false},
+        {nome:'Toes-to-Bar', grupo:'core', equip:['barra fixa'], carga:false},
+        {nome:'Kipping Pull-ups', grupo:'puxar', equip:['barra fixa'], carga:false},
+        {nome:'Bar Muscle-ups', grupo:'puxar', equip:['barra fixa'], carga:false},
+        {nome:'Ring Muscle-ups', grupo:'puxar', equip:['argolas'], carga:false},
+        {nome:'Ring Dips', grupo:'empurrar', equip:['argolas'], carga:false},
+        {nome:'Push-ups', grupo:'empurrar', equip:[], carga:false},
+        {nome:'Handstand Push-ups', grupo:'empurrar', equip:[], carga:false},
+        {nome:'Handstand Walk', grupo:'empurrar', equip:[], carga:false},
+        {nome:'Air Squats', grupo:'pernas', equip:[], carga:false},
+        {nome:'Pistols', grupo:'pernas', equip:[], carga:false},
+        {nome:'Box Jumps', grupo:'pernas', equip:['box'], carga:false},
+        {nome:'Box Jump Overs', grupo:'pernas', equip:['box'], carga:false},
+        {nome:'Burpees', grupo:'cardio', equip:[], carga:false},
+        {nome:'Burpee Box Jump Overs', grupo:'cardio', equip:['box'], carga:false},
+        {nome:'Double Unders', grupo:'cardio', equip:['corda'], carga:false},
+        {nome:'Sit-ups', grupo:'core', equip:[], carga:false},
+        {nome:'GHD Sit-ups', grupo:'core', equip:['ghd'], carga:false},
+        {nome:'Rope Climbs', grupo:'puxar', equip:['corda de escalada'], carga:false},
+        {nome:'Lunges', grupo:'pernas', equip:[], carga:false},
+      ],
+      levantamento: [
+        {nome:'Deadlift', grupo:'puxar', equip:['barra','anilhas'], carga:true, rx_m:'100kg', rx_f:'70kg'},
+        {nome:'Back Squat', grupo:'pernas', equip:['barra','anilhas','rack'], carga:true, rx_m:'100kg', rx_f:'70kg'},
+        {nome:'Front Squat', grupo:'pernas', equip:['barra','anilhas','rack'], carga:true, rx_m:'80kg', rx_f:'55kg'},
+        {nome:'Overhead Squat', grupo:'pernas', equip:['barra','anilhas'], carga:true, rx_m:'60kg', rx_f:'42kg'},
+        {nome:'Snatch', grupo:'lpo', equip:['barra','anilhas'], carga:true, rx_m:'60kg', rx_f:'42kg'},
+        {nome:'Power Snatch', grupo:'lpo', equip:['barra','anilhas'], carga:true, rx_m:'60kg', rx_f:'42kg'},
+        {nome:'Clean', grupo:'lpo', equip:['barra','anilhas'], carga:true, rx_m:'80kg', rx_f:'55kg'},
+        {nome:'Power Clean', grupo:'lpo', equip:['barra','anilhas'], carga:true, rx_m:'80kg', rx_f:'55kg'},
+        {nome:'Clean & Jerk', grupo:'lpo', equip:['barra','anilhas'], carga:true, rx_m:'80kg', rx_f:'55kg'},
+        {nome:'Push Press', grupo:'empurrar', equip:['barra','anilhas'], carga:true, rx_m:'60kg', rx_f:'42kg'},
+        {nome:'Push Jerk', grupo:'empurrar', equip:['barra','anilhas'], carga:true, rx_m:'65kg', rx_f:'45kg'},
+        {nome:'Thrusters', grupo:'pernas', equip:['barra','anilhas'], carga:true, rx_m:'43kg', rx_f:'29kg'},
+        {nome:'Sumo Deadlift High Pull', grupo:'puxar', equip:['barra','anilhas'], carga:true, rx_m:'43kg', rx_f:'29kg'},
+        {nome:'Wall Ball Shots', grupo:'pernas', equip:['wall ball'], carga:true, rx_m:'9kg', rx_f:'6kg'},
+        {nome:'Kettlebell Swings', grupo:'puxar', equip:['kettlebell'], carga:true, rx_m:'24kg', rx_f:'16kg'},
+        {nome:'Dumbbell Snatch', grupo:'lpo', equip:['dumbbell'], carga:true, rx_m:'22kg', rx_f:'15kg'},
+        {nome:'Dumbbell Clean & Jerk', grupo:'lpo', equip:['dumbbell'], carga:true, rx_m:'22kg', rx_f:'15kg'},
+        {nome:'Turkish Get-up', grupo:'core', equip:['kettlebell'], carga:true, rx_m:'24kg', rx_f:'16kg'},
+      ],
+      monoestrutural: [
+        {nome:'Run 400m', grupo:'cardio', equip:[], carga:false, tempo_seg:120},
+        {nome:'Run 800m', grupo:'cardio', equip:[], carga:false, tempo_seg:240},
+        {nome:'Run 200m', grupo:'cardio', equip:[], carga:false, tempo_seg:60},
+        {nome:'Row 500m', grupo:'cardio', equip:['remo'], carga:false, tempo_seg:120},
+        {nome:'Row 1000m', grupo:'cardio', equip:['remo'], carga:false, tempo_seg:240},
+        {nome:'Bike 1000m', grupo:'cardio', equip:['assault bike'], carga:false, tempo_seg:150},
+        {nome:'Ski Erg 500m', grupo:'cardio', equip:['ski erg'], carga:false, tempo_seg:130},
+      ],
+    };
+
+    const AQUECIMENTOS = {
+      'LPO + Condicionamento': [
+        '3 Rounds: 200m corrida + 10 PVC Pass-throughs + 10 Air Squats + 5 Snatch Grip Deadlifts (barra vazia)',
+        '2 Rounds: 250m Row + 10 Ring Rows + 10 Good Mornings (PVC) + 10 Overhead Squats (PVC)',
+      ],
+      'Gymnastics Skill': [
+        '3 Rounds: 200m corrida + 10 Scapular Pull-ups + 10 Kip Swings + 5 Strict Press (PVC) + 30s Plank',
+        '2 Rounds: 1min Jump Rope + 10 Shoulder Taps em Handstand + 10 Push-ups + 10 Ring Rows',
+      ],
+      'Endurance': [
+        '5min corrida leve + 2 Rounds: 10 Air Squats + 10 Leg Swings + 10 Arm Circles + 5 Inch Worms',
+        '3 Rounds: 200m Row leve + 10 Walking Lunges + 10 Jumping Jacks + mobilidade de quadril',
+      ],
+      'Força Pura': [
+        '3 Rounds: 200m corrida + 10 Empty Bar Deadlifts + 10 Air Squats + 5 Strict Press (barra vazia) + Band Pull-aparts',
+        '5min Bike leve + 2 Rounds: 10 Good Mornings (barra) + 10 Front Squats (barra vazia) + 5 Push Press (barra vazia)',
+      ],
+      'Mobilidade + Técnica': [
+        '5min corrida leve + Foam Roller (quadríceps, lombar, dorsais) + 2 Rounds: 10 PVC Pass-throughs + Samson Stretch + 10 Overhead Squats PVC',
+        '3min Bike + 2 Rounds: 10 Cat-Cow + 10 Scorpions + 10 Deep Squat Hold + 10 Arm Circles dinâmicos',
+      ],
+    };
+
+    const SKILLS = {
+      'LPO + Condicionamento': [
+        {nome:'Snatch', series:[{set:1,reps:3,pct:60},{set:2,reps:3,pct:65},{set:3,reps:2,pct:70},{set:4,reps:2,pct:75},{set:5,reps:1,pct:80}]},
+        {nome:'Clean & Jerk', series:[{set:1,reps:3,pct:60},{set:2,reps:3,pct:65},{set:3,reps:2,pct:70},{set:4,reps:2,pct:75}]},
+        {nome:'Power Clean', series:[{set:1,reps:5,pct:55},{set:2,reps:5,pct:60},{set:3,reps:3,pct:70},{set:4,reps:3,pct:75}]},
+      ],
+      'Gymnastics Skill': [
+        {nome:'Kipping Pull-up Progression', series:[{set:1,reps:5,pct:0},{set:2,reps:5,pct:0},{set:3,reps:5,pct:0},{set:4,reps:5,pct:0}], nota:'Foco em hollow/arch position'},
+        {nome:'Handstand Hold & Walk', series:[{set:1,reps:'30s',pct:0},{set:2,reps:'30s',pct:0},{set:3,reps:'20s walk',pct:0}], nota:'Progressão: parede → free-standing'},
+        {nome:'Toes-to-Bar Progression', series:[{set:1,reps:8,pct:0},{set:2,reps:8,pct:0},{set:3,reps:8,pct:0}], nota:'Foco no kip e ativação de core'},
+      ],
+      'Endurance': [
+        {nome:'Pacing Strategy', series:[{set:1,reps:'2min',pct:65},{set:2,reps:'2min',pct:70},{set:3,reps:'2min',pct:75},{set:4,reps:'2min',pct:80}], nota:'Row ou Bike — build em ritmo'},
+      ],
+      'Força Pura': [
+        {nome:'Back Squat', series:[{set:1,reps:5,pct:65},{set:2,reps:5,pct:70},{set:3,reps:5,pct:75},{set:4,reps:3,pct:80},{set:5,reps:3,pct:85}]},
+        {nome:'Deadlift', series:[{set:1,reps:5,pct:65},{set:2,reps:5,pct:70},{set:3,reps:3,pct:80},{set:4,reps:3,pct:85},{set:5,reps:1,pct:90}]},
+        {nome:'Front Squat', series:[{set:1,reps:5,pct:60},{set:2,reps:5,pct:65},{set:3,reps:3,pct:75},{set:4,reps:3,pct:80}]},
+        {nome:'Strict Press', series:[{set:1,reps:5,pct:60},{set:2,reps:5,pct:65},{set:3,reps:5,pct:70},{set:4,reps:3,pct:75}]},
+      ],
+      'Mobilidade + Técnica': [
+        {nome:'Overhead Squat (Técnica)', series:[{set:1,reps:5,pct:40},{set:2,reps:5,pct:45},{set:3,reps:5,pct:50}], nota:'Foco em posição e mobilidade'},
+        {nome:'Snatch Balance', series:[{set:1,reps:3,pct:40},{set:2,reps:3,pct:45},{set:3,reps:3,pct:50}], nota:'Velocidade sob a barra'},
+      ],
+    };
+
+    const WOD_FORMATOS = ['AMRAP','For Time','EMOM','Tabata','Chipper','RFT'];
+
+    // Função para verificar se equipamento está disponível
+    const temEquip = (equipamentos, needed) => {
+      if (!needed || needed.length === 0) return true;
+      return needed.every(e => {
+        const found = equipamentos.find(eq => eq.nome.toLowerCase().includes(e.toLowerCase()));
+        return found && found.quantidade > 0;
+      });
+    };
+
+    // Filtrar movimentos por equipamento disponível
+    const filtrarPorEquip = (movs, equipamentos) => {
+      if (!equipamentos || equipamentos.length === 0) return movs;
+      return movs.filter(m => temEquip(equipamentos, m.equip));
+    };
+
+    // Filtrar movimentos por restrições
+    const filtrarPorRestricoes = (movs, restricoes) => {
+      if (!restricoes || restricoes.trim() === '') return movs;
+      const rest = restricoes.toLowerCase();
+      return movs.filter(m => !rest.includes(m.nome.toLowerCase()));
+    };
+
+    // Gerar WOD inteligente
+    const gerarWodInteligente = (foco, numAlunos, equipamentos, restricoes, modoDuplas) => {
+      const allG = filtrarPorRestricoes(filtrarPorEquip(MOVIMENTOS.ginastica, equipamentos), restricoes);
+      const allW = filtrarPorRestricoes(filtrarPorEquip(MOVIMENTOS.levantamento, equipamentos), restricoes);
+      const allM = filtrarPorRestricoes(filtrarPorEquip(MOVIMENTOS.monoestrutural, equipamentos), restricoes);
+
+      const pick = (arr, n) => {
+        const shuffled = [...arr].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, n);
+      };
+
+      const repsOpts = {
+        ginastica: [8,10,12,15,20,30],
+        levantamento: [5,7,9,10,12,15,21],
+        monoestrutural: [1],
+      };
+
+      let movimentos = [];
+      let formato, rounds, tempo;
+      const nomes = [];
+
+      const focoConfig = {
+        'LPO + Condicionamento': {g:1, w:2, m:1, formatos:['AMRAP','For Time','RFT'], tempoRange:[12,18]},
+        'Gymnastics Skill': {g:3, w:0, m:1, formatos:['AMRAP','EMOM','For Time'], tempoRange:[14,20]},
+        'Endurance': {g:1, w:1, m:2, formatos:['AMRAP','For Time','Chipper'], tempoRange:[18,25]},
+        'Força Pura': {g:0, w:3, m:0, formatos:['For Time','RFT','EMOM'], tempoRange:[10,16]},
+        'Mobilidade + Técnica': {g:2, w:1, m:1, formatos:['AMRAP','EMOM'], tempoRange:[12,16]},
+      };
+
+      const cfg = focoConfig[foco] || focoConfig['LPO + Condicionamento'];
+      formato = cfg.formatos[Math.floor(Math.random() * cfg.formatos.length)];
+      tempo = cfg.tempoRange[0] + Math.floor(Math.random() * (cfg.tempoRange[1] - cfg.tempoRange[0] + 1));
+
+      if (cfg.g > 0 && allG.length > 0) {
+        pick(allG, cfg.g).forEach(m => {
+          const reps = repsOpts.ginastica[Math.floor(Math.random() * repsOpts.ginastica.length)];
+          movimentos.push({nome: m.nome, reps, carga: '', modalidade: 'ginastica'});
+          nomes.push(m.nome);
+        });
+      }
+      if (cfg.w > 0 && allW.length > 0) {
+        pick(allW, cfg.w).forEach(m => {
+          const reps = repsOpts.levantamento[Math.floor(Math.random() * repsOpts.levantamento.length)];
+          movimentos.push({nome: m.nome, reps, carga: m.rx_m ? `${m.rx_m}/${m.rx_f}` : '', modalidade: 'levantamento'});
+          nomes.push(m.nome);
+        });
+      }
+      if (cfg.m > 0 && allM.length > 0) {
+        pick(allM, cfg.m).forEach(m => {
+          movimentos.push({nome: m.nome, reps: 1, carga: '', modalidade: 'monoestrutural'});
+          nomes.push(m.nome);
+        });
+      }
+
+      // Calcular se equipamento suporta todos os alunos
+      const barrasNeeded = movimentos.filter(m => {
+        const orig = [...MOVIMENTOS.levantamento, ...MOVIMENTOS.ginastica, ...MOVIMENTOS.monoestrutural]
+          .find(o => o.nome === m.nome);
+        return orig && orig.equip.includes('barra');
+      }).length;
+      const barrasDisp = equipamentos.find(e => e.nome.toLowerCase().includes('barra'))?.quantidade || 999;
+      const efetivo = modoDuplas ? Math.ceil(numAlunos / 2) : numAlunos;
+
+      let logisticaNota = '';
+      if (barrasNeeded > 0 && barrasDisp < efetivo) {
+        logisticaNota = `Atenção: ${barrasDisp} barras para ${efetivo} ${modoDuplas?'duplas':'alunos'}. Considere rotação por estações.`;
+      }
+
+      // Gerar nome do WOD
+      const wodNomes = ['Iron Storm','The Grinder','Full Send','Dark Horse','Green Machine','Forged','Ignition','Overdrive','Benchmark Alpha','The Furnace','Blackout','Velocity','Phoenix','Nitro','Apex'];
+      const wodNome = wodNomes[Math.floor(Math.random() * wodNomes.length)];
+
+      let formatoStr;
+      if (formato === 'AMRAP') formatoStr = `AMRAP ${tempo} min`;
+      else if (formato === 'For Time') formatoStr = `For Time (TC ${tempo} min)`;
+      else if (formato === 'RFT') { rounds = [3,4,5][Math.floor(Math.random()*3)]; formatoStr = `${rounds} Rounds For Time`; }
+      else if (formato === 'EMOM') formatoStr = `EMOM ${tempo} min`;
+      else if (formato === 'Chipper') formatoStr = `Chipper (For Time)`;
+      else formatoStr = formato;
+
+      return {
+        nome: wodNome,
+        formato: formatoStr,
+        movimentos,
+        tempo_wod_min: tempo,
+        logistica_nota: logisticaNota,
+      };
+    };
+
     // ─── Icons ─────────────────────────────────────────────────────────────────
     const Icon = ({ name, size = 20, className = '' }) => (
       <span className={`material-symbols-outlined ${className}`} style={{ fontSize: size, lineHeight: 1, userSelect: 'none' }}>{name}</span>
@@ -496,48 +715,79 @@
       const [loading, setLoading] = useState(false);
       const [saved, setSaved] = useState(false);
       const [treinos, setTreinos] = useState([]);
+      const [equipamentos, setEquipamentos] = useState([]);
+      const [academia, setAcademia] = useState(null);
       const [showList, setShowList] = useState(false);
 
       useEffect(() => {
-        sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', {ascending:false}).limit(10)
-          .then(({data}) => { setTreinos(data||[]); if(data&&data.length) setTreino(data[0]); });
+        Promise.all([
+          sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', {ascending:false}).limit(10),
+          sb.from('equipamentos').select('*').eq('academia_id', ACADEMIA_ID),
+          sb.from('academias').select('*').eq('id', ACADEMIA_ID).single(),
+        ]).then(([{data:t},{data:e},{data:a}]) => {
+          setTreinos(t||[]); if(t&&t.length) setTreino(t[0]);
+          setEquipamentos(e||[]);
+          setAcademia(a);
+          if(a?.max_alunos_por_aula) setForm(f=>({...f, num_alunos: a.max_alunos_por_aula}));
+        });
       }, []);
-
-      const wods = {
-        crossfit: [
-          {nome:'The Iron Lung', formato:'AMRAP 18 min', movimentos:[{nome:'Wall Ball Shots',reps:20,carga:'20/14 lbs'},{nome:'Box Jumps',reps:15,carga:'24/20in'},{nome:'Power Snatches',reps:10,carga:'95/65 lbs'}]},
-          {nome:'Carbon',formato:'For Time',movimentos:[{nome:'Thrusters',reps:21,carga:'43/29kg'},{nome:'Pull-ups',reps:21,carga:''},{nome:'Thrusters',reps:15,carga:'43/29kg'}]},
-          {nome:'Engine Day',formato:'3 Rounds',movimentos:[{nome:'500m Row',reps:1,carga:''},{nome:'15 Burpees',reps:15,carga:''},{nome:'400m Run',reps:1,carga:''}]},
-        ],
-        hyrox: [
-          {nome:'Hyrox Sim',formato:'8 Stations',movimentos:[{nome:'1000m SkiErg',reps:1,carga:''},{nome:'50m Sled Push',reps:1,carga:'60/40kg'},{nome:'Sandbag Lunges',reps:100,carga:''}]},
-        ],
-        bootcamp: [
-          {nome:'Team Burner',formato:'EMOM 20min',movimentos:[{nome:'Kettlebell Swings',reps:15,carga:'24kg'},{nome:'Push-ups',reps:10,carga:''},{nome:'Jumping Jacks',reps:30,carga:''}]},
-        ],
-      };
 
       const gerar = async () => {
         setLoading(true); setSaved(false);
-        await new Promise(r => setTimeout(r, 1200));
-        const wodOpts = wods[form.metodologia] || wods.crossfit;
-        const wod = wodOpts[Math.floor(Math.random() * wodOpts.length)];
+        await new Promise(r => setTimeout(r, 800));
+
+        const numAlunos = parseInt(form.num_alunos) || 15;
+        const foco = form.foco;
+
+        // Aquecimento
+        const aquecOpts = AQUECIMENTOS[foco] || AQUECIMENTOS['LPO + Condicionamento'];
+        const aquecDesc = aquecOpts[Math.floor(Math.random() * aquecOpts.length)];
+        const aquecimento = { descricao: aquecDesc, duracao_min: 10 + Math.floor(Math.random()*3) };
+
+        // Skill
+        const skillOpts = SKILLS[foco] || SKILLS['Força Pura'];
+        const skillBase = skillOpts[Math.floor(Math.random() * skillOpts.length)];
+        const skill = { ...skillBase, duracao_min: 12 + Math.floor(Math.random()*4) };
+
+        // WOD
+        const wod = gerarWodInteligente(foco, numAlunos, equipamentos, form.restritcoes, form.modo_duplas);
+
+        // Tempo total: aquecimento + skill + wod + cooldown (~5min) = target 50-60min
+        const tempoTotal = aquecimento.duracao_min + skill.duracao_min + wod.tempo_wod_min + 5;
+
+        // Adaptações inteligentes baseadas nos movimentos
+        const temLPO = wod.movimentos.some(m => m.modalidade === 'levantamento');
+        const temGinastica = wod.movimentos.some(m => m.modalidade === 'ginastica');
+        const adaptacoes = {
+          iniciante: temLPO
+            ? 'Reduza cargas em 30-40%. Substitua Snatch/Clean por versões Power com hang. Use kettlebell se necessário.'
+            : temGinastica
+            ? 'Substitua Pull-ups por Ring Rows, HSPU por Pike Push-ups, Muscle-ups por Jumping Pull-ups + Dips.'
+            : 'Reduza volume em 30% e aumente os períodos de descanso.',
+          avancado: temLPO
+            ? 'Mantenha RX. Adicione complexo: Squat Clean + Front Squat + Jerk entre rounds.'
+            : 'Mantenha RX. Adicione colete de 9kg e aumente reps em 20%.',
+        };
+
+        // Intensidade
+        const intensidade = foco.includes('Força') || foco.includes('Endurance') ? 'alta' : 'media';
+
         const novo = {
           academia_id: ACADEMIA_ID, criado_por: COACH_ID,
           data_treino: form.data, metodologia: form.metodologia,
-          nome: wod.nome, num_alunos: parseInt(form.num_alunos),
-          foco: form.foco, restritcoes: form.restritcoes,
+          nome: wod.nome, num_alunos: numAlunos,
+          foco, restritcoes: form.restritcoes,
           modo_duplas: form.modo_duplas,
-          aquecimento: { descricao: '3 rounds: 400m corrida + 10 Air Squats + mobilidade', duracao_min: 12 },
-          skill: { nome: 'Front Squat', series: [{set:1,reps:5,pct:60},{set:2,reps:5,pct:70},{set:3,reps:3,pct:80}], duracao_min: 15 },
-          wod, cooldown: { descricao: '5 min caminhada leve + Foam Roller' },
-          adaptacoes: { iniciante: 'Reduza cargas 40% e substitua movimentos complexos', avancado: 'Mantenha RX + adicione colete 5kg' },
-          tempo_previsto_min: Math.floor(Math.random()*15)+25,
-          intensidade: form.foco.includes('Força')?'media':'alta',
+          aquecimento, skill, wod,
+          cooldown: { descricao: '3-5 min caminhada leve + Foam Roller (quadríceps, lombar, dorsais) + alongamento estático 2min' },
+          adaptacoes,
+          tempo_previsto_min: tempoTotal,
+          intensidade,
+          logistica_nota: wod.logistica_nota || '',
           status: 'rascunho',
         };
         setTreino(novo); setLoading(false);
-        toast('Treino gerado com IA! Revise e salve.', 'success');
+        toast(`Treino gerado! Duração prevista: ${tempoTotal} min. Revise e salve.`, 'success');
       };
 
       const salvar = async () => {
@@ -648,14 +898,37 @@
                   </div>
                 </div>
 
+                {/* Logística */}
+                {treino.logistica_nota && (
+                  <div className="p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-start gap-3 text-sm text-yellow-300">
+                    <Icon name="inventory_2" size={18} className="mt-0.5 shrink-0"/>
+                    <div>
+                      <p className="font-bold mb-0.5">Nota de Logística</p>
+                      <p className="text-yellow-200/80">{treino.logistica_nota}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Tempo total */}
+                <div className="flex items-center gap-4 flex-wrap">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
+                    <Icon name="schedule" size={16} className="text-primary"/>
+                    <span className="text-sm font-bold text-primary">{treino.tempo_previsto_min} min total</span>
+                  </div>
+                  <div className={`tag ${intensidadeColor[treino.intensidade] || 'tag-green'}`}>
+                    {treino.intensidade?.toUpperCase()}
+                  </div>
+                  {treino.num_alunos && <span className="text-xs text-slate-400"><Icon name="group" size={14} className="inline mr-1"/>{treino.num_alunos} alunos</span>}
+                </div>
+
                 {/* Aquecimento */}
                 {treino.aquecimento && (
                   <div className="card-ai p-5">
                     <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2"><Icon name="whatshot" className="text-orange-400" size={20}/><h3 className="font-display font-bold">Aquecimento</h3></div>
+                      <div className="flex items-center gap-2"><Icon name="whatshot" className="text-orange-400" size={20}/><h3 className="font-display font-bold">Aquecimento / Mobilidade</h3></div>
                       <span className="text-xs text-slate-400">{treino.aquecimento.duracao_min} min</span>
                     </div>
-                    <p className="text-slate-300 text-sm">{treino.aquecimento.descricao}</p>
+                    <p className="text-slate-300 text-sm leading-relaxed">{treino.aquecimento.descricao}</p>
                   </div>
                 )}
 
@@ -666,11 +939,12 @@
                       <div className="flex items-center gap-2"><Icon name="fitness_center" className="text-primary" size={20}/><h3 className="font-display font-bold">Skill: {treino.skill.nome}</h3></div>
                       <span className="text-xs text-slate-400">{treino.skill.duracao_min} min</span>
                     </div>
-                    <div className="grid grid-cols-4 gap-2">
+                    {treino.skill.nota && <p className="text-xs text-slate-400 mb-3 italic">{treino.skill.nota}</p>}
+                    <div className="grid grid-cols-5 gap-2">
                       {(treino.skill.series||[]).map((s,i) => (
                         <div key={i} className="bg-primary/5 border border-primary/10 rounded-lg p-3 text-center">
                           <p className="text-xs text-slate-400">Set {s.set}</p>
-                          <p className="font-bold text-sm">{s.reps}@{s.pct}%</p>
+                          <p className="font-bold text-sm">{s.reps}{s.pct ? `@${s.pct}%` : ''}</p>
                         </div>
                       ))}
                     </div>
@@ -693,15 +967,19 @@
                       </div>
                     </div>
                     <div className="space-y-3">
-                      {(treino.wod.movimentos||[]).map((m,i) => (
-                        <div key={i} className="flex items-center gap-4 border-b border-white/5 pb-3">
-                          <span className="font-display font-bold text-3xl text-primary/25 w-12">{m.reps}</span>
-                          <div>
-                            <p className="font-bold">{m.nome}</p>
-                            {m.carga && <p className="text-xs text-slate-400">{m.carga}</p>}
+                      {(treino.wod.movimentos||[]).map((m,i) => {
+                        const modTag = m.modalidade === 'ginastica' ? {l:'G',c:'tag-blue'} : m.modalidade === 'levantamento' ? {l:'W',c:'tag-red'} : m.modalidade === 'monoestrutural' ? {l:'M',c:'tag-yellow'} : null;
+                        return (
+                          <div key={i} className="flex items-center gap-4 border-b border-white/5 pb-3">
+                            <span className="font-display font-bold text-3xl text-primary/25 w-12">{m.reps}</span>
+                            <div className="flex-1">
+                              <p className="font-bold">{m.nome}</p>
+                              {m.carga && <p className="text-xs text-slate-400">{m.carga}</p>}
+                            </div>
+                            {modTag && <span className={`tag ${modTag.c}`}>{modTag.l}</span>}
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                     {form.modo_duplas && (
                       <div className="mt-4 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center gap-2 text-sm text-blue-300">
@@ -737,6 +1015,29 @@
     };
 
     // ─── Análise de Programação ────────────────────────────────────────────────
+    // Função para extrair movimentos de um treino e classificá-los
+    const extrairMovimentos = (treino) => {
+      const movs = [];
+      if (treino.wod?.movimentos) {
+        treino.wod.movimentos.forEach(m => {
+          movs.push({ nome: m.nome, reps: m.reps || 0, modalidade: m.modalidade || 'desconhecido' });
+        });
+      }
+      if (treino.skill?.nome) {
+        const totalReps = (treino.skill.series || []).reduce((sum, s) => sum + (parseInt(s.reps) || 0), 0);
+        movs.push({ nome: treino.skill.nome, reps: totalReps, modalidade: 'levantamento' });
+      }
+      return movs;
+    };
+
+    // Classificar movimento por grupo muscular
+    const getGrupo = (nomeMovimento) => {
+      const n = nomeMovimento.toLowerCase();
+      const allMovs = [...MOVIMENTOS.ginastica, ...MOVIMENTOS.levantamento, ...MOVIMENTOS.monoestrutural];
+      const found = allMovs.find(m => n.includes(m.nome.toLowerCase()) || m.nome.toLowerCase().includes(n));
+      return found?.grupo || 'cardio';
+    };
+
     const Analise = ({ toast }) => {
       const [treinos, setTreinos] = useState([]);
       const [loading, setLoading] = useState(true);
@@ -746,93 +1047,219 @@
           .then(({data}) => { setTreinos(data||[]); setLoading(false); });
       }, []);
 
-      const movFreq = [
-        {nome:'Squat', count:14}, {nome:'Pull-ups', count:8}, {nome:'Push-ups', count:11},
-        {nome:'Deadlift', count:6}, {nome:'Row', count:9}, {nome:'Run', count:12}, {nome:'Burpees', count:7},
-      ];
-      const maxCount = Math.max(...movFreq.map(m=>m.count));
+      // Calcular estatísticas reais dos treinos
+      const stats = useMemo(() => {
+        if (!treinos.length) return null;
 
-      const grupos = [{l:'Puxar',v:35},{l:'Empurrar',v:40},{l:'Pernas',v:55},{l:'Core',v:30},{l:'Cardio',v:60},{l:'LPO',v:25}];
-      const maxG = Math.max(...grupos.map(g=>g.v));
+        // Frequência de movimentos
+        const movCount = {};
+        const modalCount = { ginastica: 0, levantamento: 0, monoestrutural: 0 };
+        const grupoCount = { puxar: 0, empurrar: 0, pernas: 0, core: 0, cardio: 0, lpo: 0 };
+        const repsTotal = {};
+        const treinosPorDia = {};
+
+        treinos.forEach(t => {
+          const movs = extrairMovimentos(t);
+          movs.forEach(m => {
+            movCount[m.nome] = (movCount[m.nome] || 0) + 1;
+            repsTotal[m.nome] = (repsTotal[m.nome] || 0) + (m.reps || 0);
+            if (modalCount[m.modalidade] !== undefined) modalCount[m.modalidade]++;
+            const grupo = getGrupo(m.nome);
+            if (grupoCount[grupo] !== undefined) grupoCount[grupo]++;
+          });
+          if (t.data_treino) {
+            const dia = new Date(t.data_treino).getDay();
+            treinosPorDia[dia] = (treinosPorDia[dia] || 0) + 1;
+          }
+        });
+
+        // Top movimentos por frequência
+        const movFreq = Object.entries(movCount)
+          .map(([nome, count]) => ({ nome, count, repsTotal: repsTotal[nome] || 0 }))
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 10);
+
+        // Distribuição modalidades (%)
+        const totalModal = Object.values(modalCount).reduce((s, v) => s + v, 0) || 1;
+        const modalDist = {
+          ginastica: Math.round((modalCount.ginastica / totalModal) * 100),
+          levantamento: Math.round((modalCount.levantamento / totalModal) * 100),
+          monoestrutural: Math.round((modalCount.monoestrutural / totalModal) * 100),
+        };
+
+        // Distribuição grupos musculares (% relativo ao max)
+        const totalGrupo = Object.values(grupoCount).reduce((s, v) => s + v, 0) || 1;
+        const grupoDist = Object.entries(grupoCount)
+          .map(([l, v]) => ({ l: l.charAt(0).toUpperCase() + l.slice(1), v: Math.round((v / totalGrupo) * 100) }))
+          .sort((a, b) => b.v - a.v);
+
+        // Volume por dia da semana
+        const volumeSemanal = diasSemana.map((_, i) => treinosPorDia[i] || 0);
+
+        // Gerar insights automáticos
+        const fraquezas = [];
+        const sugestoes = [];
+
+        // Desbalanceamento puxar/empurrar
+        if (grupoCount.empurrar > grupoCount.puxar * 1.5) {
+          fraquezas.push(`Desbalanceamento: ${grupoCount.empurrar} movimentos de empurrar vs ${grupoCount.puxar} de puxar. Risco de lesão no ombro.`);
+          sugestoes.push('Adicione mais Pull-ups, Ring Rows ou Bent-over Rows para equilibrar empurrar/puxar.');
+        } else if (grupoCount.puxar > grupoCount.empurrar * 1.5) {
+          fraquezas.push(`Volume alto de puxada (${grupoCount.puxar}x) comparado a empurrar (${grupoCount.empurrar}x).`);
+          sugestoes.push('Adicione Push Press, HSPU ou Push-ups para equilibrar.');
+        }
+
+        // Falta de LPO
+        if (grupoCount.lpo < 2 && treinos.length >= 5) {
+          fraquezas.push(`Apenas ${grupoCount.lpo} sessão(ões) com Levantamento de Peso Olímpico nos últimos ${treinos.length} treinos.`);
+          sugestoes.push('Inclua sessões de Snatch ou Clean & Jerk pelo menos 2x por semana para desenvolvimento técnico.');
+        }
+
+        // Falta de core
+        if (grupoCount.core < 2 && treinos.length >= 5) {
+          fraquezas.push(`Trabalho de core sub-representado: apenas ${grupoCount.core} ocorrência(s).`);
+          sugestoes.push('Adicione Toes-to-Bar, GHD Sit-ups ou Turkish Get-ups ao skill ou aquecimento.');
+        }
+
+        // Falta de monoestrutural
+        if (modalDist.monoestrutural < 15) {
+          fraquezas.push(`Condicionamento monoestrutural em apenas ${modalDist.monoestrutural}% dos movimentos. Capacidade aeróbia pode estagnar.`);
+          sugestoes.push('Adicione corrida, remo ou bike em pelo menos 1 WOD por semana como monoestrutural puro.');
+        }
+
+        // Volume excessivo de pernas
+        if (grupoDist[0]?.l === 'Pernas' && grupoDist[0]?.v > 40) {
+          fraquezas.push(`Pernas concentram ${grupoDist[0].v}% do volume total. Risco de fadiga acumulada.`);
+          sugestoes.push('Distribua melhor entre dias com Upper Body focus e Lower Body focus.');
+        }
+
+        // Se sem treinos suficientes
+        if (treinos.length < 3 && fraquezas.length === 0) {
+          fraquezas.push('Dados insuficientes para análise completa. Continue adicionando treinos para insights mais precisos.');
+          sugestoes.push('Gere e salve pelo menos 5 treinos para que a IA possa analisar padrões e tendências.');
+        }
+
+        return { movFreq, modalDist, grupoDist, volumeSemanal, fraquezas, sugestoes, totalTreinos: treinos.length, repsTotal };
+      }, [treinos]);
 
       if (loading) return <Loading/>;
 
+      const s = stats || { movFreq: [], modalDist: {ginastica:33,levantamento:33,monoestrutural:34}, grupoDist: [], volumeSemanal: [0,0,0,0,0,0,0], fraquezas: [], sugestoes: [], totalTreinos: 0 };
+      const maxCount = Math.max(...s.movFreq.map(m => m.count), 1);
+      const maxG = Math.max(...s.grupoDist.map(g => g.v), 1);
+      const maxVol = Math.max(...s.volumeSemanal, 1);
+
       return (
         <div className="p-8 space-y-6 fade-in">
+          {/* KPIs */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {l:'Treinos Analisados', v: s.totalTreinos, i:'fitness_center', c:'text-primary'},
+              {l:'Movimentos Únicos', v: s.movFreq.length, i:'category', c:'text-blue-400'},
+              {l:'Ginástica', v: s.modalDist.ginastica+'%', i:'sports_gymnastics', c:'text-purple-400'},
+              {l:'Levantamento', v: s.modalDist.levantamento+'%', i:'fitness_center', c:'text-red-400'},
+            ].map(({l,v,i,c}) => (
+              <div key={l} className="card p-4 flex items-center gap-3">
+                <Icon name={i} className={c} size={24}/>
+                <div>
+                  <p className="font-display font-bold text-xl">{v}</p>
+                  <p className="text-xs text-slate-400">{l}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Freq movimentos */}
             <div className="card p-6">
-              <h3 className="font-display font-bold text-lg mb-5">Frequência de Movimentos</h3>
-              <div className="space-y-3">
-                {movFreq.sort((a,b)=>b.count-a.count).map(({nome,count}) => (
-                  <div key={nome} className="flex items-center gap-3">
-                    <span className="text-sm font-medium w-20 text-slate-300">{nome}</span>
-                    <div className="flex-1 bg-primary/5 rounded-full h-6 overflow-hidden">
-                      <div className="h-full bg-primary/30 border-r-2 border-primary flex items-center justify-end pr-2 rounded-full transition-all"
-                        style={{width:`${(count/maxCount)*100}%`}}>
-                        <span className="text-xs font-bold text-primary">{count}</span>
+              <h3 className="font-display font-bold text-lg mb-2">Frequência de Movimentos</h3>
+              <p className="text-xs text-slate-400 mb-5">Quantas vezes cada movimento aparece nos treinos</p>
+              {s.movFreq.length > 0 ? (
+                <div className="space-y-3">
+                  {s.movFreq.map(({nome,count,repsTotal:rt}) => (
+                    <div key={nome} className="flex items-center gap-3">
+                      <span className="text-sm font-medium w-36 text-slate-300 truncate" title={nome}>{nome}</span>
+                      <div className="flex-1 bg-primary/5 rounded-full h-6 overflow-hidden">
+                        <div className="h-full bg-primary/30 border-r-2 border-primary flex items-center justify-end pr-2 rounded-full transition-all"
+                          style={{width:`${(count/maxCount)*100}%`, minWidth:'30px'}}>
+                          <span className="text-xs font-bold text-primary">{count}x</span>
+                        </div>
                       </div>
+                      <span className="text-xs text-slate-500 w-16 text-right">{rt} reps</span>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : <p className="text-slate-500 text-sm text-center py-8">Nenhum treino salvo ainda</p>}
             </div>
 
             {/* Grupos Musculares */}
             <div className="card p-6">
-              <h3 className="font-display font-bold text-lg mb-5">Grupos Musculares</h3>
-              <div className="space-y-3">
-                {grupos.map(({l,v}) => (
-                  <div key={l} className="flex items-center gap-3">
-                    <span className="text-sm font-medium w-20 text-slate-300">{l}</span>
-                    <div className="flex-1 bg-primary/5 rounded-full h-6 overflow-hidden">
-                      <div className={`h-full flex items-center justify-end pr-2 rounded-full transition-all ${v>50?'bg-red-500/20 border-r-2 border-red-500':'bg-primary/25 border-r-2 border-primary'}`}
-                        style={{width:`${(v/maxG)*100}%`}}>
-                        <span className={`text-xs font-bold ${v>50?'text-red-400':'text-primary'}`}>{v}%</span>
+              <h3 className="font-display font-bold text-lg mb-2">Distribuição por Grupo Muscular</h3>
+              <p className="text-xs text-slate-400 mb-5">% de volume por categoria de movimento</p>
+              {s.grupoDist.length > 0 ? (
+                <div className="space-y-3">
+                  {s.grupoDist.map(({l,v}) => (
+                    <div key={l} className="flex items-center gap-3">
+                      <span className="text-sm font-medium w-20 text-slate-300">{l}</span>
+                      <div className="flex-1 bg-primary/5 rounded-full h-6 overflow-hidden">
+                        <div className={`h-full flex items-center justify-end pr-2 rounded-full transition-all ${v>45?'bg-red-500/20 border-r-2 border-red-500':'bg-primary/25 border-r-2 border-primary'}`}
+                          style={{width:`${(v/maxG)*100}%`, minWidth:'30px'}}>
+                          <span className={`text-xs font-bold ${v>45?'text-red-400':'text-primary'}`}>{v}%</span>
+                        </div>
                       </div>
+                      {v>45 && <Icon name="warning" className="text-red-400" size={14}/>}
                     </div>
-                    {v>50 && <Icon name="warning" className="text-red-400" size={14}/>}
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-red-400 mt-3 flex items-center gap-1"><Icon name="info" size={12}/>Vermelho indica sobrecarga potencial</p>
+                  ))}
+                </div>
+              ) : <p className="text-slate-500 text-sm text-center py-8">Nenhum dado disponível</p>}
+              {s.grupoDist.some(g=>g.v>45) && <p className="text-xs text-red-400 mt-3 flex items-center gap-1"><Icon name="info" size={12}/>Vermelho indica concentração excessiva (&gt;45%)</p>}
             </div>
 
             {/* Modalidades */}
             <div className="card p-6">
-              <h3 className="font-display font-bold text-lg mb-5">Distribuição por Modalidade</h3>
+              <h3 className="font-display font-bold text-lg mb-2">Distribuição por Modalidade</h3>
+              <p className="text-xs text-slate-400 mb-5">CrossFit: Ginástica (G) · Levantamento (W) · Monoestrutural (M)</p>
               <div className="flex items-center gap-6">
                 <div className="relative w-32 h-32 shrink-0">
                   <svg viewBox="0 0 36 36" className="w-32 h-32 -rotate-90">
                     <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(67,243,32,0.1)" strokeWidth="3"/>
-                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="#43f320" strokeWidth="3" strokeDasharray="45 100" strokeLinecap="round"/>
-                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(67,243,32,0.45)" strokeWidth="3" strokeDasharray="30 100" strokeDashoffset="-45" strokeLinecap="round"/>
-                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(67,243,32,0.65)" strokeWidth="3" strokeDasharray="25 100" strokeDashoffset="-75" strokeLinecap="round"/>
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="#43f320" strokeWidth="3" strokeDasharray={`${s.modalDist.ginastica} 100`} strokeLinecap="round"/>
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(67,243,32,0.45)" strokeWidth="3" strokeDasharray={`${s.modalDist.levantamento} 100`} strokeDashoffset={`-${s.modalDist.ginastica}`} strokeLinecap="round"/>
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(67,243,32,0.65)" strokeWidth="3" strokeDasharray={`${s.modalDist.monoestrutural} 100`} strokeDashoffset={`-${s.modalDist.ginastica+s.modalDist.levantamento}`} strokeLinecap="round"/>
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-xs font-bold text-slate-400">Modal</span>
+                    <span className="text-xs font-bold text-slate-400">{s.totalTreinos} WODs</span>
                   </div>
                 </div>
                 <div className="space-y-3">
-                  {[{l:'Ginástica',v:45,c:'bg-primary'},{l:'Levantamento',v:30,c:'bg-primary/60'},{l:'Monoestrutural',v:25,c:'bg-primary/35'}].map(({l,v,c}) => (
-                    <div key={l} className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${c}`}/>
-                      <span className="text-sm text-slate-300">{l}</span>
-                      <span className="font-bold text-primary ml-auto">{v}%</span>
+                  {[
+                    {l:'Ginástica (G)',v:s.modalDist.ginastica,c:'bg-primary',desc:'Pull-ups, HSPU, Box Jumps...'},
+                    {l:'Levantamento (W)',v:s.modalDist.levantamento,c:'bg-primary/60',desc:'Clean, Snatch, Deadlift...'},
+                    {l:'Monoestrutural (M)',v:s.modalDist.monoestrutural,c:'bg-primary/35',desc:'Run, Row, Bike...'}
+                  ].map(({l,v,c,desc}) => (
+                    <div key={l}>
+                      <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full ${c}`}/>
+                        <span className="text-sm text-slate-300">{l}</span>
+                        <span className="font-bold text-primary ml-auto">{v}%</span>
+                      </div>
+                      <p className="text-xs text-slate-500 ml-6">{desc}</p>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Volume tempo */}
+            {/* Volume por dia da semana */}
             <div className="card p-6">
-              <h3 className="font-display font-bold text-lg mb-5">Volume Semanal (treinos)</h3>
+              <h3 className="font-display font-bold text-lg mb-2">Volume por Dia da Semana</h3>
+              <p className="text-xs text-slate-400 mb-5">Quantidade de treinos registrados por dia</p>
               <div className="flex items-end gap-2 h-32">
-                {[4,6,5,7,3,5,6].map((v,i) => (
+                {s.volumeSemanal.map((v,i) => (
                   <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                    <div className="w-full bg-primary/15 border-t-2 border-primary rounded-sm transition-all hover:bg-primary/25"
-                      style={{height:`${(v/7)*100}%`}}/>
+                    <span className="text-xs font-bold text-primary">{v||''}</span>
+                    <div className={`w-full rounded-sm transition-all hover:bg-primary/25 ${v>0?'bg-primary/15 border-t-2 border-primary':'bg-white/5'}`}
+                      style={{height:`${v>0?(v/maxVol)*100:5}%`, minHeight: v>0?'8px':'4px'}}/>
                     <span className="text-xs text-slate-500">{diasSemana[i]}</span>
                   </div>
                 ))}
@@ -849,20 +1276,16 @@
               </div>
               <div>
                 <h3 className="font-display font-bold text-xl">Avaliação Crítica da IA</h3>
-                <p className="text-primary text-xs font-bold uppercase tracking-widest">Análise Inteligente da Programação</p>
+                <p className="text-primary text-xs font-bold uppercase tracking-widest">Análise baseada em {s.totalTreinos} treino{s.totalTreinos!==1?'s':''}</p>
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
               <div>
                 <h4 className="font-bold flex items-center gap-2 mb-4"><Icon name="warning" className="text-red-400" size={18}/>Fraquezas Identificadas</h4>
                 <ul className="space-y-3">
-                  {[
-                    'Baixo volume de puxada vertical (Pull-ups) vs movimentos de empurrar.',
-                    'Alta carga lombar na Terça e Quinta — considere redistribuir.',
-                    'Lacuna de trabalho de potência (LPO) nos últimos 10 dias.',
-                  ].map((t,i) => (
+                  {(s.fraquezas.length > 0 ? s.fraquezas : ['Nenhuma fraqueza crítica detectada com os dados atuais.']).map((t,i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                      <Icon name="circle" className="text-primary mt-0.5" size={10}/>
+                      <Icon name="circle" className="text-primary mt-0.5 shrink-0" size={10}/>
                       {t}
                     </li>
                   ))}
@@ -871,20 +1294,13 @@
               <div className="border-l border-primary/15 pl-8">
                 <h4 className="font-bold flex items-center gap-2 mb-4"><Icon name="lightbulb" className="text-primary" size={18}/>Sugestões de Ajuste</h4>
                 <ul className="space-y-3">
-                  {[
-                    'Introduzir Ring Rows ou Scapular Pulls na Quinta.',
-                    'Redistribuir volume de agachamento entre Terça e Sexta.',
-                    'Adicionar 1 sessão de clean technique na próxima semana.',
-                  ].map((t,i) => (
+                  {(s.sugestoes.length > 0 ? s.sugestoes : ['Continue gerando e salvando treinos para receber sugestões personalizadas.']).map((t,i) => (
                     <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                      <Icon name="check_circle" className="text-primary mt-0.5" size={14}/>
+                      <Icon name="check_circle" className="text-primary mt-0.5 shrink-0" size={14}/>
                       {t}
                     </li>
                   ))}
                 </ul>
-                <button className="mt-5 text-primary text-sm font-bold underline decoration-primary/30 underline-offset-4 hover:decoration-primary">
-                  Aplicar sugestões automaticamente
-                </button>
               </div>
             </div>
           </div>
@@ -904,14 +1320,72 @@
           .then(({data}) => { setPeriodo(data); setLoading(false); });
       }, []);
 
+      const PERIODIZACAO_TEMPLATES = {
+        'Preparação para competição': {
+          fases: ['Base Geral','Força Específica','Peaking','Taper'],
+          semanas: 12,
+          gerarSemanas: () => Array.from({length:12},(_,i) => ({
+            semana: i+1,
+            fase: i<3?'Base Geral':i<6?'Força Específica':i<10?'Peaking':'Taper',
+            volume: [75,80,85,50,80,85,50,85,90,95,40,30][i],
+            intensidade: [60,65,70,50,75,80,50,85,88,92,60,40][i],
+            deload: i===3||i===6||i===10||i===11,
+            foco_semana: i<3?'Construção aeróbia + técnica LPO':i<6?'Força máxima + metcon médio':i<10?'Intensidade alta + simulação de competição':'Recuperação ativa, baixo volume',
+          })),
+        },
+        'Construção de base': {
+          fases: ['Adaptação','Resistência Muscular','Força Base','Recuperação'],
+          semanas: 12,
+          gerarSemanas: () => Array.from({length:12},(_,i) => ({
+            semana: i+1,
+            fase: i<3?'Adaptação':i<7?'Resistência Muscular':i<11?'Força Base':'Recuperação',
+            volume: [60,65,70,75,78,80,50,75,80,82,85,40][i],
+            intensidade: [50,55,58,60,62,65,45,65,68,70,72,40][i],
+            deload: i===6||i===11,
+            foco_semana: i<3?'Padrões motores + mobilidade + cardio base':i<7?'Aumento progressivo de volume e complexidade':i<11?'Construção de força com cargas moderadas-altas':'Deload completo',
+          })),
+        },
+        'Hypertrophy': {
+          fases: ['Acumulação','Intensificação','Pico Volume','Deload'],
+          semanas: 8,
+          gerarSemanas: () => Array.from({length:8},(_,i) => ({
+            semana: i+1,
+            fase: i<3?'Acumulação':i<6?'Intensificação':i<7?'Pico Volume':'Deload',
+            volume: [75,80,85,50,85,90,95,45][i],
+            intensidade: [60,63,65,50,70,73,75,45][i],
+            deload: i===3||i===7,
+            foco_semana: i<3?'Alto volume, baixa carga (3-4 sets x 10-15 reps)':i<6?'Volume moderado, carga crescente (4-5 sets x 6-10 reps)':i<7?'Volume máximo, carga moderada':'Recuperação ativa',
+          })),
+        },
+        'Deload/Recuperação': {
+          fases: ['Deload Ativo','Retorno Gradual'],
+          semanas: 4,
+          gerarSemanas: () => Array.from({length:4},(_,i) => ({
+            semana: i+1,
+            fase: i<2?'Deload Ativo':'Retorno Gradual',
+            volume: [40,45,55,65][i],
+            intensidade: [40,45,55,60][i],
+            deload: i<2,
+            foco_semana: i<2?'Mobilidade, yoga, corrida leve, técnica com PVC':'Retorno progressivo à carga normal',
+          })),
+        },
+        'Open Season Prep': {
+          fases: ['Base Metcon','Skill Focus','Open Simulation','Taper'],
+          semanas: 12,
+          gerarSemanas: () => Array.from({length:12},(_,i) => ({
+            semana: i+1,
+            fase: i<3?'Base Metcon':i<7?'Skill Focus':i<10?'Open Simulation':'Taper',
+            volume: [70,75,80,50,75,80,85,50,88,92,45,35][i],
+            intensidade: [65,68,72,50,72,75,78,50,85,90,55,40][i],
+            deload: i===3||i===7||i===10||i===11,
+            foco_semana: i<3?'Capacidade metabólica + engine building':i<7?'Movimentos técnicos (MU, HSPU, DU, Pistols)':i<10?'Simulação de WODs estilo Open, time caps reais':'Deload inteligente antes do Open',
+          })),
+        },
+      };
+
       const criar = async () => {
-        const semanas = Array.from({length:12},(_,i) => ({
-          semana: i+1,
-          fase: i<4?'Base Strength':i<8?'Hypertrophy Focus':'Open Prep / Peak',
-          volume: [70,75,80,50,75,80,85,50,80,85,90,30][i],
-          intensidade: [60,65,70,50,70,75,80,50,85,90,95,30][i],
-          deload: [false,false,false,true,false,false,false,true,false,false,false,true][i],
-        }));
+        const template = PERIODIZACAO_TEMPLATES[form.objetivo] || PERIODIZACAO_TEMPLATES['Construção de base'];
+        const semanas = template.gerarSemanas();
         const { data, error } = await sb.from('periodizacoes').insert([{
           academia_id: ACADEMIA_ID, criado_por: COACH_ID,
           nome: form.nome, objetivo: form.objetivo,
@@ -923,9 +1397,12 @@
         toast('Periodização criada com sucesso!','success');
       };
 
-      const fases = ['Base Strength','Hypertrophy Focus','Open Prep / Peak'];
-      const faseColors = ['bg-primary/30 border-primary/50','bg-blue-500/20 border-blue-500/30','bg-purple-500/20 border-purple-500/30'];
-      const faseTextColors = ['text-primary','text-blue-400','text-purple-400'];
+      const fasesFromPeriodo = periodo?.semanas ? [...new Set(periodo.semanas.map(s=>s.fase))] : [];
+      const allFaseColors = ['bg-primary/30 border-primary/50','bg-blue-500/20 border-blue-500/30','bg-purple-500/20 border-purple-500/30','bg-orange-500/20 border-orange-500/30','bg-red-500/20 border-red-500/30'];
+      const allFaseTextColors = ['text-primary','text-blue-400','text-purple-400','text-orange-400','text-red-400'];
+      const fases = fasesFromPeriodo;
+      const faseColors = fases.map((_,i)=>allFaseColors[i%allFaseColors.length]);
+      const faseTextColors = fases.map((_,i)=>allFaseTextColors[i%allFaseTextColors.length]);
 
       if (loading) return <Loading/>;
 
@@ -946,13 +1423,19 @@
               {/* Gantt */}
               <div className="card overflow-x-auto">
                 <div className="min-w-[900px]">
+                  {(() => {
+                    const sems = periodo.semanas || [];
+                    const numSem = sems.length;
+                    const gridCols = `repeat(${numSem}, minmax(0, 1fr))`;
+                    return (<>
                   {/* Header semanas */}
                   <div className="flex border-b border-white/5">
                     <div className="w-40 shrink-0 p-3 text-xs font-bold text-slate-500 uppercase">Categoria</div>
-                    <div className="flex-1 grid grid-cols-12">
-                      {Array.from({length:12},(_,i) => (
-                        <div key={i} className={`p-3 text-center text-xs font-bold border-l border-white/5 ${i===3||i===7||i===11?'bg-blue-500/5 text-blue-400':'text-slate-400'}`}>
-                          {i===3||i===7||i===11?'DL':'W'}{i+1}
+                    <div className="flex-1 grid" style={{gridTemplateColumns:gridCols}}>
+                      {sems.map((s,i) => (
+                        <div key={i} className={`p-3 text-center text-xs font-bold border-l border-white/5 ${s.deload?'bg-blue-500/5 text-blue-400':'text-slate-400'}`}
+                          title={s.foco_semana||''}>
+                          {s.deload?'DL':'S'}{i+1}
                         </div>
                       ))}
                     </div>
@@ -963,13 +1446,13 @@
                     <div className="w-40 shrink-0 p-3 flex items-center gap-2 text-sm font-bold">
                       <Icon name="settings_input_component" className="text-primary" size={16}/>Fases
                     </div>
-                    <div className="flex-1 grid grid-cols-12 p-2 gap-1">
-                      {Array.from({length:12},(_,i) => {
-                        const s = (periodo.semanas||[])[i];
+                    <div className="flex-1 grid p-2 gap-1" style={{gridTemplateColumns:gridCols}}>
+                      {sems.map((s,i) => {
                         const fi = fases.indexOf(s?.fase);
+                        const isFirst = i===0 || sems[i-1]?.fase !== s?.fase;
                         return (
-                          <div key={i} className={`gantt-bar border ${faseColors[fi>=0?fi:0]} ${faseTextColors[fi>=0?fi:0]}`} title={s?.fase}>
-                            {i%4===0 && <span className="truncate text-xs">{s?.fase?.split(' ')[0]}</span>}
+                          <div key={i} className={`gantt-bar border ${faseColors[fi>=0?fi:0]} ${faseTextColors[fi>=0?fi:0]}`} title={s?.fase + (s?.foco_semana ? ' — '+s.foco_semana : '')}>
+                            {isFirst && <span className="truncate text-xs">{s?.fase?.split(' ')[0]}</span>}
                           </div>
                         );
                       })}
@@ -979,12 +1462,12 @@
                   {/* Volume */}
                   <div className="flex border-b border-white/5">
                     <div className="w-40 shrink-0 p-3 flex items-center gap-2 text-sm font-bold">
-                      <Icon name="fitness_center" className="text-primary" size={16}/>Volume
+                      <Icon name="fitness_center" className="text-primary" size={16}/>Volume %
                     </div>
                     <div className="flex-1 p-3 flex items-end gap-1 h-16">
-                      {(periodo.semanas||[]).map((s,i) => (
+                      {sems.map((s,i) => (
                         <div key={i} className="flex-1 rounded-sm bg-primary/15 border-t border-primary/30 relative group"
-                          style={{height:`${s.volume}%`}} title={`${s.volume}%`}>
+                          style={{height:`${s.volume}%`}} title={`S${i+1}: ${s.volume}%`}>
                           <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-xs text-primary font-bold opacity-0 group-hover:opacity-100">{s.volume}%</div>
                         </div>
                       ))}
@@ -994,12 +1477,12 @@
                   {/* Intensidade */}
                   <div className="flex border-b border-white/5">
                     <div className="w-40 shrink-0 p-3 flex items-center gap-2 text-sm font-bold">
-                      <Icon name="bolt" className="text-primary" size={16}/>Intensidade
+                      <Icon name="bolt" className="text-primary" size={16}/>Intensidade %
                     </div>
                     <div className="flex-1 p-3 flex items-end gap-1 h-16">
-                      {(periodo.semanas||[]).map((s,i) => (
+                      {sems.map((s,i) => (
                         <div key={i} className="flex-1 rounded-sm bg-orange-500/15 border-t border-orange-400/40"
-                          style={{height:`${s.intensidade}%`}} title={`${s.intensidade}%`}/>
+                          style={{height:`${s.intensidade}%`}} title={`S${i+1}: ${s.intensidade}%`}/>
                       ))}
                     </div>
                   </div>
@@ -1009,33 +1492,49 @@
                     <div className="w-40 shrink-0 p-3 flex items-center gap-2 text-sm font-bold">
                       <Icon name="rebase_edit" className="text-primary" size={16}/>Deload
                     </div>
-                    <div className="flex-1 grid grid-cols-12 p-2 gap-1">
-                      {(periodo.semanas||[]).map((s,i) => (
+                    <div className="flex-1 grid p-2 gap-1" style={{gridTemplateColumns:gridCols}}>
+                      {sems.map((s,i) => (
                         <div key={i} className={`h-10 rounded-lg flex items-center justify-center ${s.deload?'bg-blue-500/20 border border-blue-500/30':'bg-transparent'}`}>
                           {s.deload && <Icon name="check_circle" className="text-blue-400" size={16}/>}
                         </div>
                       ))}
                     </div>
                   </div>
+                  </>);
+                  })()}
                 </div>
               </div>
 
-              {/* Insights */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[
-                  {i:'psychology',t:'Recomendação IA', c:'text-primary', txt:'Detectamos fadiga acumulada na Semana 3. O bloco foi ajustado com 2 dias extras de mobilidade ativa.'},
-                  {i:'monitoring',t:'Prontidão Semana 4', c:'text-blue-400', txt:'88% — Capacidade de carga otimizada para o final do mesociclo. +12% vs semana anterior.'},
-                  {i:'event_note',t:'Próximo Milestone', c:'text-purple-400', txt:'Open Qualifier #1 — Em 32 dias (Final da Fase 2). Progresso: 67%'},
-                ].map(({i,t,c,txt}) => (
-                  <div key={t} className="card p-5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Icon name={i} className={c} size={18}/>
-                      <h4 className="font-bold text-sm uppercase tracking-wide">{t}</h4>
-                    </div>
-                    <p className="text-sm text-slate-400">{txt}</p>
+              {/* Insights dinâmicos */}
+              {(() => {
+                const sems = periodo.semanas || [];
+                const deloadWeeks = sems.filter(s=>s.deload).map(s=>s.semana);
+                const maxIntWeek = sems.reduce((best,s) => s.intensidade > (best?.intensidade||0) ? s : best, sems[0]);
+                const fasesInfo = fases.map(f => ({ fase: f, semanas: sems.filter(s=>s.fase===f).length }));
+                return (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="card p-5">
+                    <div className="flex items-center gap-2 mb-3"><Icon name="psychology" className="text-primary" size={18}/><h4 className="font-bold text-sm uppercase tracking-wide">Estrutura do Ciclo</h4></div>
+                    <p className="text-sm text-slate-400">{sems.length} semanas · {deloadWeeks.length} deload{deloadWeeks.length!==1?'s':''} (S{deloadWeeks.join(', S')}) · Objetivo: {periodo.objetivo}</p>
+                    <div className="mt-3 space-y-1">{fasesInfo.map(f=><p key={f.fase} className="text-xs text-slate-500">• {f.fase}: {f.semanas} semana{f.semanas!==1?'s':''}</p>)}</div>
                   </div>
-                ))}
-              </div>
+                  <div className="card p-5">
+                    <div className="flex items-center gap-2 mb-3"><Icon name="bolt" className="text-orange-400" size={18}/><h4 className="font-bold text-sm uppercase tracking-wide">Pico de Intensidade</h4></div>
+                    <p className="text-sm text-slate-400">Semana {maxIntWeek?.semana}: {maxIntWeek?.intensidade}% intensidade · {maxIntWeek?.volume}% volume</p>
+                    <p className="text-xs text-slate-500 mt-2">Fase: {maxIntWeek?.fase}</p>
+                    {maxIntWeek?.foco_semana && <p className="text-xs text-primary mt-1">{maxIntWeek.foco_semana}</p>}
+                  </div>
+                  <div className="card p-5">
+                    <div className="flex items-center gap-2 mb-3"><Icon name="event_note" className="text-purple-400" size={18}/><h4 className="font-bold text-sm uppercase tracking-wide">Recomendação IA</h4></div>
+                    <p className="text-sm text-slate-400">{
+                      deloadWeeks.length < Math.floor(sems.length/4)
+                        ? `Considere adicionar mais deloads. Recomendado: 1 a cada 3-4 semanas de carga.`
+                        : `Distribuição de deloads adequada. Mantenha a progressão conforme planejado e ajuste se sentir fadiga acumulada.`
+                    }</p>
+                  </div>
+                </div>
+                );
+              })()}
             </>
           ) : (
             <div className="card p-12 flex flex-col items-center text-center">
@@ -1058,7 +1557,13 @@
                 <div><label className="text-sm text-slate-400 mb-1.5 block">Data Início</label><input type="date" value={form.data_inicio} onChange={e=>setForm(f=>({...f,data_inicio:e.target.value}))}/></div>
                 <div><label className="text-sm text-slate-400 mb-1.5 block">Data Fim</label><input type="date" value={form.data_fim} onChange={e=>setForm(f=>({...f,data_fim:e.target.value}))}/></div>
               </div>
-              <p className="text-xs text-slate-500">A IA irá gerar automaticamente 12 semanas de periodização progressiva com deloads planejados.</p>
+              <p className="text-xs text-slate-500">
+                {form.objetivo === 'Preparação para competição' ? 'A IA irá gerar 12 semanas: Base Geral → Força Específica → Peaking → Taper. Foco em performance máxima no dia da competição.' :
+                 form.objetivo === 'Hypertrophy' ? 'A IA irá gerar 8 semanas: Acumulação → Intensificação → Pico Volume → Deload. Alto volume para hipertrofia.' :
+                 form.objetivo === 'Deload/Recuperação' ? 'A IA irá gerar 4 semanas de recuperação ativa com retorno gradual ao treinamento normal.' :
+                 form.objetivo === 'Open Season Prep' ? 'A IA irá gerar 12 semanas: Base Metcon → Skill Focus → Open Simulation → Taper. Foco em WODs estilo Open.' :
+                 'A IA irá gerar 12 semanas: Adaptação → Resistência Muscular → Força Base → Recuperação. Construção sólida de fundamentos.'}
+              </p>
               <div className="flex gap-3 mt-2">
                 <button onClick={() => setShowModal(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
                 <button onClick={criar} className="flex-1 btn-primary py-2.5 rounded-xl">Criar com IA</button>
