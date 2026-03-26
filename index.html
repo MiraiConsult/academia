@@ -1424,21 +1424,14 @@
 
     // ─── App Root ──────────────────────────────────────────────────────────────
     const App = () => {
-      const [user, setUser] = useState(null);
+      const defaultUser = { id: COACH_ID, nome: 'Coach Demo', email: 'coach@crossfititron.com', perfil: 'head_coach', academia_id: ACADEMIA_ID };
+      const [user, setUser] = useState(defaultUser);
       const [page, setPage] = useState('dashboard');
       const [academia, setAcademia] = useState(null);
       const [toastState, setToastState] = useState(null);
       const [alertCount, setAlertCount] = useState(0);
 
       const toast = (msg, type='success') => setToastState({msg, type, key: Date.now()});
-
-      // Auto-login: entra direto como head_coach
-      useEffect(() => {
-        if (!user) {
-          sb.from('usuarios').select('*').eq('email', 'coach@crossfititron.com').single()
-            .then(({data}) => { if (data) setUser(data); });
-        }
-      }, []);
 
       useEffect(() => {
         if (!user) return;
@@ -1451,7 +1444,7 @@
 
       const logout = () => { setUser(null); setPage('dashboard'); };
 
-      if (!user) return <div className="min-h-screen flex items-center justify-center" style={{background:'#0d1a0b'}}><div className="loading-spinner" style={{width:40,height:40,borderWidth:3}}/></div>;
+      if (!user) return null;
 
       const isCoach = user.perfil === 'head_coach';
       const pageMap = {
