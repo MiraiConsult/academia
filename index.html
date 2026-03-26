@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>iA Coach — Head Coach Virtual</title>
+  <title>iA Coach — Coach Virtual Estratégico</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -172,11 +172,11 @@
         '3 Rounds: 200m corrida + 10 PVC Pass-throughs + 10 Air Squats + 5 Snatch Grip Deadlifts (barra vazia)',
         '2 Rounds: 250m Row + 10 Ring Rows + 10 Good Mornings (PVC) + 10 Overhead Squats (PVC)',
       ],
-      'Gymnastics Skill': [
+      'Ginástica': [
         '3 Rounds: 200m corrida + 10 Scapular Pull-ups + 10 Kip Swings + 5 Strict Press (PVC) + 30s Plank',
-        '2 Rounds: 1min Jump Rope + 10 Shoulder Taps em Handstand + 10 Push-ups + 10 Ring Rows',
+        '2 Rounds: 1min pular corda + 10 Shoulder Taps em Handstand + 10 Push-ups + 10 Ring Rows',
       ],
-      'Endurance': [
+      'Resistência': [
         '5min corrida leve + 2 Rounds: 10 Air Squats + 10 Leg Swings + 10 Arm Circles + 5 Inch Worms',
         '3 Rounds: 200m Row leve + 10 Walking Lunges + 10 Jumping Jacks + mobilidade de quadril',
       ],
@@ -196,13 +196,13 @@
         {nome:'Clean & Jerk', series:[{set:1,reps:3,pct:60},{set:2,reps:3,pct:65},{set:3,reps:2,pct:70},{set:4,reps:2,pct:75}]},
         {nome:'Power Clean', series:[{set:1,reps:5,pct:55},{set:2,reps:5,pct:60},{set:3,reps:3,pct:70},{set:4,reps:3,pct:75}]},
       ],
-      'Gymnastics Skill': [
-        {nome:'Kipping Pull-up Progression', series:[{set:1,reps:5,pct:0},{set:2,reps:5,pct:0},{set:3,reps:5,pct:0},{set:4,reps:5,pct:0}], nota:'Foco em hollow/arch position'},
-        {nome:'Handstand Hold & Walk', series:[{set:1,reps:'30s',pct:0},{set:2,reps:'30s',pct:0},{set:3,reps:'20s walk',pct:0}], nota:'Progressão: parede → free-standing'},
-        {nome:'Toes-to-Bar Progression', series:[{set:1,reps:8,pct:0},{set:2,reps:8,pct:0},{set:3,reps:8,pct:0}], nota:'Foco no kip e ativação de core'},
+      'Ginástica': [
+        {nome:'Progressão de Kipping Pull-up', series:[{set:1,reps:5,pct:0},{set:2,reps:5,pct:0},{set:3,reps:5,pct:0},{set:4,reps:5,pct:0}], nota:'Foco em posição hollow/arch'},
+        {nome:'Handstand Hold & Walk', series:[{set:1,reps:'30s',pct:0},{set:2,reps:'30s',pct:0},{set:3,reps:'20s walk',pct:0}], nota:'Progressão: parede → livre'},
+        {nome:'Progressão de Toes-to-Bar', series:[{set:1,reps:8,pct:0},{set:2,reps:8,pct:0},{set:3,reps:8,pct:0}], nota:'Foco no kip e ativação de core'},
       ],
-      'Endurance': [
-        {nome:'Pacing Strategy', series:[{set:1,reps:'2min',pct:65},{set:2,reps:'2min',pct:70},{set:3,reps:'2min',pct:75},{set:4,reps:'2min',pct:80}], nota:'Row ou Bike — build em ritmo'},
+      'Resistência': [
+        {nome:'Estratégia de Ritmo', series:[{set:1,reps:'2min',pct:65},{set:2,reps:'2min',pct:70},{set:3,reps:'2min',pct:75},{set:4,reps:'2min',pct:80}], nota:'Row ou Bike — construção progressiva de ritmo'},
       ],
       'Força Pura': [
         {nome:'Back Squat', series:[{set:1,reps:5,pct:65},{set:2,reps:5,pct:70},{set:3,reps:5,pct:75},{set:4,reps:3,pct:80},{set:5,reps:3,pct:85}]},
@@ -263,8 +263,8 @@
 
       const focoConfig = {
         'LPO + Condicionamento': {g:1, w:2, m:1, formatos:['AMRAP','For Time','RFT'], tempoRange:[12,18]},
-        'Gymnastics Skill': {g:3, w:0, m:1, formatos:['AMRAP','EMOM','For Time'], tempoRange:[14,20]},
-        'Endurance': {g:1, w:1, m:2, formatos:['AMRAP','For Time','Chipper'], tempoRange:[18,25]},
+        'Ginástica': {g:3, w:0, m:1, formatos:['AMRAP','EMOM','For Time'], tempoRange:[14,20]},
+        'Resistência': {g:1, w:1, m:2, formatos:['AMRAP','For Time','Chipper'], tempoRange:[18,25]},
         'Força Pura': {g:0, w:3, m:0, formatos:['For Time','RFT','EMOM'], tempoRange:[10,16]},
         'Mobilidade + Técnica': {g:2, w:1, m:1, formatos:['AMRAP','EMOM'], tempoRange:[12,16]},
       };
@@ -309,7 +309,7 @@
       }
 
       // Gerar nome do WOD
-      const wodNomes = ['Iron Storm','The Grinder','Full Send','Dark Horse','Green Machine','Forged','Ignition','Overdrive','Benchmark Alpha','The Furnace','Blackout','Velocity','Phoenix','Nitro','Apex'];
+      const wodNomes = ['Tempestade','Forja','Trovão','Máquina Verde','Ignição','Fênix','Vulcão','Titânio','Vendaval','Motor','Aço','Centelha','Turbo','Impacto','Arsenal'];
       const wodNome = wodNomes[Math.floor(Math.random() * wodNomes.length)];
 
       let formatoStr;
@@ -410,7 +410,7 @@
                 </div>
                 <span className="font-display text-3xl font-bold">iA Coach</span>
               </div>
-              <p className="text-slate-400">Head Coach Virtual — Plataforma de Gestão Fitness com IA</p>
+              <p className="text-slate-400">Coach Virtual Estratégico — Plataforma de Gestão Fitness com IA</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -483,16 +483,16 @@
     // ─── Sidebar ───────────────────────────────────────────────────────────────
     const Sidebar = ({ user, page, setPage, onLogout, academia }) => {
       const coachLinks = [
-        { id: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
+        { id: 'dashboard', icon: 'dashboard', label: 'Painel' },
         { id: 'gerar', icon: 'auto_awesome', label: 'Gerar Treino' },
         { id: 'analise', icon: 'monitoring', label: 'Análise' },
         { id: 'periodizacao', icon: 'calendar_month', label: 'Periodização' },
         { id: 'seguranca', icon: 'verified_user', label: 'Segurança' },
       ];
       const donoLinks = [
-        { id: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
+        { id: 'dashboard', icon: 'dashboard', label: 'Painel' },
         { id: 'estrategico', icon: 'insights', label: 'Visão Estratégica' },
-        { id: 'coaches', icon: 'groups', label: 'Gestão Coaches' },
+        { id: 'coaches', icon: 'groups', label: 'Gestão de Professores' },
         { id: 'configuracoes', icon: 'settings', label: 'Configurações' },
       ];
       const links = user.perfil === 'head_coach' ? coachLinks : donoLinks;
@@ -523,7 +523,7 @@
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold truncate">{user.nome}</p>
-                <p className="text-xs text-slate-500">{user.perfil === 'head_coach' ? 'Head Coach' : 'Dono'}</p>
+                <p className="text-xs text-slate-500">{user.perfil === 'head_coach' ? 'Head Coach' : 'Proprietário'}</p>
               </div>
               <button onClick={onLogout} className="p-1 text-slate-500 hover:text-red-400 transition-colors">
                 <Icon name="logout" size={18}/>
@@ -548,7 +548,7 @@
             </div>
           )}
           {actions}
-          <button onClick={toggleTheme} className="theme-toggle" title={theme === 'dark' ? 'Modo claro' : 'Modo escuro'}>
+          <button onClick={toggleTheme} className="theme-toggle" title={theme === 'dark' ? 'Mudar para modo claro' : 'Mudar para modo escuro'}>
             <Icon name={theme === 'dark' ? 'light_mode' : 'dark_mode'} size={20} className={theme === 'dark' ? 'text-yellow-400' : 'text-slate-600'}/>
           </button>
         </div>
@@ -655,8 +655,8 @@
             {/* Stats */}
             <div className="space-y-4">
               {[
-                {l:'Check-ins Hoje', v:'84 / 120', i:'group'},
-                {l:'PRs Quebrados', v:'12', i:'emoji_events'},
+                {l:'Acessos Hoje', v:'84 / 120', i:'group'},
+                {l:'Recordes Pessoais', v:'12', i:'emoji_events'},
                 {l:'Membros Ativos', v:'342', i:'fitness_center'},
                 {l:'Treinos Esta Semana', v: treinos.filter(t=> { const d=new Date(t.data_treino); const n=new Date(); return Math.abs(d-n)<7*86400000; }).length, i:'calendar_month'},
               ].map(({l,v,i}) => (
@@ -770,7 +770,7 @@
         };
 
         // Intensidade
-        const intensidade = foco.includes('Força') || foco.includes('Endurance') ? 'alta' : 'media';
+        const intensidade = foco.includes('Força') || foco.includes('Resistência') ? 'alta' : 'media';
 
         const novo = {
           academia_id: ACADEMIA_ID, criado_por: COACH_ID,
@@ -834,7 +834,7 @@
             <div>
               <label className="text-sm font-medium mb-1.5 block">Foco da Sessão</label>
               <select value={form.foco} onChange={e=>setForm(f=>({...f,foco:e.target.value}))}>
-                {['LPO + Condicionamento','Gymnastics Skill','Endurance','Força Pura','Mobilidade + Técnica'].map(o=><option key={o}>{o}</option>)}
+                {['LPO + Condicionamento','Ginástica','Resistência','Força Pura','Mobilidade + Técnica'].map(o=><option key={o}>{o}</option>)}
               </select>
             </div>
 
@@ -846,7 +846,7 @@
             <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/10">
               <div>
                 <p className="text-sm font-bold">Treino em Duplas</p>
-                <p className="text-xs text-slate-400">Teams of 2</p>
+                <p className="text-xs text-slate-400">Equipes de 2</p>
               </div>
               <label className="toggle">
                 <input type="checkbox" checked={form.modo_duplas} onChange={e=>setForm(f=>({...f,modo_duplas:e.target.checked}))}/>
@@ -943,7 +943,7 @@
                     <div className="grid grid-cols-5 gap-2">
                       {(treino.skill.series||[]).map((s,i) => (
                         <div key={i} className="bg-primary/5 border border-primary/10 rounded-lg p-3 text-center">
-                          <p className="text-xs text-slate-400">Set {s.set}</p>
+                          <p className="text-xs text-slate-400">Série {s.set}</p>
                           <p className="font-bold text-sm">{s.reps}{s.pct ? `@${s.pct}%` : ''}</p>
                         </div>
                       ))}
@@ -983,7 +983,7 @@
                     </div>
                     {form.modo_duplas && (
                       <div className="mt-4 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center gap-2 text-sm text-blue-300">
-                        <Icon name="group" size={16}/>Adaptado para duplas — alternar movimentos por round
+                        <Icon name="group" size={16}/>Adaptado para duplas — alternar movimentos por rodada
                       </div>
                     )}
                   </div>
@@ -992,11 +992,11 @@
                 {/* Cooldown + Adaptações */}
                 <div className="grid grid-cols-2 gap-4">
                   <div className="card p-5">
-                    <div className="flex items-center gap-2 mb-3"><Icon name="self_improvement" className="text-primary" size={18}/><h3 className="font-bold text-sm">Cooldown</h3></div>
+                    <div className="flex items-center gap-2 mb-3"><Icon name="self_improvement" className="text-primary" size={18}/><h3 className="font-bold text-sm">Volta à Calma</h3></div>
                     <p className="text-xs text-slate-400">{treino.cooldown?.descricao}</p>
                   </div>
                   <div className="card p-5">
-                    <div className="flex items-center gap-2 mb-3"><Icon name="tune" className="text-primary" size={18}/><h3 className="font-bold text-sm">Adaptações (Scaling)</h3></div>
+                    <div className="flex items-center gap-2 mb-3"><Icon name="tune" className="text-primary" size={18}/><h3 className="font-bold text-sm">Adaptações</h3></div>
                     <p className="text-xs text-slate-400 mb-1"><span className="text-slate-200 font-bold">Iniciante:</span> {treino.adaptacoes?.iniciante}</p>
                     <p className="text-xs text-slate-400"><span className="text-slate-200 font-bold">Avançado:</span> {treino.adaptacoes?.avancado}</p>
                   </div>
@@ -1322,15 +1322,15 @@
 
       const PERIODIZACAO_TEMPLATES = {
         'Preparação para competição': {
-          fases: ['Base Geral','Força Específica','Peaking','Taper'],
+          fases: ['Base Geral','Força Específica','Pico','Afinamento'],
           semanas: 12,
           gerarSemanas: () => Array.from({length:12},(_,i) => ({
             semana: i+1,
-            fase: i<3?'Base Geral':i<6?'Força Específica':i<10?'Peaking':'Taper',
+            fase: i<3?'Base Geral':i<6?'Força Específica':i<10?'Pico':'Afinamento',
             volume: [75,80,85,50,80,85,50,85,90,95,40,30][i],
             intensidade: [60,65,70,50,75,80,50,85,88,92,60,40][i],
             deload: i===3||i===6||i===10||i===11,
-            foco_semana: i<3?'Construção aeróbia + técnica LPO':i<6?'Força máxima + metcon médio':i<10?'Intensidade alta + simulação de competição':'Recuperação ativa, baixo volume',
+            foco_semana: i<3?'Construção aeróbia + técnica de LPO':i<6?'Força máxima + condicionamento médio':i<10?'Intensidade alta + simulação de competição':'Recuperação ativa, baixo volume',
           })),
         },
         'Construção de base': {
@@ -1345,16 +1345,16 @@
             foco_semana: i<3?'Padrões motores + mobilidade + cardio base':i<7?'Aumento progressivo de volume e complexidade':i<11?'Construção de força com cargas moderadas-altas':'Deload completo',
           })),
         },
-        'Hypertrophy': {
-          fases: ['Acumulação','Intensificação','Pico Volume','Deload'],
+        'Hipertrofia': {
+          fases: ['Acumulação','Intensificação','Pico de Volume','Deload'],
           semanas: 8,
           gerarSemanas: () => Array.from({length:8},(_,i) => ({
             semana: i+1,
-            fase: i<3?'Acumulação':i<6?'Intensificação':i<7?'Pico Volume':'Deload',
+            fase: i<3?'Acumulação':i<6?'Intensificação':i<7?'Pico de Volume':'Deload',
             volume: [75,80,85,50,85,90,95,45][i],
             intensidade: [60,63,65,50,70,73,75,45][i],
             deload: i===3||i===7,
-            foco_semana: i<3?'Alto volume, baixa carga (3-4 sets x 10-15 reps)':i<6?'Volume moderado, carga crescente (4-5 sets x 6-10 reps)':i<7?'Volume máximo, carga moderada':'Recuperação ativa',
+            foco_semana: i<3?'Alto volume, baixa carga (3-4 séries x 10-15 reps)':i<6?'Volume moderado, carga crescente (4-5 séries x 6-10 reps)':i<7?'Volume máximo, carga moderada':'Recuperação ativa',
           })),
         },
         'Deload/Recuperação': {
@@ -1369,16 +1369,16 @@
             foco_semana: i<2?'Mobilidade, yoga, corrida leve, técnica com PVC':'Retorno progressivo à carga normal',
           })),
         },
-        'Open Season Prep': {
-          fases: ['Base Metcon','Skill Focus','Open Simulation','Taper'],
+        'Preparação para Open': {
+          fases: ['Base Metcon','Foco Técnico','Simulação Open','Afinamento'],
           semanas: 12,
           gerarSemanas: () => Array.from({length:12},(_,i) => ({
             semana: i+1,
-            fase: i<3?'Base Metcon':i<7?'Skill Focus':i<10?'Open Simulation':'Taper',
+            fase: i<3?'Base Metcon':i<7?'Foco Técnico':i<10?'Simulação Open':'Afinamento',
             volume: [70,75,80,50,75,80,85,50,88,92,45,35][i],
             intensidade: [65,68,72,50,72,75,78,50,85,90,55,40][i],
             deload: i===3||i===7||i===10||i===11,
-            foco_semana: i<3?'Capacidade metabólica + engine building':i<7?'Movimentos técnicos (MU, HSPU, DU, Pistols)':i<10?'Simulação de WODs estilo Open, time caps reais':'Deload inteligente antes do Open',
+            foco_semana: i<3?'Capacidade metabólica + construção de motor':i<7?'Movimentos técnicos (MU, HSPU, DU, Pistols)':i<10?'Simulação de WODs estilo Open, time caps reais':'Deload inteligente antes do Open',
           })),
         },
       };
@@ -1550,7 +1550,7 @@
               <div><label className="text-sm text-slate-400 mb-1.5 block">Nome do ciclo</label><input value={form.nome} onChange={e=>setForm(f=>({...f,nome:e.target.value}))} placeholder="Ex: Macrociclo Open 2025"/></div>
               <div><label className="text-sm text-slate-400 mb-1.5 block">Objetivo</label>
                 <select value={form.objetivo} onChange={e=>setForm(f=>({...f,objetivo:e.target.value}))}>
-                  {['Preparação para competição','Construção de base','Hypertrophy','Deload/Recuperação','Open Season Prep'].map(o=><option key={o}>{o}</option>)}
+                  {['Preparação para competição','Construção de base','Hipertrofia','Deload/Recuperação','Preparação para Open'].map(o=><option key={o}>{o}</option>)}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -1558,10 +1558,10 @@
                 <div><label className="text-sm text-slate-400 mb-1.5 block">Data Fim</label><input type="date" value={form.data_fim} onChange={e=>setForm(f=>({...f,data_fim:e.target.value}))}/></div>
               </div>
               <p className="text-xs text-slate-500">
-                {form.objetivo === 'Preparação para competição' ? 'A IA irá gerar 12 semanas: Base Geral → Força Específica → Peaking → Taper. Foco em performance máxima no dia da competição.' :
-                 form.objetivo === 'Hypertrophy' ? 'A IA irá gerar 8 semanas: Acumulação → Intensificação → Pico Volume → Deload. Alto volume para hipertrofia.' :
+                {form.objetivo === 'Preparação para competição' ? 'A IA irá gerar 12 semanas: Base Geral → Força Específica → Pico → Afinamento. Foco em performance máxima no dia da competição.' :
+                 form.objetivo === 'Hipertrofia' ? 'A IA irá gerar 8 semanas: Acumulação → Intensificação → Pico de Volume → Deload. Alto volume para hipertrofia.' :
                  form.objetivo === 'Deload/Recuperação' ? 'A IA irá gerar 4 semanas de recuperação ativa com retorno gradual ao treinamento normal.' :
-                 form.objetivo === 'Open Season Prep' ? 'A IA irá gerar 12 semanas: Base Metcon → Skill Focus → Open Simulation → Taper. Foco em WODs estilo Open.' :
+                 form.objetivo === 'Preparação para Open' ? 'A IA irá gerar 12 semanas: Base Metcon → Foco Técnico → Simulação Open → Afinamento. Foco em WODs estilo Open.' :
                  'A IA irá gerar 12 semanas: Adaptação → Resistência Muscular → Força Base → Recuperação. Construção sólida de fundamentos.'}
               </p>
               <div className="flex gap-3 mt-2">
@@ -1604,7 +1604,7 @@
             {[
               {l:'Alertas Ativos', v: alertas.filter(a=>!a.resolvido).length, i:'warning', c:'text-red-400', bg:'bg-red-500/10'},
               {l:'Resolvidos', v: alertas.filter(a=>a.resolvido).length, i:'check_circle', c:'text-primary', bg:'bg-primary/10'},
-              {l:'Score Segurança', v: '74/100', i:'shield', c:'text-yellow-400', bg:'bg-yellow-500/10'},
+              {l:'Nota de Segurança', v: '74/100', i:'shield', c:'text-yellow-400', bg:'bg-yellow-500/10'},
             ].map(({l,v,i,c,bg}) => (
               <div key={l} className={`card p-5 flex items-center gap-4 ${bg} border-none`}>
                 <Icon name={i} className={c} size={28}/>
@@ -1705,9 +1705,9 @@
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               {l:'Treinos Gerados', v: treinos.length, i:'auto_awesome', d:'+8 essa semana'},
-              {l:'Taxa Retenção', v:'88.4%', i:'group', d:'-2.1% vs mês ant.'},
+              {l:'Taxa de Retenção', v:'88.4%', i:'group', d:'-2.1% vs mês ant.'},
               {l:'Sugestões Aceitas', v:'76%', i:'thumb_up', d:'IA Coach'},
-              {l:'Receita Projetada', v:'R$142k', i:'payments', d:'+5.8% MoM'},
+              {l:'Receita Projetada', v:'R$142k', i:'payments', d:'+5.8% vs mês ant.'},
             ].map(({l,v,i,d}) => (
               <div key={l} className="card p-5">
                 <div className="flex items-center justify-between mb-3">
@@ -1748,7 +1748,7 @@
             <div className="card p-6">
               <h3 className="font-display font-bold text-lg mb-5">Equilíbrio de Programação</h3>
               <div className="space-y-4">
-                {[{l:'Força & Potência',v:42},{l:'Condicionamento',v:38},{l:'Técnica & Skill',v:20}].map(({l,v}) => (
+                {[{l:'Força & Potência',v:42},{l:'Condicionamento',v:38},{l:'Técnica',v:20}].map(({l,v}) => (
                   <div key={l}>
                     <div className="flex justify-between text-sm mb-1.5"><span>{l}</span><span className="text-primary font-bold">{v}%</span></div>
                     <div className="progress-bar"><div className="progress-fill" style={{width:`${v}%`}}/></div>
@@ -1777,7 +1777,7 @@
                   </div>
                 ))}
               </div>
-              <button onClick={() => setPage('estrategico')} className="mt-4 w-full btn-ghost rounded-lg py-2 text-sm">Ver Todos os Insights</button>
+              <button onClick={() => setPage('estrategico')} className="mt-4 w-full btn-ghost rounded-lg py-2 text-sm">Ver Todas as Recomendações</button>
             </div>
           </div>
         </div>
@@ -1789,7 +1789,7 @@
       <div className="p-8 space-y-6 fade-in">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            {l:'Volume Mensal', v:'2.480 check-ins', d:'+12.5%', pos:true},
+            {l:'Volume Mensal', v:'2.480 acessos', d:'+12.5%', pos:true},
             {l:'Taxa de Retenção', v:'88.4%', d:'-2.1%', pos:false},
             {l:'Receita Projetada', v:'R$ 142.500', d:'+5.8%', pos:true},
           ].map(({l,v,d,pos}) => (
@@ -1805,7 +1805,7 @@
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="card p-6">
-            <h3 className="font-display font-bold text-lg mb-4">Benchmarking Local (IA)</h3>
+            <h3 className="font-display font-bold text-lg mb-4">Comparativo Local (IA)</h3>
             <p className="text-slate-400 text-sm mb-5">Comparativo com boxes em raio de 5km</p>
             {[
               {l:'Ticket Médio',v:'+R$45,00',i:'expand_less',pos:true},
@@ -1832,7 +1832,7 @@
                 {i:'trending_up',t:'Expansão de Hyrox',d:'Demanda crescente às 18h. Aumentar grade em 20%.'},
                 {i:'balance',t:'Rebalancear Programação',d:'Peso superou condicionamento nas últimas 3 semanas.'},
                 {i:'group',t:'Campanha de Reengajamento',d:'23 alunos com padrão de evasão identificado.'},
-                {i:'school',t:'Workshop de Movimento',d:'Skill técnico abaixo da média — sugestão de evento.'},
+                {i:'school',t:'Oficina de Movimento',d:'Técnica abaixo da média — sugestão de evento.'},
               ].map(({i,t,d}) => (
                 <div key={t} className="flex gap-3 p-3 rounded-lg bg-bg-dark hover:bg-primary/5 transition-colors cursor-pointer">
                   <Icon name={i} className="text-primary shrink-0 mt-0.5" size={16}/>
@@ -1869,11 +1869,11 @@
                     <p className="text-sm text-slate-400">{u.email}</p>
                   </div>
                   <span className={`tag ml-auto ${u.perfil==='head_coach'?'tag-green':'tag-blue'}`}>
-                    {u.perfil==='head_coach'?'Head Coach':'Dono'}
+                    {u.perfil==='head_coach'?'Head Coach':'Proprietário'}
                   </span>
                 </div>
                 <div className="grid grid-cols-3 gap-3">
-                  {[{l:'Treinos',v:'24'},{l:'Sugestões Aceitas',v:'78%'},{l:'Score IA',v:'8.7'}].map(({l,v}) => (
+                  {[{l:'Treinos',v:'24'},{l:'Sugestões Aceitas',v:'78%'},{l:'Nota IA',v:'8.7'}].map(({l,v}) => (
                     <div key={l} className="text-center p-3 rounded-lg bg-bg-dark">
                       <p className="font-display font-bold text-lg text-primary">{v}</p>
                       <p className="text-xs text-slate-400 mt-0.5">{l}</p>
@@ -1943,7 +1943,7 @@
 
     // ─── App Root ──────────────────────────────────────────────────────────────
     const App = () => {
-      const defaultUser = { id: COACH_ID, nome: 'Coach Demo', email: 'coach@crossfititron.com', perfil: 'head_coach', academia_id: ACADEMIA_ID };
+      const defaultUser = { id: COACH_ID, nome: 'Coach Demonstração', email: 'coach@crossfititron.com', perfil: 'head_coach', academia_id: ACADEMIA_ID };
       const [user, setUser] = useState(defaultUser);
       const [page, setPage] = useState('dashboard');
       const [academia, setAcademia] = useState(null);
@@ -1985,13 +1985,13 @@
       };
 
       const titleMap = {
-        dashboard: ['Dashboard', isCoach ? 'Visão geral do dia e performance' : 'Métricas e gestão da academia'],
+        dashboard: ['Painel', isCoach ? 'Visão geral do dia e desempenho' : 'Métricas e gestão da academia'],
         gerar: ['Gerar Treino', 'Inteligência artificial para criar sessões otimizadas'],
         analise: ['Análise de Programação', 'Estatísticas detalhadas da programação'],
         periodizacao: ['Periodização', 'Planejamento estratégico de macrociclos'],
         seguranca: ['Verificação de Segurança', 'Auditoria de segurança e riscos da semana'],
-        estrategico: ['Visão Estratégica', 'Insights de IA para gestão do negócio'],
-        coaches: ['Gestão de Coaches', 'Performance e métricas dos professores'],
+        estrategico: ['Visão Estratégica', 'Recomendações de IA para gestão do negócio'],
+        coaches: ['Gestão de Professores', 'Desempenho e métricas dos coaches'],
         configuracoes: ['Configurações', 'Perfil e dados da academia'],
       };
 
