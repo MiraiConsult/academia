@@ -157,9 +157,16 @@
       };
 
       const quickLogin = async (perfil) => {
-        const emailMap = { head_coach: 'coach@crossfititron.com', dono: 'dono@crossfititron.com' };
-        const { data } = await sb.from('usuarios').select('*').eq('email', emailMap[perfil]).single();
-        if (data) onLogin(data);
+        setLoading(true); setErr('');
+        try {
+          const emailMap = { head_coach: 'coach@crossfititron.com', dono: 'dono@crossfititron.com' };
+          const { data, error } = await sb.from('usuarios').select('*').eq('email', emailMap[perfil]).single();
+          if (error || !data) { setErr('Usuário demo não encontrado. Verifique se o banco de dados está configurado.'); setLoading(false); return; }
+          onLogin(data);
+        } catch (e) {
+          setErr('Erro ao conectar. Tente novamente.');
+        }
+        setLoading(false);
       };
 
       return (
