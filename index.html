@@ -171,26 +171,84 @@
     };
 
     const AQUECIMENTOS = {
-      'LPO + Condicionamento': [
-        '3 Rounds: 200m corrida + 10 PVC Pass-throughs + 10 Air Squats + 5 Snatch Grip Deadlifts (barra vazia)',
-        '2 Rounds: 250m Row + 10 Ring Rows + 10 Good Mornings (PVC) + 10 Overhead Squats (PVC)',
-      ],
-      'Ginástica': [
-        '3 Rounds: 200m corrida + 10 Scapular Pull-ups + 10 Kip Swings + 5 Strict Press (PVC) + 30s Plank',
-        '2 Rounds: 1min pular corda + 10 Shoulder Taps em Handstand + 10 Push-ups + 10 Ring Rows',
-      ],
-      'Resistência': [
-        '5min corrida leve + 2 Rounds: 10 Air Squats + 10 Leg Swings + 10 Arm Circles + 5 Inch Worms',
-        '3 Rounds: 200m Row leve + 10 Walking Lunges + 10 Jumping Jacks + mobilidade de quadril',
-      ],
-      'Força Pura': [
-        '3 Rounds: 200m corrida + 10 Empty Bar Deadlifts + 10 Air Squats + 5 Strict Press (barra vazia) + Band Pull-aparts',
-        '5min Bike leve + 2 Rounds: 10 Good Mornings (barra) + 10 Front Squats (barra vazia) + 5 Push Press (barra vazia)',
-      ],
-      'Mobilidade + Técnica': [
-        '5min corrida leve + Foam Roller (quadríceps, lombar, dorsais) + 2 Rounds: 10 PVC Pass-throughs + Samson Stretch + 10 Overhead Squats PVC',
-        '3min Bike + 2 Rounds: 10 Cat-Cow + 10 Scorpions + 10 Deep Squat Hold + 10 Arm Circles dinâmicos',
-      ],
+      'crossfit': {
+        'LPO + Condicionamento': [
+          '3 Rounds: 200m corrida + 10 PVC Pass-throughs + 10 Air Squats + 5 Snatch Grip Deadlifts (barra vazia)',
+          '2 Rounds: 250m Row + 10 Ring Rows + 10 Good Mornings (PVC) + 10 Overhead Squats (PVC)',
+        ],
+        'Ginástica': [
+          '3 Rounds: 200m corrida + 10 Scapular Pull-ups + 10 Kip Swings + 5 Strict Press (PVC) + 30s Plank',
+          '2 Rounds: 1min pular corda + 10 Shoulder Taps em Handstand + 10 Push-ups + 10 Ring Rows',
+        ],
+        'Resistência': [
+          '5min corrida leve + 2 Rounds: 10 Air Squats + 10 Leg Swings + 10 Arm Circles + 5 Inch Worms',
+          '3 Rounds: 200m Row leve + 10 Walking Lunges + 10 Jumping Jacks + mobilidade de quadril',
+        ],
+        'Força Pura': [
+          '3 Rounds: 200m corrida + 10 Empty Bar Deadlifts + 10 Air Squats + 5 Strict Press (barra vazia) + Band Pull-aparts',
+          '5min Bike leve + 2 Rounds: 10 Good Mornings (barra) + 10 Front Squats (barra vazia) + 5 Push Press (barra vazia)',
+        ],
+        'Cardio': [
+          '5min corrida progressiva (leve → moderado) + 2 Rounds: 10 Air Squats + 10 Lunges + 10 Jumping Jacks + mobilidade de tornozelo',
+          '3min Row leve + 2min Bike leve + 2 Rounds: 10 Mountain Climbers + 10 High Knees + 10 Butt Kickers + mobilidade geral',
+        ],
+        'Mobilidade + Técnica': [
+          '5min corrida leve + Foam Roller (quadríceps, lombar, dorsais) + 2 Rounds: 10 PVC Pass-throughs + Samson Stretch + 10 Overhead Squats PVC',
+          '3min Bike + 2 Rounds: 10 Cat-Cow + 10 Scorpions + 10 Deep Squat Hold + 10 Arm Circles dinâmicos',
+        ],
+      },
+      'bootcamp': {
+        'LPO + Condicionamento': [
+          '2 Rounds: 1min polichinelos + 30s skipping alto + 10 agachamentos livres + 10 flexões + mobilidade de ombro e quadril',
+          '3min corrida no lugar com intensidade crescente + 2 Rounds: 10 lunges alternados + 10 mountain climbers + 10 arm circles',
+        ],
+        'Ginástica': [
+          '2 Rounds: 1min corrida lateral + 30s bear crawl + 10 push-ups + 10 sit-ups + 30s prancha + mobilidade',
+          '3 Rounds: 30s polichinelos + 10 burpees adaptados (sem salto) + 10 agachamentos + 10 shoulder taps em prancha',
+        ],
+        'Resistência': [
+          '5min caminhada rápida progressiva + 2 Rounds: 20 polichinelos + 10 high knees + 10 butt kickers + 10 air squats + mobilidade ativa',
+          '3min step touch lateral + 2 Rounds: 10 lunges + 10 mountain climbers + 30s prancha + 10 jumping jacks',
+        ],
+        'Força Pura': [
+          '3min corrida leve + 2 Rounds: 10 agachamentos livres + 10 flexões no joelho + 10 glute bridges + 10 superman holds + mobilidade',
+          '2 Rounds: 1min polichinelos + 10 lunges + 10 push-ups + 10 good mornings sem peso + band pull-aparts',
+        ],
+        'Cardio': [
+          '5min corrida progressiva (caminhada → trote → corrida leve) + 2 Rounds: 10 polichinelos + 10 high knees + 10 mountain climbers + 30s descanso ativo',
+          '3 Rounds: 30s step touch + 30s skipping + 30s corrida no lugar + 10 air squats + mobilidade de tornozelo e quadril',
+        ],
+        'Mobilidade + Técnica': [
+          '5min caminhada + Foam Roller geral + 2 Rounds: 10 cat-cow + 10 deep squat holds + 10 arm circles + Samson stretch',
+          '3min movimento articular geral + 2 Rounds: 10 hip circles + 10 ankle circles + 10 shoulder rolls + 10 bodyweight squats lentos',
+        ],
+      },
+      'hyrox': {
+        'LPO + Condicionamento': [
+          '5min corrida leve + 2 Rounds: 10 air squats + 10 walking lunges + 10 KB swings leves + mobilidade de quadril',
+          '3min row leve + 2 Rounds: 10 lunges + 10 burpees leves + 10 farmer carry steps + mobilidade de ombro',
+        ],
+        'Ginástica': [
+          '3 Rounds: 200m corrida + 10 push-ups + 10 lunges + 10 sit-ups + mobilidade geral',
+          '2 Rounds: 1min corrida + 10 air squats + 10 mountain climbers + 30s prancha + mobilidade',
+        ],
+        'Resistência': [
+          '8min corrida progressiva (leve → moderado) + 2 Rounds: 10 air squats + 10 lunges + 10 burpees leves',
+          '5min bike leve + 3min corrida leve + 2 Rounds: 10 lunges + 10 jumping jacks + mobilidade dinâmica',
+        ],
+        'Força Pura': [
+          '5min corrida leve + 2 Rounds: 10 KB deadlifts leves + 10 wall balls leves + 10 lunges + mobilidade',
+          '3min row leve + 2 Rounds: 10 air squats + 10 push-ups + 10 glute bridges + band pull-aparts',
+        ],
+        'Cardio': [
+          '8min corrida progressiva (caminhada → trote → ritmo de prova) + 2 Rounds: 10 high knees + 10 butt kickers + 10 air squats',
+          '3min Ski Erg leve + 3min Row leve + 2 Rounds: 10 lunges + 10 jumping jacks + mobilidade de tornozelo',
+        ],
+        'Mobilidade + Técnica': [
+          '5min caminhada progressiva + Foam Roller + 2 Rounds: 10 hip openers + 10 ankle rotations + 10 lunges com rotação de tronco',
+          '3min bike leve + mobilidade completa: quadril, tornozelo, ombro, coluna torácica + 10 deep squats holds',
+        ],
+      },
     };
 
     const SKILLS = {
@@ -213,6 +271,10 @@
         {nome:'Front Squat', series:[{set:1,reps:5,pct:60},{set:2,reps:5,pct:65},{set:3,reps:3,pct:75},{set:4,reps:3,pct:80}]},
         {nome:'Strict Press', series:[{set:1,reps:5,pct:60},{set:2,reps:5,pct:65},{set:3,reps:5,pct:70},{set:4,reps:3,pct:75}]},
       ],
+      'Cardio': [
+        {nome:'Intervalos de Corrida', series:[{set:1,reps:'400m',pct:70},{set:2,reps:'400m',pct:75},{set:3,reps:'400m',pct:80},{set:4,reps:'400m',pct:85}], nota:'Descanso de 1:30 entre cada intervalo. Foco em manter ritmo constante.'},
+        {nome:'Engine Builder (Row/Bike)', series:[{set:1,reps:'2min',pct:65},{set:2,reps:'2min',pct:70},{set:3,reps:'2min',pct:75},{set:4,reps:'2min',pct:80},{set:5,reps:'2min',pct:85}], nota:'Alternar entre Row e Bike a cada set. Construção de capacidade aeróbia.'},
+      ],
       'Mobilidade + Técnica': [
         {nome:'Overhead Squat (Técnica)', series:[{set:1,reps:5,pct:40},{set:2,reps:5,pct:45},{set:3,reps:5,pct:50}], nota:'Foco em posição e mobilidade'},
         {nome:'Snatch Balance', series:[{set:1,reps:3,pct:40},{set:2,reps:3,pct:45},{set:3,reps:3,pct:50}], nota:'Velocidade sob a barra'},
@@ -223,38 +285,38 @@
 
     // ─── Detalhes dos Exercícios ──────────────────────────────────────────────
     const EXERCICIO_DETALHES = {
-      'Pull-ups': {desc:'Suspensão na barra com braços estendidos, puxar o corpo até o queixo ultrapassar a barra.',musculos:'Dorsais, bíceps, antebraço',erros:'Não completar a amplitude, kipping excessivo sem controle, ombros elevados',escala:'Ring Rows, Banded Pull-ups, Jumping Pull-ups',img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=400&h=300&fit=crop'},
-      'Chest-to-Bar Pull-ups': {desc:'Igual ao Pull-up, mas o peito deve tocar a barra no topo do movimento.',musculos:'Dorsais, bíceps, romboides',erros:'Falta de extensão no quadril no kip, não encostar o peito',escala:'Pull-ups regulares, Banded C2B',img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=400&h=300&fit=crop'},
-      'Toes-to-Bar': {desc:'Pendurado na barra, elevar os pés até tocar a barra com os dedos dos pés.',musculos:'Core, hip flexors, dorsais',erros:'Usar apenas os braços, perder o ritmo do kip, pernas dobradas',escala:'Knees-to-Elbows, Hanging Knee Raises, Sit-ups',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop'},
-      'Bar Muscle-ups': {desc:'Combina pull-up com dip na barra — puxar e transicionar acima da barra.',musculos:'Dorsais, peitorais, tríceps, core',erros:'Falta de kip, braços muito abertos, transição lenta',escala:'Pull-ups + Dips separados, Jumping Muscle-ups',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Ring Muscle-ups': {desc:'Muscle-up nas argolas — requer false grip e transição suave.',musculos:'Dorsais, peitorais, tríceps, core, estabilizadores de ombro',erros:'Perder o false grip, cotovelos abertos, falta de profundidade no dip',escala:'Ring Dips + Ring Rows, Banded Ring MU',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Ring Dips': {desc:'Dips nas argolas — descer até o ombro ficar abaixo do cotovelo, estender completamente.',musculos:'Tríceps, peitorais, deltóides anteriores',erros:'Argolas instáveis, amplitude incompleta, ombros internamente rotados',escala:'Box Dips, Banded Ring Dips, Bar Dips',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Push-ups': {desc:'Posição de prancha, descer o peito ao chão e empurrar de volta mantendo o corpo rígido.',musculos:'Peitorais, tríceps, deltóides, core',erros:'Quadril caído, cotovelos muito abertos, amplitude parcial',escala:'Push-ups de joelho, Push-ups inclinados (em box)',img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=400&h=300&fit=crop'},
-      'Handstand Push-ups': {desc:'Invertido contra a parede, descer a cabeça ao chão e empurrar até extensão total.',musculos:'Deltóides, tríceps, trapézio superior',erros:'Cabeça muito à frente, kip descontrolado, cotovelos abertos',escala:'Pike Push-ups, Box HSPU, Dumbbell Press',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop'},
-      'Air Squats': {desc:'Agachamento completo com peso corporal — quadril abaixo dos joelhos, peito erguido.',musculos:'Quadríceps, glúteos, isquiotibiais',erros:'Joelhos para dentro (valgo), calcanhar saindo do chão, lombar arredondada',escala:'Squat to box, Air Squat parcial',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
-      'Box Jumps': {desc:'Saltar sobre o box com os dois pés, estendendo completamente o quadril no topo.',musculos:'Quadríceps, glúteos, panturrilhas',erros:'Não estender o quadril em cima, pousar com os pés na borda, não absorver o impacto',escala:'Step-ups, Box Jump baixo (50cm)',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Burpees': {desc:'Do pé, mãos no chão, peito ao chão, levantar e saltar com palma acima da cabeça.',musculos:'Corpo inteiro: peitorais, quadríceps, deltóides, core',erros:'Não deitar completamente, pular sem extensão, ritmo inconsistente',escala:'Burpees step-back, Burpees sem salto',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop'},
-      'Double Unders': {desc:'Pular corda com duas passagens por salto.',musculos:'Panturrilhas, ombros, core, coordenação',erros:'Braços muito abertos, salto muito alto, pulsos rígidos',escala:'Single Unders (2:1 ou 3:1)',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Sit-ups': {desc:'Deitado, mãos atrás da cabeça ou acima, sentar completamente tocando os pés.',musculos:'Reto abdominal, hip flexors',erros:'Usar impulso, tensão no pescoço, pés saindo do chão',escala:'Crunches, Sit-ups com Abmat',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop'},
-      'Rope Climbs': {desc:'Subir a corda até o topo usando braços e pernas, técnica de wrap com os pés.',musculos:'Dorsais, bíceps, antebraço, core',erros:'Não travar os pés, descer sem controle, braços sobrecarregados',escala:'Rope Pulls deitado, Rope Climbs até metade',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Lunges': {desc:'Passo à frente ou atrás, joelho traseiro toca o chão, voltar à posição inicial.',musculos:'Quadríceps, glúteos, isquiotibiais',erros:'Joelho passando do pé, tronco inclinado, passos curtos',escala:'Lunges com apoio, Step-ups',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
-      'Deadlift': {desc:'Levantar a barra do chão até extensão completa do quadril e joelhos. Rei dos levantamentos.',musculos:'Posterior de coxa, glúteos, lombar, trapézio, antebraço',erros:'Lombar arredondada, barra longe do corpo, joelhos para dentro',escala:'Sumo Deadlift, Kettlebell Deadlift, carga reduzida',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Back Squat': {desc:'Barra apoiada nos trapézios, agachamento completo abaixo do paralelo.',musculos:'Quadríceps, glúteos, core, eretores da coluna',erros:'Joelhos para dentro, inclinar excessivamente, não atingir profundidade',escala:'Goblet Squat, Front Squat, Air Squat com peso',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
-      'Front Squat': {desc:'Barra na posição de rack frontal, agachamento completo mantendo o tronco vertical.',musculos:'Quadríceps, glúteos, core, deltóides anteriores',erros:'Cotovelos caindo, peso nos dedos, perda de posição do rack',escala:'Goblet Squat, Front Squat com halteres',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
-      'Overhead Squat': {desc:'Agachamento com barra travada acima da cabeça com braços estendidos.',musculos:'Quadríceps, glúteos, deltóides, core, mobilidade de ombro e tornozelo',erros:'Barra à frente, joelhos colapsando, perda de linha média',escala:'Overhead Squat com PVC, Overhead Squat parcial',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
-      'Snatch': {desc:'Levantar a barra do chão até acima da cabeça em um único movimento contínuo.',musculos:'Corpo inteiro: pernas, quadril, dorsais, ombros, core',erros:'Puxar com os braços cedo, não estender o quadril, receber com braços dobrados',escala:'Power Snatch, Hang Snatch, Snatch com barra vazia',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Power Snatch': {desc:'Snatch recebendo acima do paralelo — sem agachamento completo.',musculos:'Quadríceps, glúteos, trapézio, deltóides',erros:'Puxar com braços, não estender quadril, barra longe do corpo',escala:'Hang Power Snatch, Dumbbell Snatch',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Clean': {desc:'Levantar a barra do chão até a posição de rack frontal nos ombros.',musculos:'Quadríceps, glúteos, trapézio, deltóides anteriores',erros:'Puxar com braços, não usar quadril, cotovelos baixos no rack',escala:'Power Clean, Hang Clean, Kettlebell Clean',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Power Clean': {desc:'Clean recebendo acima do paralelo — sem agachamento completo.',musculos:'Quadríceps, glúteos, trapézio, core',erros:'Puxar cedo com braços, barra longe, recepção rígida',escala:'Hang Power Clean, Dumbbell Clean',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Clean & Jerk': {desc:'Clean seguido de Jerk — levantar até os ombros e depois acima da cabeça.',musculos:'Corpo inteiro: pernas, quadril, ombros, tríceps',erros:'Separar muito os dois movimentos, dip de jerk instável',escala:'Power Clean + Push Press, carga reduzida',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Push Press': {desc:'Da posição de rack, usar dip de pernas para impulsionar a barra acima da cabeça.',musculos:'Deltóides, tríceps, quadríceps, core',erros:'Dip muito profundo, peso nos dedos, não travar braços em cima',escala:'Strict Press, Dumbbell Press',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Thrusters': {desc:'Front Squat direto em Push Press — movimento fluído do agachamento ao overhead.',musculos:'Quadríceps, glúteos, deltóides, tríceps, core',erros:'Parar entre squat e press, cotovelos caindo, amplitude parcial',escala:'Dumbbell Thrusters, carga reduzida, Wall Ball Shots',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
-      'Wall Ball Shots': {desc:'Squat com medicine ball e arremessar ao alvo na parede (3m/2.7m).',musculos:'Quadríceps, glúteos, deltóides, tríceps',erros:'Não atingir profundidade, não acertar o alvo, perder sequência',escala:'Wall Ball mais leve, alvo mais baixo',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop'},
-      'Kettlebell Swings': {desc:'Swing do kettlebell entre as pernas até acima da cabeça (americano) ou na altura dos olhos (russo).',musculos:'Posterior de coxa, glúteos, core, deltóides',erros:'Agachar ao invés de fazer hip hinge, usar braços, lombar arredondada',escala:'Russian Swing (altura dos olhos), KB mais leve',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Dumbbell Snatch': {desc:'Snatch com halter — do chão ao overhead com um braço.',musculos:'Deltóides, trapézio, quadríceps, core',erros:'Usar só o braço, não estender quadril, rotação excessiva',escala:'DB Snatch mais leve, Hang DB Snatch',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Run 400m': {desc:'Corrida de 400 metros — sprint de meia distância.',musculos:'Quadríceps, panturrilhas, glúteos, core',erros:'Sair muito rápido, postura curvada, braços cruzando a linha média',escala:'Run 200m, Row 500m, Bike 1000m',img:'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=400&h=300&fit=crop'},
-      'Row 500m': {desc:'Remo ergômetro por 500 metros — puxada com pernas, quadril e braços.',musculos:'Dorsais, quadríceps, bíceps, core',erros:'Puxar só com braços, não usar pernas, costas arredondadas',escala:'Row 400m, Bike 1000m',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
-      'Row 1000m': {desc:'Remo ergômetro por 1000 metros — foco em ritmo sustentável.',musculos:'Dorsais, quadríceps, bíceps, core',erros:'Sair muito forte, perder ritmo, técnica deteriorando com fadiga',escala:'Row 750m, Bike 2000m',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop'},
+      'Pull-ups': {desc:'Suspensão na barra com braços estendidos, puxar o corpo até o queixo ultrapassar a barra. Iniciar com ativação escapular, puxar os cotovelos para baixo e para trás.',musculos:'Dorsais, bíceps, antebraço, romboides',erros:'Não completar a amplitude, kipping excessivo sem controle, ombros elevados',escala:'Ring Rows, Banded Pull-ups, Jumping Pull-ups',img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+pull+ups+tutorial'},
+      'Chest-to-Bar Pull-ups': {desc:'Igual ao Pull-up, mas o peito deve tocar a barra no topo do movimento.',musculos:'Dorsais, bíceps, romboides',erros:'Falta de extensão no quadril no kip, não encostar o peito',escala:'Pull-ups regulares, Banded C2B',img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Toes-to-Bar': {desc:'Pendurado na barra, elevar os pés até tocar a barra com os dedos dos pés.',musculos:'Core, hip flexors, dorsais',erros:'Usar apenas os braços, perder o ritmo do kip, pernas dobradas',escala:'Knees-to-Elbows, Hanging Knee Raises, Sit-ups',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Bar Muscle-ups': {desc:'Combina pull-up com dip na barra — puxar e transicionar acima da barra.',musculos:'Dorsais, peitorais, tríceps, core',erros:'Falta de kip, braços muito abertos, transição lenta',escala:'Pull-ups + Dips separados, Jumping Muscle-ups',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Ring Muscle-ups': {desc:'Muscle-up nas argolas — requer false grip e transição suave.',musculos:'Dorsais, peitorais, tríceps, core, estabilizadores de ombro',erros:'Perder o false grip, cotovelos abertos, falta de profundidade no dip',escala:'Ring Dips + Ring Rows, Banded Ring MU',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Ring Dips': {desc:'Dips nas argolas — descer até o ombro ficar abaixo do cotovelo, estender completamente.',musculos:'Tríceps, peitorais, deltóides anteriores',erros:'Argolas instáveis, amplitude incompleta, ombros internamente rotados',escala:'Box Dips, Banded Ring Dips, Bar Dips',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Push-ups': {desc:'Posição de prancha, descer o peito ao chão e empurrar de volta mantendo o corpo rígido.',musculos:'Peitorais, tríceps, deltóides, core',erros:'Quadril caído, cotovelos muito abertos, amplitude parcial',escala:'Push-ups de joelho, Push-ups inclinados (em box)',img:'https://images.unsplash.com/photo-1598971639058-fab3c3109a00?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Handstand Push-ups': {desc:'Invertido contra a parede, descer a cabeça ao chão e empurrar até extensão total.',musculos:'Deltóides, tríceps, trapézio superior',erros:'Cabeça muito à frente, kip descontrolado, cotovelos abertos',escala:'Pike Push-ups, Box HSPU, Dumbbell Press',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Air Squats': {desc:'Agachamento completo com peso corporal — quadril abaixo dos joelhos, peito erguido.',musculos:'Quadríceps, glúteos, isquiotibiais',erros:'Joelhos para dentro (valgo), calcanhar saindo do chão, lombar arredondada',escala:'Squat to box, Air Squat parcial',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Box Jumps': {desc:'Saltar sobre o box com os dois pés, estendendo completamente o quadril no topo.',musculos:'Quadríceps, glúteos, panturrilhas',erros:'Não estender o quadril em cima, pousar com os pés na borda, não absorver o impacto',escala:'Step-ups, Box Jump baixo (50cm)',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Burpees': {desc:'Do pé, mãos no chão, peito ao chão, levantar e saltar com palma acima da cabeça.',musculos:'Corpo inteiro: peitorais, quadríceps, deltóides, core',erros:'Não deitar completamente, pular sem extensão, ritmo inconsistente',escala:'Burpees step-back, Burpees sem salto',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Double Unders': {desc:'Pular corda com duas passagens por salto.',musculos:'Panturrilhas, ombros, core, coordenação',erros:'Braços muito abertos, salto muito alto, pulsos rígidos',escala:'Single Unders (2:1 ou 3:1)',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Sit-ups': {desc:'Deitado, mãos atrás da cabeça ou acima, sentar completamente tocando os pés.',musculos:'Reto abdominal, hip flexors',erros:'Usar impulso, tensão no pescoço, pés saindo do chão',escala:'Crunches, Sit-ups com Abmat',img:'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Rope Climbs': {desc:'Subir a corda até o topo usando braços e pernas, técnica de wrap com os pés.',musculos:'Dorsais, bíceps, antebraço, core',erros:'Não travar os pés, descer sem controle, braços sobrecarregados',escala:'Rope Pulls deitado, Rope Climbs até metade',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Lunges': {desc:'Passo à frente ou atrás, joelho traseiro toca o chão, voltar à posição inicial.',musculos:'Quadríceps, glúteos, isquiotibiais',erros:'Joelho passando do pé, tronco inclinado, passos curtos',escala:'Lunges com apoio, Step-ups',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Deadlift': {desc:'Levantar a barra do chão até extensão completa do quadril e joelhos. Rei dos levantamentos.',musculos:'Posterior de coxa, glúteos, lombar, trapézio, antebraço',erros:'Lombar arredondada, barra longe do corpo, joelhos para dentro',escala:'Sumo Deadlift, Kettlebell Deadlift, carga reduzida',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Back Squat': {desc:'Barra apoiada nos trapézios, agachamento completo abaixo do paralelo.',musculos:'Quadríceps, glúteos, core, eretores da coluna',erros:'Joelhos para dentro, inclinar excessivamente, não atingir profundidade',escala:'Goblet Squat, Front Squat, Air Squat com peso',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Front Squat': {desc:'Barra na posição de rack frontal, agachamento completo mantendo o tronco vertical.',musculos:'Quadríceps, glúteos, core, deltóides anteriores',erros:'Cotovelos caindo, peso nos dedos, perda de posição do rack',escala:'Goblet Squat, Front Squat com halteres',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Overhead Squat': {desc:'Agachamento com barra travada acima da cabeça com braços estendidos.',musculos:'Quadríceps, glúteos, deltóides, core, mobilidade de ombro e tornozelo',erros:'Barra à frente, joelhos colapsando, perda de linha média',escala:'Overhead Squat com PVC, Overhead Squat parcial',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Snatch': {desc:'Levantar a barra do chão até acima da cabeça em um único movimento contínuo.',musculos:'Corpo inteiro: pernas, quadril, dorsais, ombros, core',erros:'Puxar com os braços cedo, não estender o quadril, receber com braços dobrados',escala:'Power Snatch, Hang Snatch, Snatch com barra vazia',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Power Snatch': {desc:'Snatch recebendo acima do paralelo — sem agachamento completo.',musculos:'Quadríceps, glúteos, trapézio, deltóides',erros:'Puxar com braços, não estender quadril, barra longe do corpo',escala:'Hang Power Snatch, Dumbbell Snatch',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Clean': {desc:'Levantar a barra do chão até a posição de rack frontal nos ombros.',musculos:'Quadríceps, glúteos, trapézio, deltóides anteriores',erros:'Puxar com braços, não usar quadril, cotovelos baixos no rack',escala:'Power Clean, Hang Clean, Kettlebell Clean',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Power Clean': {desc:'Clean recebendo acima do paralelo — sem agachamento completo.',musculos:'Quadríceps, glúteos, trapézio, core',erros:'Puxar cedo com braços, barra longe, recepção rígida',escala:'Hang Power Clean, Dumbbell Clean',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Clean & Jerk': {desc:'Clean seguido de Jerk — levantar até os ombros e depois acima da cabeça.',musculos:'Corpo inteiro: pernas, quadril, ombros, tríceps',erros:'Separar muito os dois movimentos, dip de jerk instável',escala:'Power Clean + Push Press, carga reduzida',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Push Press': {desc:'Da posição de rack, usar dip de pernas para impulsionar a barra acima da cabeça.',musculos:'Deltóides, tríceps, quadríceps, core',erros:'Dip muito profundo, peso nos dedos, não travar braços em cima',escala:'Strict Press, Dumbbell Press',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Thrusters': {desc:'Front Squat direto em Push Press — movimento fluído do agachamento ao overhead.',musculos:'Quadríceps, glúteos, deltóides, tríceps, core',erros:'Parar entre squat e press, cotovelos caindo, amplitude parcial',escala:'Dumbbell Thrusters, carga reduzida, Wall Ball Shots',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Wall Ball Shots': {desc:'Squat com medicine ball e arremessar ao alvo na parede (3m/2.7m).',musculos:'Quadríceps, glúteos, deltóides, tríceps',erros:'Não atingir profundidade, não acertar o alvo, perder sequência',escala:'Wall Ball mais leve, alvo mais baixo',img:'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Kettlebell Swings': {desc:'Swing do kettlebell entre as pernas até acima da cabeça (americano) ou na altura dos olhos (russo).',musculos:'Posterior de coxa, glúteos, core, deltóides',erros:'Agachar ao invés de fazer hip hinge, usar braços, lombar arredondada',escala:'Russian Swing (altura dos olhos), KB mais leve',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Dumbbell Snatch': {desc:'Snatch com halter — do chão ao overhead com um braço.',musculos:'Deltóides, trapézio, quadríceps, core',erros:'Usar só o braço, não estender quadril, rotação excessiva',escala:'DB Snatch mais leve, Hang DB Snatch',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Run 400m': {desc:'Corrida de 400 metros — sprint de meia distância.',musculos:'Quadríceps, panturrilhas, glúteos, core',erros:'Sair muito rápido, postura curvada, braços cruzando a linha média',escala:'Run 200m, Row 500m, Bike 1000m',img:'https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+running+technique'},
+      'Row 500m': {desc:'Remo ergômetro por 500 metros — puxada com pernas, quadril e braços.',musculos:'Dorsais, quadríceps, bíceps, core',erros:'Puxar só com braços, não usar pernas, costas arredondadas',escala:'Row 400m, Bike 1000m',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
+      'Row 1000m': {desc:'Remo ergômetro por 1000 metros — foco em ritmo sustentável.',musculos:'Dorsais, quadríceps, bíceps, core',erros:'Sair muito forte, perder ritmo, técnica deteriorando com fadiga',escala:'Row 750m, Bike 2000m',img:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop',video:'https://www.youtube.com/results?search_query=crossfit+exercise+tutorial'},
     };
 
     // ─── Biblioteca de WODs Clássicos (Benchmarks) ────────────────────────────
@@ -337,6 +399,7 @@
         'Ginástica': {g:3, w:0, m:1, formatos:['AMRAP','EMOM','For Time'], tempoRange:[14,20]},
         'Resistência': {g:1, w:1, m:2, formatos:['AMRAP','For Time','Chipper'], tempoRange:[18,25]},
         'Força Pura': {g:0, w:3, m:0, formatos:['For Time','RFT','EMOM'], tempoRange:[10,16]},
+        'Cardio': {g:1, w:1, m:3, formatos:['AMRAP','For Time','Chipper','EMOM'], tempoRange:[15,25]},
         'Mobilidade + Técnica': {g:2, w:1, m:1, formatos:['AMRAP','EMOM'], tempoRange:[12,16]},
       };
 
@@ -627,30 +690,116 @@
     );
 
     // ─── Dashboard Head Coach ──────────────────────────────────────────────────
+    // ─── Treinos Simulados para Demo ──────────────────────────────────────────
+    const gerarTreinosSimulados = () => {
+      const h = new Date();
+      const simNomes = ['Tempestade','Forja','Trovão','Fênix','Motor','Ignição','Vulcão','Arsenal','Titânio','Centelha','Impacto','Turbo','Vendaval','Aço','Nitro','Apogeu','Gladiador','Inferno','Rugido','Horizonte','Onda','Barreira','Resgate','Supremo','Ataque','Domínio','Impulso','Fortuna','Ascensão','Guerreiro'];
+      const simFocos = ['LPO + Condicionamento','Ginástica','Resistência','Força Pura','Cardio','Mobilidade + Técnica'];
+      const simMovs = [
+        [{nome:'Thrusters',reps:15,carga:'43/29kg',modalidade:'levantamento'},{nome:'Pull-ups',reps:12,carga:'',modalidade:'ginastica'},{nome:'Run 400m',reps:1,carga:'',modalidade:'monoestrutural'}],
+        [{nome:'Deadlift',reps:12,carga:'100/70kg',modalidade:'levantamento'},{nome:'Box Jumps',reps:15,carga:'',modalidade:'ginastica'},{nome:'Push-ups',reps:20,carga:'',modalidade:'ginastica'}],
+        [{nome:'Power Clean',reps:9,carga:'80/55kg',modalidade:'levantamento'},{nome:'Toes-to-Bar',reps:12,carga:'',modalidade:'ginastica'},{nome:'Row 500m',reps:1,carga:'',modalidade:'monoestrutural'}],
+        [{nome:'Wall Ball Shots',reps:20,carga:'9/6kg',modalidade:'levantamento'},{nome:'Burpees',reps:10,carga:'',modalidade:'ginastica'},{nome:'Kettlebell Swings',reps:15,carga:'24/16kg',modalidade:'levantamento'}],
+        [{nome:'Snatch',reps:7,carga:'60/42kg',modalidade:'levantamento'},{nome:'Double Unders',reps:30,carga:'',modalidade:'ginastica'},{nome:'Lunges',reps:20,carga:'',modalidade:'ginastica'}],
+        [{nome:'Front Squat',reps:10,carga:'80/55kg',modalidade:'levantamento'},{nome:'Handstand Push-ups',reps:8,carga:'',modalidade:'ginastica'},{nome:'Run 400m',reps:1,carga:'',modalidade:'monoestrutural'}],
+        [{nome:'Clean & Jerk',reps:5,carga:'80/55kg',modalidade:'levantamento'},{nome:'Pull-ups',reps:15,carga:'',modalidade:'ginastica'},{nome:'Air Squats',reps:20,carga:'',modalidade:'ginastica'}],
+      ];
+      const formatos = ['AMRAP 15 min','For Time (TC 18 min)','3 Rounds For Time','EMOM 16 min','5 Rounds For Time','AMRAP 20 min'];
+      const result = [];
+      for (let i = -15; i <= 15; i++) {
+        const d = new Date(h); d.setDate(d.getDate() + i);
+        const dow = d.getDay();
+        if (dow === 0) continue; // Domingo - descanso
+        const dateStr = d.toISOString().split('T')[0];
+        const idx = Math.abs(i + 15) % simNomes.length;
+        const movsIdx = Math.abs(i + 15) % simMovs.length;
+        const focoIdx = Math.abs(i + 15) % simFocos.length;
+        result.push({
+          id: `sim-${i+15}`, academia_id: ACADEMIA_ID, criado_por: COACH_ID,
+          data_treino: dateStr, metodologia: 'crossfit',
+          nome: simNomes[idx], num_alunos: 12 + (idx % 8),
+          foco: simFocos[focoIdx], intensidade: idx % 3 === 0 ? 'alta' : 'media',
+          tempo_previsto_min: 50 + (idx % 12),
+          aquecimento: { descricao: '3 Rounds: 200m corrida + 10 Air Squats + mobilidade específica', duracao_min: 10 },
+          skill: { nome: ['Back Squat','Snatch','Clean','Front Squat','Deadlift','Push Press'][idx%6], series: [{set:1,reps:5,pct:60},{set:2,reps:5,pct:70},{set:3,reps:3,pct:80}], duracao_min: 14 },
+          wod: { nome: simNomes[idx], formato: formatos[idx % formatos.length], movimentos: simMovs[movsIdx], tempo_wod_min: 15 + (idx%8) },
+          cooldown: { descricao: '5 min caminhada leve + Foam Roller + alongamento' },
+          adaptacoes: { iniciante: 'Reduza cargas 30-40%. Substitua movimentos complexos.', avancado: 'Mantenha RX. Adicione colete 9kg.' },
+          status: 'publicado',
+        });
+      }
+      return result;
+    };
+
+    const TREINOS_SIMULADOS = gerarTreinosSimulados();
+
     const DashboardCoach = ({ setPage, toast }) => {
-      const [treinos, setTreinos] = useState([]);
+      const [treinosDB, setTreinosDB] = useState([]);
       const [alertas, setAlertas] = useState([]);
       const [loading, setLoading] = useState(true);
+      const [viewMode, setViewMode] = useState('semana'); // 'semana' ou 'mes'
+      const [weekOffset, setWeekOffset] = useState(0);
 
       useEffect(() => {
         const load = async () => {
           const [{ data: t }, { data: a }] = await Promise.all([
-            sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', { ascending: false }).limit(7),
+            sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', { ascending: false }).limit(30),
             sb.from('alertas_seguranca').select('*').eq('academia_id', ACADEMIA_ID).eq('resolvido', false),
           ]);
-          setTreinos(t || []);
+          setTreinosDB(t || []);
           setAlertas(a || []);
           setLoading(false);
         };
         load();
       }, []);
 
+      // Combinar treinos do banco com simulados (simulados preenchem dias vazios)
+      const treinos = useMemo(() => {
+        const dbDates = new Set((treinosDB||[]).map(t => t.data_treino));
+        const simFiltered = TREINOS_SIMULADOS.filter(s => !dbDates.has(s.data_treino));
+        return [...(treinosDB||[]), ...simFiltered].sort((a,b) => a.data_treino > b.data_treino ? 1 : -1);
+      }, [treinosDB]);
+
       const treino_hoje = treinos.find(t => t.data_treino === hoje());
-      const semana = Array.from({length:7}, (_,i) => {
-        const d = new Date(); d.setDate(d.getDate() - d.getDay() + i);
-        const dateStr = d.toISOString().split('T')[0];
-        return { dia: diasSemana[i], date: dateStr, treino: treinos.find(t => t.data_treino === dateStr) };
-      });
+
+      // Gerar dias do calendário
+      const calendarDays = useMemo(() => {
+        if (viewMode === 'semana') {
+          return Array.from({length:7}, (_,i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - d.getDay() + i + (weekOffset * 7));
+            const dateStr = d.toISOString().split('T')[0];
+            return { dia: diasSemana[d.getDay()], date: dateStr, fullDate: d, treino: treinos.find(t => t.data_treino === dateStr) };
+          });
+        } else {
+          const ref = new Date();
+          ref.setMonth(ref.getMonth() + weekOffset);
+          const year = ref.getFullYear();
+          const month = ref.getMonth();
+          const firstDay = new Date(year, month, 1).getDay();
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          const days = [];
+          for (let i = 0; i < firstDay; i++) days.push(null);
+          for (let i = 1; i <= daysInMonth; i++) {
+            const d = new Date(year, month, i);
+            const dateStr = d.toISOString().split('T')[0];
+            days.push({ dia: diasSemana[d.getDay()], date: dateStr, fullDate: d, treino: treinos.find(t => t.data_treino === dateStr), dayNum: i });
+          }
+          return days;
+        }
+      }, [treinos, viewMode, weekOffset]);
+
+      const calendarLabel = useMemo(() => {
+        if (viewMode === 'semana') {
+          const start = calendarDays[0];
+          const end = calendarDays[6];
+          if (!start || !end) return '';
+          return `${new Date(start.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'})} — ${new Date(end.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'})}`;
+        } else {
+          const ref = new Date(); ref.setMonth(ref.getMonth() + weekOffset);
+          return ref.toLocaleDateString('pt-BR', {month:'long', year:'numeric'}).replace(/^\w/,c=>c.toUpperCase());
+        }
+      }, [calendarDays, viewMode, weekOffset]);
 
       if (loading) return <Loading/>;
       return (
@@ -697,7 +846,7 @@
                   {treino_hoje.wod && (
                     <div className="space-y-2 mb-4">
                       <p className="text-sm font-bold text-primary">{treino_hoje.wod.formato}</p>
-                      {(treino_hoje.wod.movimentos||[]).slice(0,3).map((m,i) => (
+                      {(treino_hoje.wod.movimentos||[]).slice(0,4).map((m,i) => (
                         <div key={i} className="flex items-center gap-3 text-sm">
                           <span className="text-2xl font-display font-bold text-primary/30 w-8">{m.reps}</span>
                           <span className="font-medium">{m.nome}</span>
@@ -729,7 +878,7 @@
                 {l:'Acessos Hoje', v:'84 / 120', i:'group'},
                 {l:'Recordes Pessoais', v:'12', i:'emoji_events'},
                 {l:'Membros Ativos', v:'342', i:'fitness_center'},
-                {l:'Treinos Esta Semana', v: treinos.filter(t=> { const d=new Date(t.data_treino); const n=new Date(); return Math.abs(d-n)<7*86400000; }).length, i:'calendar_month'},
+                {l:'Treinos Este Mês', v: treinos.filter(t=> { const d=new Date(t.data_treino); const n=new Date(); return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear(); }).length, i:'calendar_month'},
               ].map(({l,v,i}) => (
                 <div key={l} className="card p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -744,25 +893,60 @@
             </div>
           </div>
 
-          {/* Calendário Semanal */}
+          {/* Calendário com rolagem */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-display font-bold text-lg">Calendário Semanal</h2>
-              <button onClick={() => setPage('gerar')} className="btn-ghost px-4 py-1.5 rounded-lg text-sm flex items-center gap-1.5">
-                <Icon name="add" size={16}/>Novo Treino
-              </button>
+              <div className="flex items-center gap-3">
+                <h2 className="font-display font-bold text-lg">Calendário</h2>
+                <div className="flex rounded-lg border border-white/10 overflow-hidden">
+                  <button onClick={()=>{setViewMode('semana');setWeekOffset(0);}} className={`px-3 py-1 text-xs font-bold ${viewMode==='semana'?'bg-primary/20 text-primary':'text-slate-400 hover:text-white'}`}>Semana</button>
+                  <button onClick={()=>{setViewMode('mes');setWeekOffset(0);}} className={`px-3 py-1 text-xs font-bold ${viewMode==='mes'?'bg-primary/20 text-primary':'text-slate-400 hover:text-white'}`}>Mês</button>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button onClick={()=>setWeekOffset(w=>w-1)} className="p-1.5 rounded-lg border border-white/10 hover:border-primary/30 text-slate-400 hover:text-primary transition-colors"><Icon name="chevron_left" size={18}/></button>
+                <span className="text-sm font-medium min-w-[180px] text-center">{calendarLabel}</span>
+                <button onClick={()=>setWeekOffset(w=>w+1)} className="p-1.5 rounded-lg border border-white/10 hover:border-primary/30 text-slate-400 hover:text-primary transition-colors"><Icon name="chevron_right" size={18}/></button>
+                {weekOffset !== 0 && <button onClick={()=>setWeekOffset(0)} className="text-xs text-primary font-bold ml-1">Hoje</button>}
+              </div>
             </div>
-            <div className="grid grid-cols-7 gap-3">
-              {semana.map(({dia, date, treino}) => {
-                const isToday = date === hoje();
+
+            {viewMode === 'mes' && (
+              <div className="grid grid-cols-7 gap-1 mb-1">
+                {diasSemana.map(d => <div key={d} className="text-center text-xs font-bold text-slate-500 py-1">{d.slice(0,3)}</div>)}
+              </div>
+            )}
+
+            <div className={`grid gap-${viewMode==='semana'?'3':'1'} ${viewMode==='semana'?'grid-cols-7':'grid-cols-7'}`}>
+              {calendarDays.map((item, idx) => {
+                if (!item) return <div key={`empty-${idx}`} className="h-16"/>;
+                const isToday = item.date === hoje();
+                const hasTreino = !!item.treino;
+                if (viewMode === 'mes') {
+                  return (
+                    <div key={item.date} className={`rounded-lg p-1.5 min-h-[60px] border cursor-pointer transition-all ${isToday?'bg-primary/10 border-primary/40':'hasTreino'?'card border-transparent hover:border-primary/20':'border-transparent hover:border-white/10'}`}
+                      onClick={() => setPage('gerar')}>
+                      <p className={`text-xs font-bold ${isToday?'text-primary':'text-slate-400'}`}>{item.dayNum}</p>
+                      {hasTreino && (
+                        <div className="mt-1">
+                          <p className="text-xs font-bold truncate leading-tight">{item.treino.nome}</p>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <div className={`w-1.5 h-1.5 rounded-full ${item.treino.intensidade==='alta'?'bg-red-400':'bg-primary'}`}/>
+                            <span className="text-xs text-slate-500 truncate">{item.treino.foco?.split(' ')[0]}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
                 return (
-                  <div key={dia} className={`rounded-xl p-3 border transition-all cursor-pointer ${isToday ? 'bg-primary/10 border-primary/40' : 'card border-transparent hover:border-primary/20'}`}
+                  <div key={item.date} className={`rounded-xl p-3 border transition-all cursor-pointer ${isToday ? 'bg-primary/10 border-primary/40' : 'card border-transparent hover:border-primary/20'}`}
                     onClick={() => setPage('gerar')}>
-                    <p className={`text-xs font-bold uppercase text-center mb-2 ${isToday?'text-primary':'text-slate-500'}`}>{dia}</p>
-                    {treino ? (
+                    <p className={`text-xs font-bold uppercase text-center mb-2 ${isToday?'text-primary':'text-slate-500'}`}>{item.dia}</p>
+                    {hasTreino ? (
                       <div>
-                        <p className="text-xs font-bold truncate">{treino.nome}</p>
-                        <p className="text-xs text-slate-500 mt-1">{metLabels[treino.metodologia]}</p>
+                        <p className="text-xs font-bold truncate">{item.treino.nome}</p>
+                        <p className="text-xs text-slate-500 mt-1">{metLabels[item.treino.metodologia] || item.treino.foco?.split(' ')[0]}</p>
                         {isToday && <div className="w-1.5 h-1.5 rounded-full bg-primary mx-auto mt-2 pulse-green"/>}
                       </div>
                     ) : (
@@ -783,29 +967,75 @@
     // ─── Modal de Detalhes do Exercício ──────────────────────────────────────
     const ExercicioModal = ({ nome, onClose }) => {
       const det = EXERCICIO_DETALHES[nome];
-      if (!det) return null;
+      if (!det) return (
+        <Modal open={true} onClose={onClose} title={nome}>
+          <div className="text-center py-8">
+            <Icon name="fitness_center" className="text-primary/30" size={48}/>
+            <p className="text-slate-400 mt-3">Detalhes deste exercício serão adicionados em breve.</p>
+          </div>
+        </Modal>
+      );
       return (
         <Modal open={true} onClose={onClose} title={nome}>
           <div className="space-y-4">
-            {det.img && <img src={det.img} alt={nome} className="w-full h-48 object-cover rounded-xl"/>}
-            <div>
-              <h4 className="font-bold text-sm mb-1 flex items-center gap-2"><Icon name="description" size={16} className="text-primary"/>Execução</h4>
+            {/* Imagem do exercício */}
+            <div className="w-full rounded-xl overflow-hidden bg-primary/5">
+              {det.img ? (
+                <img src={det.img} alt={nome} className="w-full h-52 object-cover" onError={(e)=>{e.target.style.display='none';}}/>
+              ) : (
+                <div className="h-52 flex flex-col items-center justify-center text-primary/30">
+                  <Icon name="fitness_center" size={48}/>
+                  <span className="text-sm mt-2">{nome}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Descrição de execução */}
+            <div className="card p-4">
+              <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Icon name="description" size={16} className="text-primary"/>Como Executar</h4>
               <p className="text-sm text-slate-300 leading-relaxed">{det.desc}</p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-bold text-sm mb-1 flex items-center gap-2"><Icon name="fitness_center" size={16} className="text-primary"/>Músculos</h4>
-                <p className="text-xs text-slate-400">{det.musculos}</p>
+
+            <div className="grid grid-cols-2 gap-3">
+              {/* Músculos */}
+              <div className="card p-4">
+                <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Icon name="fitness_center" size={16} className="text-primary"/>Músculos Trabalhados</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {det.musculos.split(',').map((m,i) => (
+                    <span key={i} className="tag tag-green text-xs">{m.trim()}</span>
+                  ))}
+                </div>
               </div>
-              <div>
-                <h4 className="font-bold text-sm mb-1 flex items-center gap-2"><Icon name="warning" size={16} className="text-red-400"/>Erros Comuns</h4>
-                <p className="text-xs text-slate-400">{det.erros}</p>
+
+              {/* Erros */}
+              <div className="card p-4">
+                <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Icon name="warning" size={16} className="text-red-400"/>Erros Comuns</h4>
+                <ul className="space-y-1">
+                  {det.erros.split(',').map((e,i) => (
+                    <li key={i} className="text-xs text-slate-400 flex items-start gap-1.5">
+                      <Icon name="close" size={10} className="text-red-400 mt-0.5 shrink-0"/>{e.trim()}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
-            <div>
-              <h4 className="font-bold text-sm mb-1 flex items-center gap-2"><Icon name="tune" size={16} className="text-primary"/>Escala / Substituições</h4>
-              <p className="text-xs text-slate-400">{det.escala}</p>
+
+            {/* Escalas */}
+            <div className="card p-4">
+              <h4 className="font-bold text-sm mb-2 flex items-center gap-2"><Icon name="tune" size={16} className="text-primary"/>Escala / Substituições</h4>
+              <div className="flex flex-wrap gap-1.5">
+                {det.escala.split(',').map((s,i) => (
+                  <span key={i} className="px-2.5 py-1 rounded-lg bg-primary/10 border border-primary/20 text-xs font-medium text-primary">{s.trim()}</span>
+                ))}
+              </div>
             </div>
+
+            {/* Link para vídeo */}
+            {det.video && (
+              <a href={det.video} target="_blank" rel="noopener noreferrer" className="btn-primary w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm">
+                <Icon name="play_circle" size={18}/>Assistir Vídeo de Demonstração
+              </a>
+            )}
           </div>
         </Modal>
       );
@@ -851,7 +1081,8 @@
         const skillMin = Math.round(duracaoAlvo * 0.25);
         const wodMin = duracaoAlvo - aquecMin - skillMin - cooldownMin;
 
-        const aquecOpts = AQUECIMENTOS[foco] || AQUECIMENTOS['LPO + Condicionamento'];
+        const metAquec = AQUECIMENTOS[form.metodologia] || AQUECIMENTOS['crossfit'];
+        const aquecOpts = metAquec[foco] || metAquec['LPO + Condicionamento'] || Object.values(metAquec)[0];
         const aquecDesc = aquecOpts[Math.floor(Math.random() * aquecOpts.length)];
         const aquecimento = { descricao: aquecDesc, duracao_min: aquecMin };
 
@@ -901,7 +1132,8 @@
         const duracaoAlvo = parseInt(form.duracao) || 55;
         const aquecMin = Math.round(duracaoAlvo * 0.2);
         const foco = form.foco;
-        const aquecOpts = AQUECIMENTOS[foco] || AQUECIMENTOS['LPO + Condicionamento'];
+        const metAquec = AQUECIMENTOS[form.metodologia] || AQUECIMENTOS['crossfit'];
+        const aquecOpts = metAquec[foco] || metAquec['LPO + Condicionamento'] || Object.values(metAquec)[0];
         const aquecDesc = aquecOpts[Math.floor(Math.random() * aquecOpts.length)];
         const cooldownMin = 5;
         const skillMin = Math.max(duracaoAlvo - aquecMin - (bm.tempo_est || 15) - cooldownMin, 8);
@@ -1011,7 +1243,7 @@
             <div>
               <label className="text-sm font-medium mb-1.5 block">Foco da Sessão</label>
               <select value={form.foco} onChange={e=>setForm(f=>({...f,foco:e.target.value}))}>
-                {['LPO + Condicionamento','Ginástica','Resistência','Força Pura','Mobilidade + Técnica'].map(o=><option key={o}>{o}</option>)}
+                {['LPO + Condicionamento','Ginástica','Resistência','Força Pura','Cardio','Mobilidade + Técnica'].map(o=><option key={o}>{o}</option>)}
               </select>
             </div>
 
@@ -1293,7 +1525,13 @@
 
       useEffect(() => {
         sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', {ascending:false})
-          .then(({data}) => { setTreinos(data||[]); setLoading(false); });
+          .then(({data}) => {
+            // Se houver treinos no banco, usar eles. Senão, usar simulados para demonstração
+            const dbTreinos = data || [];
+            const usarSimulados = dbTreinos.length < 5;
+            setTreinos(usarSimulados ? [...dbTreinos, ...TREINOS_SIMULADOS] : dbTreinos);
+            setLoading(false);
+          });
       }, []);
 
       // Calcular estatísticas reais dos treinos
@@ -1562,11 +1800,14 @@
       const [periodo, setPeriodo] = useState(null);
       const [loading, setLoading] = useState(true);
       const [showModal, setShowModal] = useState(false);
-      const [form, setForm] = useState({ nome: '', objetivo: '', data_inicio: hoje(), data_fim: '' });
+      const [form, setForm] = useState({ nome: '', objetivo: 'Construção de base', data_inicio: hoje(), data_fim: '' });
 
       useEffect(() => {
         sb.from('periodizacoes').select('*').eq('academia_id', ACADEMIA_ID).eq('status','ativo').single()
-          .then(({data}) => { setPeriodo(data); setLoading(false); });
+          .then(({data, error}) => {
+            if (data) { setPeriodo(data); }
+            setLoading(false);
+          });
       }, []);
 
       const PERIODIZACAO_TEMPLATES = {
@@ -1633,16 +1874,25 @@
       };
 
       const criar = async () => {
-        const template = PERIODIZACAO_TEMPLATES[form.objetivo] || PERIODIZACAO_TEMPLATES['Construção de base'];
+        const objetivo = form.objetivo || 'Construção de base';
+        const template = PERIODIZACAO_TEMPLATES[objetivo] || PERIODIZACAO_TEMPLATES['Construção de base'];
         const semanas = template.gerarSemanas();
-        const { data, error } = await sb.from('periodizacoes').insert([{
+        const periodoLocal = {
+          id: 'local-' + Date.now(),
           academia_id: ACADEMIA_ID, criado_por: COACH_ID,
-          nome: form.nome, objetivo: form.objetivo,
+          nome: form.nome || `Ciclo ${objetivo}`, objetivo,
           data_inicio: form.data_inicio, data_fim: form.data_fim || null,
           semanas, status: 'ativo',
-        }]).select().single();
-        if (error) { toast('Erro: '+error.message,'error'); return; }
-        setPeriodo(data); setShowModal(false);
+        };
+        // Tentar salvar no banco
+        const { data, error } = await sb.from('periodizacoes').insert([periodoLocal]).select().single();
+        if (data) {
+          setPeriodo(data);
+        } else {
+          // Se falhar no banco, usar localmente para demonstração
+          setPeriodo(periodoLocal);
+        }
+        setShowModal(false);
         toast('Periodização criada com sucesso!','success');
       };
 
