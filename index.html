@@ -1298,7 +1298,7 @@
               <label className="text-sm text-primary font-semibold mb-2 block">Gerar Para</label>
               <div className="grid grid-cols-2 gap-2 mb-3">
                 {[{v:'turma',l:'Turma',i:'groups'},{v:'aluno',l:'Aluno',i:'person'}].map(({v,l,i}) => (
-                  <button key={v} onClick={() => setForm(f=>({...f,destino:v}))}
+                  <button key={v} onClick={() => setForm(f=>({...f, destino:v, ...(v==='aluno'?{num_alunos:1,modo_duplas:false}:{num_alunos:TURMAS.find(t=>t.id===f.turma_id)?.max_alunos||15})}))}
                     className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border text-xs font-bold transition-all ${form.destino===v?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
                     <Icon name={i} size={16}/>{l}
                   </button>
@@ -1354,7 +1354,7 @@
 
             {[
               {l:'Data do Treino', k:'data', type:'date'},
-              {l:'Número de Alunos', k:'num_alunos', type:'number', ph:'Ex: 15'},
+              ...(form.destino !== 'aluno' ? [{l:'Número de Alunos', k:'num_alunos', type:'number', ph:'Ex: 15'}] : []),
             ].map(({l,k,type,ph}) => (
               <div key={k}>
                 <label className="text-sm font-medium mb-1.5 block">{l}</label>
@@ -1374,6 +1374,7 @@
               <textarea value={form.restritcoes} onChange={e=>setForm(f=>({...f,restritcoes:e.target.value}))} placeholder="Ex: Sem remo, sem box jump..." rows={2} style={{resize:'none'}}/>
             </div>
 
+            {form.destino !== 'aluno' && (
             <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/10">
               <div>
                 <p className="text-sm font-bold">Treino em Duplas</p>
@@ -1384,6 +1385,7 @@
                 <span className="toggle-slider"/>
               </label>
             </div>
+            )}
 
             <div className="grid grid-cols-2 gap-2">
               <button onClick={gerar} disabled={loading} className="btn-primary py-3 rounded-xl flex items-center justify-center gap-1.5 font-display font-bold text-sm">
@@ -1480,7 +1482,8 @@
                   <div className={`tag ${intensidadeColor[treino.intensidade] || 'tag-green'}`}>
                     {treino.intensidade?.toUpperCase()}
                   </div>
-                  {treino.num_alunos && <span className="text-xs text-slate-400"><Icon name="group" size={14} className="inline mr-1"/>{treino.num_alunos} alunos</span>}
+                  {treino.num_alunos && treino.num_alunos > 1 && <span className="text-xs text-slate-400"><Icon name="group" size={14} className="inline mr-1"/>{treino.num_alunos} alunos</span>}
+                  {treino.aluno_id && <span className="text-xs text-slate-400"><Icon name="person" size={14} className="inline mr-1"/>Treino Individual</span>}
                 </div>
 
                 {/* Aquecimento */}
