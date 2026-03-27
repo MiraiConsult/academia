@@ -34,7 +34,7 @@
     * { font-family: 'DM Sans', sans-serif; }
     h1,h2,h3,h4,h5,h6,.font-display { font-family: 'Syne', sans-serif !important; }
     :root { --bg: #0d1a0b; --bg-card: #111f0e; --text: #e2e8f0; --text-muted: #94a3b8; --border: rgba(67,243,32,0.08); --border-hover: rgba(67,243,32,0.2); --border-focus: rgba(67,243,32,0.6); --primary: #43f320; --primary-bg: rgba(67,243,32,0.1); --primary-bg2: rgba(67,243,32,0.15); --nav-hover: rgba(67,243,32,0.08); --nav-active: rgba(67,243,32,0.12); --overlay: rgba(0,0,0,0.7); --scrollbar: #2a4025; --toggle-bg: #2a3828; --glow: rgba(67,243,32,0.15); --glow-border: rgba(67,243,32,0.35); --ghost-border: rgba(67,243,32,0.3); --ghost-hover: rgba(67,243,32,0.1); }
-    [data-theme="light"] { --bg: #f5f7f5; --bg-card: #ffffff; --text: #1a2e1a; --text-muted: #5a6b5a; --border: #e0e8de; --border-hover: #c0d0be; --border-focus: #43f320; --primary: #2db80e; --primary-bg: rgba(45,184,14,0.08); --primary-bg2: rgba(45,184,14,0.12); --nav-hover: rgba(45,184,14,0.06); --nav-active: rgba(45,184,14,0.1); --overlay: rgba(0,0,0,0.4); --scrollbar: #c0d0be; --toggle-bg: #c0d0be; --glow: rgba(45,184,14,0.1); --glow-border: rgba(45,184,14,0.3); --ghost-border: rgba(45,184,14,0.35); --ghost-hover: rgba(45,184,14,0.08); }
+    [data-theme="light"] { --bg: #f0f4f0; --bg-card: #ffffff; --text: #1a2e1a; --text-muted: #4a5a4a; --border: #d0dace; --border-hover: #a0b8a0; --border-focus: #2db80e; --primary: #1d9e06; --primary-bg: rgba(29,158,6,0.1); --primary-bg2: rgba(29,158,6,0.15); --nav-hover: rgba(29,158,6,0.08); --nav-active: rgba(29,158,6,0.12); --overlay: rgba(0,0,0,0.4); --scrollbar: #a0b8a0; --toggle-bg: #a0b8a0; --glow: rgba(29,158,6,0.12); --glow-border: rgba(29,158,6,0.35); --ghost-border: rgba(29,158,6,0.4); --ghost-hover: rgba(29,158,6,0.1); --text-secondary: #2d4a2d; }
     body { background: var(--bg); color: var(--text); transition: background 0.3s, color 0.3s; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
@@ -85,8 +85,14 @@
     input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: var(--primary); border-radius: 50%; cursor: pointer; border: 3px solid var(--bg-card); box-shadow: 0 0 8px rgba(67,243,32,0.3); }
     input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: var(--primary); border-radius: 50%; cursor: pointer; border: 3px solid var(--bg-card); }
     [data-theme="light"] .border-white\/5 { border-color: #e0e8de !important; }
-    [data-theme="light"] .text-slate-400, [data-theme="light"] .text-slate-500 { color: var(--text-muted) !important; }
-    [data-theme="light"] .text-slate-600 { color: #4a5b4a !important; }
+    [data-theme="light"] .text-slate-300 { color: #2d4a2d !important; }
+    [data-theme="light"] .text-slate-400 { color: #4a6a4a !important; }
+    [data-theme="light"] .text-slate-500 { color: #5a7a5a !important; }
+    [data-theme="light"] .text-slate-600 { color: #3a5a3a !important; }
+    [data-theme="light"] .text-primary\/25, [data-theme="light"] .text-primary\/30 { color: rgba(29,158,6,0.5) !important; }
+    [data-theme="light"] .card-ai { border-color: rgba(29,158,6,0.4); box-shadow: 0 0 16px rgba(29,158,6,0.08); }
+    [data-theme="light"] .font-display.font-bold { color: #1a2e1a; }
+    [data-theme="light"] .bg-primary\/5, [data-theme="light"] .bg-primary\/10 { background: rgba(29,158,6,0.06) !important; }
     [data-theme="light"] .bg-primary\/10, [data-theme="light"] .bg-primary\/20 { background: rgba(45,184,14,0.1) !important; }
     .theme-toggle { cursor: pointer; padding: 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-card); transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
     .theme-toggle:hover { border-color: var(--primary); background: var(--primary-bg); }
@@ -148,6 +154,16 @@
       {id:'aluno-23', nome:'Eduardo Reis', turma_id:'turma-10', nivel:'intermediário', restricoes:'', objetivo:'Condicionamento'},
       {id:'aluno-24', nome:'Vanessa Cardoso', turma_id:'turma-11', nivel:'avançado', restricoes:'', objetivo:'Competição'},
       {id:'aluno-25', nome:'Leonardo Nunes', turma_id:'turma-12', nivel:'intermediário', restricoes:'Dor no ombro esquerdo', objetivo:'Performance'},
+    ];
+
+    // ─── Focos de Sessão (editáveis) ────────────────────────────────────────
+    let FOCOS_SESSAO = [
+      {id:'foco-1', nome:'LPO + Condicionamento', descricao:'Levantamento de Peso Olímpico combinado com condicionamento metabólico. Foco em técnica e potência.', icone:'fitness_center', ativo:true},
+      {id:'foco-2', nome:'Ginástica', descricao:'Movimentos corporais: pull-ups, muscle-ups, handstand, pistols. Foco em controle e habilidade.', icone:'sports_gymnastics', ativo:true},
+      {id:'foco-3', nome:'Resistência', descricao:'Capacidade aeróbia e anaeróbia. WODs mais longos com foco em manter ritmo.', icone:'directions_run', ativo:true},
+      {id:'foco-4', nome:'Força Pura', descricao:'Desenvolvimento de força máxima com Back Squat, Deadlift, Press. Cargas altas, volume controlado.', icone:'exercise', ativo:true},
+      {id:'foco-5', nome:'Cardio', descricao:'Condicionamento monoestrutural: corrida, remo, bike. Construção de base aeróbia.', icone:'favorite', ativo:true},
+      {id:'foco-6', nome:'Mobilidade + Técnica', descricao:'Trabalho de mobilidade, flexibilidade e refinamento técnico com cargas leves.', icone:'self_improvement', ativo:true},
     ];
 
     // ─── Helpers ───────────────────────────────────────────────────────────────
@@ -667,6 +683,7 @@
         { id: 'periodizacao', icon: 'calendar_month', label: 'Periodização' },
         { id: 'seguranca', icon: 'verified_user', label: 'Segurança' },
         { id: 'cadastro', icon: 'badge', label: 'Turmas e Alunos' },
+        { id: 'focos', icon: 'category', label: 'Focos de Sessão' },
       ];
       const donoLinks = [
         { id: 'dashboard', icon: 'dashboard', label: 'Painel' },
@@ -1365,7 +1382,7 @@
             <div>
               <label className="text-sm font-medium mb-1.5 block">Foco da Sessão</label>
               <select value={form.foco} onChange={e=>setForm(f=>({...f,foco:e.target.value}))}>
-                {['LPO + Condicionamento','Ginástica','Resistência','Força Pura','Cardio','Mobilidade + Técnica'].map(o=><option key={o}>{o}</option>)}
+                {FOCOS_SESSAO.filter(f=>f.ativo).map(f=><option key={f.id} value={f.nome}>{f.nome}</option>)}
               </select>
             </div>
 
@@ -1486,35 +1503,76 @@
                   {treino.aluno_id && <span className="text-xs text-slate-400"><Icon name="person" size={14} className="inline mr-1"/>Treino Individual</span>}
                 </div>
 
-                {/* Aquecimento */}
+                {/* Aquecimento — estruturado como WOD */}
                 {treino.aquecimento && (
                   <div className="card-ai p-5">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2"><Icon name="whatshot" className="text-orange-400" size={20}/><h3 className="font-display font-bold">Aquecimento / Mobilidade</h3></div>
-                      <span className="text-xs text-slate-400">{treino.aquecimento.duracao_min} min</span>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2"><Icon name="whatshot" className="text-orange-400" size={22}/><h3 className="font-display font-bold text-lg">Aquecimento / Mobilidade</h3></div>
+                      <span className="tag tag-yellow">{treino.aquecimento.duracao_min} min</span>
                     </div>
                     {editando ? (
                       <textarea value={treino.aquecimento.descricao} onChange={e => setTreino(prev => ({...prev, aquecimento: {...prev.aquecimento, descricao: e.target.value}}))}
-                        rows={3} className="text-sm" style={{resize:'vertical'}}/>
+                        rows={4} className="text-sm" style={{resize:'vertical'}}/>
                     ) : (
-                      <p className="text-slate-300 text-sm leading-relaxed">{treino.aquecimento.descricao}</p>
+                      <div className="space-y-2">
+                        {treino.aquecimento.descricao.split('+').map((parte, i) => {
+                          const p = parte.trim();
+                          if (!p) return null;
+                          const movNome = Object.keys(EXERCICIO_DETALHES).find(k => p.toLowerCase().includes(k.toLowerCase()));
+                          return (
+                            <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg bg-orange-500/5 border border-orange-500/10">
+                              <span className="w-7 h-7 rounded-lg bg-orange-400/15 flex items-center justify-center shrink-0">
+                                <span className="text-xs font-bold text-orange-400">{i+1}</span>
+                              </span>
+                              <p className="text-sm flex-1">{p}</p>
+                              {movNome && (
+                                <button onClick={()=>setExercicioModal(movNome)} className="shrink-0 p-1.5 rounded-lg hover:bg-primary/10 text-slate-400 hover:text-primary transition-colors" title="Ver detalhes">
+                                  <Icon name="info" size={16}/>
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
                 )}
 
-                {/* Skill */}
+                {/* Skill — estruturado com detalhes */}
                 {treino.skill && (
                   <div className="card p-5">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2"><Icon name="fitness_center" className="text-primary" size={20}/><h3 className="font-display font-bold">Skill: {treino.skill.nome}</h3></div>
-                      <span className="text-xs text-slate-400">{treino.skill.duracao_min} min</span>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Icon name="fitness_center" className="text-primary" size={22}/>
+                        <div>
+                          <h3 className="font-display font-bold text-lg">Skill: {treino.skill.nome}</h3>
+                          {treino.skill.nota && <p className="text-xs text-slate-400 italic">{treino.skill.nota}</p>}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="tag tag-blue">{treino.skill.duracao_min} min</span>
+                        {EXERCICIO_DETALHES[treino.skill.nome] && (
+                          <button onClick={()=>setExercicioModal(treino.skill.nome)} className="p-1.5 rounded-lg hover:bg-primary/10 text-slate-400 hover:text-primary transition-colors" title="Ver detalhes e vídeo">
+                            <Icon name="play_circle" size={20}/>
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    {treino.skill.nota && <p className="text-xs text-slate-400 mb-3 italic">{treino.skill.nota}</p>}
+                    {/* Imagem do skill se disponível */}
+                    {EXERCICIO_DETALHES[treino.skill.nome]?.img && (
+                      <div className="mb-3 rounded-lg overflow-hidden cursor-pointer" onClick={()=>setExercicioModal(treino.skill.nome)}>
+                        <img src={EXERCICIO_DETALHES[treino.skill.nome].img} alt={treino.skill.nome} className="w-full h-32 object-cover opacity-80 hover:opacity-100 transition-opacity" onError={e=>{e.target.style.display='none';}}/>
+                      </div>
+                    )}
+                    {/* Descrição breve */}
+                    {EXERCICIO_DETALHES[treino.skill.nome]?.desc && (
+                      <p className="text-xs text-slate-400 mb-3 leading-relaxed">{EXERCICIO_DETALHES[treino.skill.nome].desc}</p>
+                    )}
                     <div className="grid grid-cols-5 gap-2">
                       {(treino.skill.series||[]).map((s,i) => (
                         <div key={i} className="bg-primary/5 border border-primary/10 rounded-lg p-3 text-center">
                           <p className="text-xs text-slate-400">Série {s.set}</p>
-                          <p className="font-bold text-sm">{s.reps}{s.pct ? `@${s.pct}%` : ''}</p>
+                          <p className="font-bold text-sm">{s.reps}{s.pct ? ` @${s.pct}%` : ''}</p>
                         </div>
                       ))}
                     </div>
@@ -1607,6 +1665,44 @@
                     <p className="text-xs text-slate-400 mb-1"><span className="text-slate-200 font-bold">Iniciante:</span> {treino.adaptacoes?.iniciante}</p>
                     <p className="text-xs text-slate-400"><span className="text-slate-200 font-bold">Avançado:</span> {treino.adaptacoes?.avancado}</p>
                   </div>
+                {/* Análise IA — justificativa do treino */}
+                <div className="card-ai p-5 relative overflow-hidden">
+                  <div className="absolute -right-8 -top-8 w-32 h-32 bg-primary/5 rounded-full blur-2xl"/>
+                  <div className="flex items-center gap-2 mb-3 relative">
+                    <Icon name="psychology" className="text-primary" size={20}/>
+                    <h3 className="font-display font-bold">Análise IA — Por que este treino?</h3>
+                  </div>
+                  <div className="space-y-2 relative text-sm">
+                    {treino.aluno_id && (() => {
+                      const al = ALUNOS.find(a=>a.id===treino.aluno_id);
+                      return al ? (
+                        <div className="p-3 rounded-lg bg-primary/5 border border-primary/10 space-y-1.5">
+                          <p><Icon name="person" size={14} className="text-primary inline mr-1.5"/>Treino personalizado para <span className="font-bold text-primary">{al.nome}</span></p>
+                          <p className="text-slate-400 text-xs">Nível: <span className="font-bold">{al.nivel}</span> · Objetivo: <span className="font-bold">{al.objetivo}</span></p>
+                          {al.restricoes && <p className="text-red-400 text-xs"><Icon name="warning" size={12} className="inline mr-1"/>Restrições aplicadas: {al.restricoes}</p>}
+                          <p className="text-slate-400 text-xs">{al.nivel==='iniciante'?'Cargas e complexidade reduzidas para construção de base técnica segura.':al.nivel==='avançado'?'Intensidade e complexidade maximizadas para desenvolvimento de performance.':'Volume e carga equilibrados para progressão consistente.'}</p>
+                        </div>
+                      ) : null;
+                    })()}
+                    {treino.turma_id && (() => {
+                      const turma = TURMAS.find(t=>t.id===treino.turma_id);
+                      return turma ? (
+                        <div className="p-3 rounded-lg bg-primary/5 border border-primary/10 space-y-1.5">
+                          <p><Icon name="groups" size={14} className="text-primary inline mr-1.5"/>Treino para <span className="font-bold text-primary">{turma.nome}</span></p>
+                          <p className="text-slate-400 text-xs">Modalidade: <span className="font-bold">{metLabels[turma.modalidade]}</span> · Capacidade: {turma.max_alunos} alunos · Dias: {turma.dias?.join(', ')}</p>
+                          <p className="text-slate-400 text-xs">Logística otimizada para {treino.num_alunos} alunos com equipamentos disponíveis da academia.</p>
+                        </div>
+                      ) : null;
+                    })()}
+                    <ul className="space-y-1.5 text-slate-400 text-xs mt-2">
+                      <li className="flex items-start gap-2"><Icon name="check_circle" size={14} className="text-primary shrink-0 mt-0.5"/>Foco da sessão: <span className="font-bold text-slate-300">{treino.foco}</span> — movimentos selecionados para atender este objetivo.</li>
+                      <li className="flex items-start gap-2"><Icon name="check_circle" size={14} className="text-primary shrink-0 mt-0.5"/>Duração total de <span className="font-bold text-slate-300">{treino.tempo_previsto_min} min</span> distribuídos entre aquecimento ({treino.aquecimento?.duracao_min}min), skill ({treino.skill?.duracao_min}min), WOD e volta à calma.</li>
+                      <li className="flex items-start gap-2"><Icon name="check_circle" size={14} className="text-primary shrink-0 mt-0.5"/>Distribuição modal: {treino.wod?.movimentos?.filter(m=>m.modalidade==='ginastica').length||0} ginástica, {treino.wod?.movimentos?.filter(m=>m.modalidade==='levantamento').length||0} levantamento, {treino.wod?.movimentos?.filter(m=>m.modalidade==='monoestrutural').length||0} monoestrutural.</li>
+                      {treino.logistica_nota && <li className="flex items-start gap-2 text-yellow-400"><Icon name="warning" size={14} className="shrink-0 mt-0.5"/>{treino.logistica_nota}</li>}
+                    </ul>
+                  </div>
+                </div>
+
                 </div>
               </div>
             ) : (
@@ -2504,6 +2600,115 @@
       </div>
     );
 
+    // ─── Cadastro de Focos de Sessão ────────────────────────────────────────────
+    const CadastroFocos = ({ toast }) => {
+      const [focos, setFocos] = useState([...FOCOS_SESSAO]);
+      const [showModal, setShowModal] = useState(false);
+      const [editItem, setEditItem] = useState(null);
+      const [form, setForm] = useState({nome:'',descricao:'',icone:'fitness_center'});
+      const icones = ['fitness_center','sports_gymnastics','directions_run','exercise','favorite','self_improvement','bolt','timer','local_fire_department','speed','psychology','trending_up'];
+
+      useEffect(() => { FOCOS_SESSAO = focos; }, [focos]);
+
+      const abrirNovo = () => { setEditItem(null); setForm({nome:'',descricao:'',icone:'fitness_center'}); setShowModal(true); };
+      const abrirEditar = (item) => { setEditItem(item); setForm({nome:item.nome,descricao:item.descricao||'',icone:item.icone||'fitness_center'}); setShowModal(true); };
+
+      const salvar = () => {
+        if (!form.nome.trim()) { toast('Preencha o nome do foco','error'); return; }
+        if (editItem) {
+          setFocos(prev => prev.map(f => f.id === editItem.id ? {...f,...form} : f));
+          toast('Foco atualizado!');
+        } else {
+          setFocos(prev => [...prev, {id:'foco-'+Date.now(), ...form, ativo:true}]);
+          toast('Foco criado!');
+        }
+        setShowModal(false);
+      };
+
+      const toggleAtivo = (id) => {
+        setFocos(prev => prev.map(f => f.id === id ? {...f, ativo:!f.ativo} : f));
+      };
+
+      const remover = (id) => {
+        setFocos(prev => prev.filter(f => f.id !== id));
+        toast('Foco removido');
+      };
+
+      return (
+        <div className="p-8 space-y-6 fade-in max-w-4xl">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-display font-bold text-xl">Focos de Sessão</h2>
+              <p className="text-slate-400 text-sm mt-1">Gerencie os tipos de foco disponíveis na geração de treinos.</p>
+            </div>
+            <button onClick={abrirNovo} className="btn-primary px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm">
+              <Icon name="add" size={18}/>Novo Foco
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {focos.map(foco => (
+              <div key={foco.id} className={`card p-5 transition-all ${foco.ativo?'':'opacity-50'}`}>
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <Icon name={foco.icone||'fitness_center'} className="text-primary" size={22}/>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="font-display font-bold">{foco.nome}</h4>
+                      {!foco.ativo && <span className="tag tag-red text-xs">Inativo</span>}
+                    </div>
+                    <p className="text-xs text-slate-400 leading-relaxed">{foco.descricao}</p>
+                  </div>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <label className="toggle" style={{width:36,height:20}}>
+                      <input type="checkbox" checked={foco.ativo} onChange={()=>toggleAtivo(foco.id)}/>
+                      <span className="toggle-slider" style={{'--tw-before-height':'14px','--tw-before-width':'14px'}}/>
+                    </label>
+                    <button onClick={()=>abrirEditar(foco)} className="p-1.5 rounded-lg hover:bg-primary/10 text-slate-400 hover:text-primary transition-colors"><Icon name="edit" size={16}/></button>
+                    <button onClick={()=>remover(foco.id)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition-colors"><Icon name="delete" size={16}/></button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {focos.length === 0 && (
+            <div className="card p-12 text-center">
+              <Icon name="category" className="text-primary/20" size={48}/>
+              <p className="text-slate-400 text-sm mt-3">Nenhum foco cadastrado</p>
+            </div>
+          )}
+
+          <Modal open={showModal} onClose={()=>setShowModal(false)} title={editItem ? 'Editar Foco de Sessão' : 'Novo Foco de Sessão'}>
+            <div className="space-y-4">
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Nome do Foco</label>
+                <input value={form.nome} onChange={e=>setForm(f=>({...f,nome:e.target.value}))} placeholder="Ex: Força Funcional"/>
+              </div>
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Descrição</label>
+                <textarea value={form.descricao} onChange={e=>setForm(f=>({...f,descricao:e.target.value}))} placeholder="Descreva o que este foco de sessão trabalha..." rows={3} style={{resize:'none'}}/>
+              </div>
+              <div>
+                <label className="text-sm text-slate-400 mb-2 block">Ícone</label>
+                <div className="flex flex-wrap gap-2">
+                  {icones.map(ic=>(
+                    <button key={ic} type="button" onClick={()=>setForm(f=>({...f,icone:ic}))}
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${form.icone===ic?'border-primary bg-primary/15 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
+                      <Icon name={ic} size={20}/>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-3 mt-2">
+                <button onClick={()=>setShowModal(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
+                <button onClick={salvar} className="flex-1 btn-primary py-2.5 rounded-xl">{editItem?'Salvar':'Criar Foco'}</button>
+              </div>
+            </div>
+          </Modal>
+        </div>
+      );
+    };
+
     // ─── Cadastro de Turmas e Alunos ───────────────────────────────────────────
     const CadastroTurmasAlunos = ({ toast }) => {
       const [turmas, setTurmas] = useState([...TURMAS]);
@@ -2513,10 +2718,11 @@
       const [editItem, setEditItem] = useState(null);
       const [formTurma, setFormTurma] = useState({nome:'',horario:'',modalidade:'crossfit',dias:[],max_alunos:20,cor:'#43f320'});
       const [filtroModalidade, setFiltroModalidade] = useState('todas');
-      const [formAluno, setFormAluno] = useState({nome:'',turma_id:'',nivel:'intermediário',restricoes:'',objetivo:''});
+      const [formAluno, setFormAluno] = useState({nome:'',turma_id:'',nivel:'intermediário',restricoes:'',objetivo:'',idade:'',peso:'',altura:'',email:'',telefone:'',genero:'masculino'});
       const diasOpcoes = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
       const niveis = ['iniciante','intermediário','avançado'];
       const objetivos = ['Competição','Performance','Saúde','Condicionamento','Emagrecimento'];
+      const generos = ['masculino','feminino'];
 
       // Sincronizar com globals
       useEffect(() => { TURMAS = turmas; }, [turmas]);
@@ -2525,14 +2731,19 @@
       const abrirNovo = () => {
         setEditItem(null);
         if (tab === 'turmas') setFormTurma({nome:'',horario:'',modalidade:'crossfit',dias:['Seg','Ter','Qua','Qui','Sex'],max_alunos:20,cor:'#43f320'});
-        else setFormAluno({nome:'',turma_id:turmas[0]?.id||'',nivel:'intermediário',restricoes:'',objetivo:'Condicionamento'});
+        else setFormAluno({nome:'',turma_id:turmas[0]?.id||'',nivel:'intermediário',restricoes:'',objetivo:'Condicionamento',idade:'',peso:'',altura:'',email:'',telefone:'',genero:'masculino'});
         setShowModal(true);
       };
 
       const abrirEditar = (item) => {
         setEditItem(item);
-        if (tab === 'turmas') setFormTurma({nome:item.nome.split('—').pop()?.trim()||item.nome,horario:item.horario,modalidade:item.modalidade||'crossfit',dias:[...(item.dias||[])],max_alunos:item.max_alunos,cor:item.cor||'#43f320'});
-        else setFormAluno({nome:item.nome,turma_id:item.turma_id,nivel:item.nivel,restricoes:item.restricoes||'',objetivo:item.objetivo||''});
+        if (tab === 'turmas') {
+          setTab('turmas');
+          setFormTurma({nome:item.nome.split('—').pop()?.trim()||item.nome,horario:item.horario,modalidade:item.modalidade||'crossfit',dias:[...(item.dias||[])],max_alunos:item.max_alunos,cor:item.cor||'#43f320'});
+        } else {
+          setTab('alunos');
+          setFormAluno({nome:item.nome,turma_id:item.turma_id||'',nivel:item.nivel||'intermediário',restricoes:item.restricoes||'',objetivo:item.objetivo||'',idade:item.idade||'',peso:item.peso||'',altura:item.altura||'',email:item.email||'',telefone:item.telefone||'',genero:item.genero||'masculino'});
+        }
         setShowModal(true);
       };
 
@@ -2773,13 +2984,39 @@
               </div>
             ) : (
               <div className="space-y-4">
-                <div><label className="text-sm text-slate-400 mb-1.5 block">Nome Completo</label>
-                  <input value={formAluno.nome} onChange={e=>setFormAluno(f=>({...f,nome:e.target.value}))} placeholder="Ex: João Silva"/>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="col-span-2"><label className="text-sm text-slate-400 mb-1.5 block">Nome Completo</label>
+                    <input value={formAluno.nome} onChange={e=>setFormAluno(f=>({...f,nome:e.target.value}))} placeholder="Ex: João Silva"/>
+                  </div>
+                  <div><label className="text-sm text-slate-400 mb-1.5 block">Gênero</label>
+                    <select value={formAluno.genero} onChange={e=>setFormAluno(f=>({...f,genero:e.target.value}))}>
+                      {generos.map(g=><option key={g} value={g}>{g.charAt(0).toUpperCase()+g.slice(1)}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div><label className="text-sm text-slate-400 mb-1.5 block">Idade</label>
+                    <input type="number" value={formAluno.idade} onChange={e=>setFormAluno(f=>({...f,idade:e.target.value}))} placeholder="Ex: 28"/>
+                  </div>
+                  <div><label className="text-sm text-slate-400 mb-1.5 block">Peso (kg)</label>
+                    <input type="number" value={formAluno.peso} onChange={e=>setFormAluno(f=>({...f,peso:e.target.value}))} placeholder="Ex: 75"/>
+                  </div>
+                  <div><label className="text-sm text-slate-400 mb-1.5 block">Altura (cm)</label>
+                    <input type="number" value={formAluno.altura} onChange={e=>setFormAluno(f=>({...f,altura:e.target.value}))} placeholder="Ex: 175"/>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div><label className="text-sm text-slate-400 mb-1.5 block">E-mail</label>
+                    <input type="email" value={formAluno.email} onChange={e=>setFormAluno(f=>({...f,email:e.target.value}))} placeholder="aluno@email.com"/>
+                  </div>
+                  <div><label className="text-sm text-slate-400 mb-1.5 block">Telefone</label>
+                    <input value={formAluno.telefone} onChange={e=>setFormAluno(f=>({...f,telefone:e.target.value}))} placeholder="(11) 99999-9999"/>
+                  </div>
                 </div>
                 <div><label className="text-sm text-slate-400 mb-1.5 block">Turma</label>
                   <select value={formAluno.turma_id} onChange={e=>setFormAluno(f=>({...f,turma_id:e.target.value}))}>
                     <option value="">Sem turma definida</option>
-                    {turmas.map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}
+                    {turmas.map(t=><option key={t.id} value={t.id}>{t.nome} [{metLabels[t.modalidade]||''}]</option>)}
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -2794,8 +3031,8 @@
                     </select>
                   </div>
                 </div>
-                <div><label className="text-sm text-slate-400 mb-1.5 block">Restrições / Observações</label>
-                  <textarea value={formAluno.restricoes} onChange={e=>setFormAluno(f=>({...f,restricoes:e.target.value}))} placeholder="Ex: Lesão no ombro, gestante, dor lombar..." rows={2} style={{resize:'none'}}/>
+                <div><label className="text-sm text-slate-400 mb-1.5 block">Restrições / Observações Médicas</label>
+                  <textarea value={formAluno.restricoes} onChange={e=>setFormAluno(f=>({...f,restricoes:e.target.value}))} placeholder="Ex: Lesão no ombro direito, gestante 4 meses, dor lombar crônica..." rows={2} style={{resize:'none'}}/>
                 </div>
                 <div className="flex gap-3 mt-2">
                   <button onClick={()=>setShowModal(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
@@ -2944,6 +3181,7 @@
         periodizacao: <Periodizacao toast={toast} filtro={filtro}/>,
         seguranca: <Seguranca toast={toast} filtro={filtro}/>,
         cadastro: <CadastroTurmasAlunos toast={toast}/>,
+        focos: <CadastroFocos toast={toast}/>,
         estrategico: <Estrategico/>,
         coaches: <Coaches/>,
         configuracoes: <Configuracoes toast={toast}/>,
@@ -2956,6 +3194,7 @@
         periodizacao: ['Periodização', 'Planejamento estratégico de macrociclos'],
         seguranca: ['Verificação de Segurança', 'Auditoria de segurança e riscos da semana'],
         cadastro: ['Turmas e Alunos', 'Cadastro e gestão de turmas e alunos da academia'],
+        focos: ['Focos de Sessão', 'Gerenciar tipos de foco disponíveis na geração de treinos'],
         estrategico: ['Visão Estratégica', 'Recomendações de IA para gestão do negócio'],
         coaches: ['Gestão de Professores', 'Desempenho e métricas dos coaches'],
         configuracoes: ['Configurações', 'Perfil e dados da academia'],
