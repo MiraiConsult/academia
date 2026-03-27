@@ -106,8 +106,8 @@
     const COACH_ID = 'b1c2d3e4-f5a6-7890-abcd-ef1234567891';
     const DONO_ID = 'c2d3e4f5-a6b7-8901-bcde-f12345678902';
 
-    // ─── Alunos e Turmas Simulados ────────────────────────────────────────────
-    const TURMAS = [
+    // ─── Alunos e Turmas (editáveis via estado global) ──────────────────────
+    let TURMAS = [
       {id:'turma-1', nome:'06:00 — CrossFit Manhã', horario:'06:00', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:20, cor:'#43f320'},
       {id:'turma-2', nome:'07:30 — CrossFit Intermediário', horario:'07:30', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:18, cor:'#60a5fa'},
       {id:'turma-3', nome:'12:00 — CrossFit Horário de Almoço', horario:'12:00', dias:['Seg','Qua','Sex'], max_alunos:15, cor:'#facc15'},
@@ -116,7 +116,7 @@
       {id:'turma-6', nome:'09:00 — Bootcamp Sábado', horario:'09:00', dias:['Sáb'], max_alunos:25, cor:'#fb923c'},
     ];
 
-    const ALUNOS = [
+    let ALUNOS = [
       {id:'aluno-1', nome:'Lucas Oliveira', turma_id:'turma-4', nivel:'intermediário', restricoes:'', objetivo:'Competição'},
       {id:'aluno-2', nome:'Marina Santos', turma_id:'turma-1', nivel:'avançado', restricoes:'', objetivo:'Performance'},
       {id:'aluno-3', nome:'Pedro Almeida', turma_id:'turma-2', nivel:'iniciante', restricoes:'Lesão no ombro direito', objetivo:'Saúde'},
@@ -650,6 +650,7 @@
         { id: 'analise', icon: 'monitoring', label: 'Análise' },
         { id: 'periodizacao', icon: 'calendar_month', label: 'Periodização' },
         { id: 'seguranca', icon: 'verified_user', label: 'Segurança' },
+        { id: 'cadastro', icon: 'badge', label: 'Turmas e Alunos' },
       ];
       const donoLinks = [
         { id: 'dashboard', icon: 'dashboard', label: 'Painel' },
@@ -2484,6 +2485,280 @@
       </div>
     );
 
+    // ─── Cadastro de Turmas e Alunos ───────────────────────────────────────────
+    const CadastroTurmasAlunos = ({ toast }) => {
+      const [turmas, setTurmas] = useState([...TURMAS]);
+      const [alunos, setAlunos] = useState([...ALUNOS]);
+      const [tab, setTab] = useState('turmas');
+      const [showModal, setShowModal] = useState(false);
+      const [editItem, setEditItem] = useState(null);
+      const [formTurma, setFormTurma] = useState({nome:'',horario:'',dias:[],max_alunos:20,cor:'#43f320'});
+      const [formAluno, setFormAluno] = useState({nome:'',turma_id:'',nivel:'intermediário',restricoes:'',objetivo:''});
+      const diasOpcoes = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+      const niveis = ['iniciante','intermediário','avançado'];
+      const objetivos = ['Competição','Performance','Saúde','Condicionamento','Emagrecimento'];
+
+      // Sincronizar com globals
+      useEffect(() => { TURMAS = turmas; }, [turmas]);
+      useEffect(() => { ALUNOS = alunos; }, [alunos]);
+
+      const abrirNovo = () => {
+        setEditItem(null);
+        if (tab === 'turmas') setFormTurma({nome:'',horario:'',dias:['Seg','Ter','Qua','Qui','Sex'],max_alunos:20,cor:'#43f320'});
+        else setFormAluno({nome:'',turma_id:turmas[0]?.id||'',nivel:'intermediário',restricoes:'',objetivo:'Condicionamento'});
+        setShowModal(true);
+      };
+
+      const abrirEditar = (item) => {
+        setEditItem(item);
+        if (tab === 'turmas') setFormTurma({nome:item.nome,horario:item.horario,dias:[...item.dias],max_alunos:item.max_alunos,cor:item.cor||'#43f320'});
+        else setFormAluno({nome:item.nome,turma_id:item.turma_id,nivel:item.nivel,restricoes:item.restricoes||'',objetivo:item.objetivo||''});
+        setShowModal(true);
+      };
+
+      const salvarTurma = () => {
+        if (!formTurma.nome.trim()) { toast('Preencha o nome da turma','error'); return; }
+        if (editItem) {
+          setTurmas(prev => prev.map(t => t.id === editItem.id ? {...t,...formTurma, nome: `${formTurma.horario} — ${formTurma.nome}`} : t));
+          toast('Turma atualizada!');
+        } else {
+          const nova = {id:'turma-'+Date.now(), ...formTurma, nome: `${formTurma.horario} — ${formTurma.nome}`};
+          setTurmas(prev => [...prev, nova]);
+          toast('Turma criada!');
+        }
+        setShowModal(false);
+      };
+
+      const salvarAluno = () => {
+        if (!formAluno.nome.trim()) { toast('Preencha o nome do aluno','error'); return; }
+        if (editItem) {
+          setAlunos(prev => prev.map(a => a.id === editItem.id ? {...a,...formAluno} : a));
+          toast('Aluno atualizado!');
+        } else {
+          const novo = {id:'aluno-'+Date.now(), ...formAluno};
+          setAlunos(prev => [...prev, novo]);
+          toast('Aluno cadastrado!');
+        }
+        setShowModal(false);
+      };
+
+      const removerTurma = (id) => {
+        setTurmas(prev => prev.filter(t => t.id !== id));
+        setAlunos(prev => prev.map(a => a.turma_id === id ? {...a, turma_id:''} : a));
+        toast('Turma removida');
+      };
+
+      const removerAluno = (id) => {
+        setAlunos(prev => prev.filter(a => a.id !== id));
+        toast('Aluno removido');
+      };
+
+      return (
+        <div className="p-8 space-y-6 fade-in">
+          {/* Tabs e ações */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1 bg-bg-card rounded-xl p-1 border border-white/5">
+              {[{v:'turmas',l:'Turmas',i:'groups',count:turmas.length},{v:'alunos',l:'Alunos',i:'person',count:alunos.length}].map(({v,l,i,count})=>(
+                <button key={v} onClick={()=>setTab(v)}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${tab===v?'bg-primary/15 text-primary':'text-slate-400 hover:text-white'}`}>
+                  <Icon name={i} size={18}/>{l}<span className="ml-1 text-xs opacity-60">({count})</span>
+                </button>
+              ))}
+            </div>
+            <button onClick={abrirNovo} className="btn-primary px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm">
+              <Icon name="add" size={18}/>Nova {tab === 'turmas' ? 'Turma' : 'Aluno'}
+            </button>
+          </div>
+
+          {/* KPIs */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              {l:'Total de Turmas',v:turmas.length,i:'groups',c:'text-primary'},
+              {l:'Total de Alunos',v:alunos.length,i:'person',c:'text-blue-400'},
+              {l:'Capacidade Total',v:turmas.reduce((s,t)=>s+t.max_alunos,0),i:'chair',c:'text-yellow-400'},
+              {l:'Taxa de Ocupação',v:turmas.length>0?Math.round((alunos.length/turmas.reduce((s,t)=>s+t.max_alunos,0))*100)+'%':'—',i:'trending_up',c:'text-purple-400'},
+            ].map(({l,v,i,c})=>(
+              <div key={l} className="card p-4 flex items-center gap-3">
+                <Icon name={i} className={c} size={24}/>
+                <div><p className="font-display font-bold text-xl">{v}</p><p className="text-xs text-slate-400">{l}</p></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Lista de Turmas */}
+          {tab === 'turmas' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {turmas.map(turma => {
+                const alunosDaTurma = alunos.filter(a => a.turma_id === turma.id);
+                const ocupacao = turma.max_alunos > 0 ? Math.round((alunosDaTurma.length / turma.max_alunos) * 100) : 0;
+                return (
+                  <div key={turma.id} className="card p-5 space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{background:turma.cor+'20',border:`1px solid ${turma.cor}40`}}>
+                          <Icon name="groups" size={20} style={{color:turma.cor}}/>
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-sm">{turma.nome}</h4>
+                          <p className="text-xs text-slate-400">{turma.dias?.join(', ')}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-1">
+                        <button onClick={()=>abrirEditar(turma)} className="p-1.5 rounded-lg hover:bg-primary/10 text-slate-400 hover:text-primary transition-colors"><Icon name="edit" size={16}/></button>
+                        <button onClick={()=>removerTurma(turma.id)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition-colors"><Icon name="delete" size={16}/></button>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-slate-400">{alunosDaTurma.length} / {turma.max_alunos} alunos</span>
+                        <span className={`font-bold ${ocupacao>85?'text-red-400':ocupacao>60?'text-yellow-400':'text-primary'}`}>{ocupacao}%</span>
+                      </div>
+                      <div className="progress-bar"><div className="progress-fill" style={{width:`${ocupacao}%`}}/></div>
+                    </div>
+                    {alunosDaTurma.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {alunosDaTurma.slice(0,5).map(a => (
+                          <span key={a.id} className="px-2 py-0.5 rounded-md bg-white/5 text-xs text-slate-300">{a.nome.split(' ')[0]}</span>
+                        ))}
+                        {alunosDaTurma.length > 5 && <span className="px-2 py-0.5 rounded-md bg-primary/10 text-xs text-primary font-bold">+{alunosDaTurma.length-5}</span>}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Lista de Alunos */}
+          {tab === 'alunos' && (
+            <div className="card overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/5">
+                    <th className="text-left p-4 text-xs font-bold text-slate-500 uppercase">Aluno</th>
+                    <th className="text-left p-4 text-xs font-bold text-slate-500 uppercase">Turma</th>
+                    <th className="text-left p-4 text-xs font-bold text-slate-500 uppercase">Nível</th>
+                    <th className="text-left p-4 text-xs font-bold text-slate-500 uppercase">Objetivo</th>
+                    <th className="text-left p-4 text-xs font-bold text-slate-500 uppercase">Restrições</th>
+                    <th className="text-right p-4 text-xs font-bold text-slate-500 uppercase">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {alunos.map(aluno => {
+                    const turma = turmas.find(t => t.id === aluno.turma_id);
+                    const nivelColor = aluno.nivel==='avançado'?'tag-green':aluno.nivel==='intermediário'?'tag-yellow':'tag-blue';
+                    return (
+                      <tr key={aluno.id} className="border-b border-white/5 hover:bg-white/2 transition-colors">
+                        <td className="p-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center border border-primary/20">
+                              <Icon name="person" className="text-primary" size={14}/>
+                            </div>
+                            <span className="font-medium">{aluno.nome}</span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-slate-400 text-xs">{turma ? turma.nome.split('—')[0].trim() : '—'}</td>
+                        <td className="p-4"><span className={`tag ${nivelColor}`}>{aluno.nivel}</span></td>
+                        <td className="p-4 text-slate-300">{aluno.objetivo || '—'}</td>
+                        <td className="p-4">{aluno.restricoes ? <span className="text-red-400 text-xs flex items-center gap-1"><Icon name="warning" size={12}/>{aluno.restricoes}</span> : <span className="text-slate-500 text-xs">Nenhuma</span>}</td>
+                        <td className="p-4 text-right">
+                          <div className="flex justify-end gap-1">
+                            <button onClick={()=>{setTab('alunos');abrirEditar(aluno);}} className="p-1.5 rounded-lg hover:bg-primary/10 text-slate-400 hover:text-primary transition-colors"><Icon name="edit" size={16}/></button>
+                            <button onClick={()=>removerAluno(aluno.id)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition-colors"><Icon name="delete" size={16}/></button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {alunos.length === 0 && (
+                <div className="p-12 text-center">
+                  <Icon name="person_off" className="text-primary/20" size={48}/>
+                  <p className="text-slate-400 text-sm mt-3">Nenhum aluno cadastrado</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Modal de Criação/Edição */}
+          <Modal open={showModal} onClose={()=>setShowModal(false)} title={editItem ? `Editar ${tab==='turmas'?'Turma':'Aluno'}` : `Nova ${tab==='turmas'?'Turma':'Aluno'}`}>
+            {tab === 'turmas' ? (
+              <div className="space-y-4">
+                <div><label className="text-sm text-slate-400 mb-1.5 block">Nome da Turma</label>
+                  <input value={formTurma.nome} onChange={e=>setFormTurma(f=>({...f,nome:e.target.value}))} placeholder="Ex: CrossFit Iniciante"/>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div><label className="text-sm text-slate-400 mb-1.5 block">Horário</label>
+                    <input type="time" value={formTurma.horario} onChange={e=>setFormTurma(f=>({...f,horario:e.target.value}))}/>
+                  </div>
+                  <div><label className="text-sm text-slate-400 mb-1.5 block">Máx. Alunos</label>
+                    <input type="number" value={formTurma.max_alunos} onChange={e=>setFormTurma(f=>({...f,max_alunos:parseInt(e.target.value)||0}))}/>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm text-slate-400 mb-2 block">Dias da Semana</label>
+                  <div className="flex flex-wrap gap-2">
+                    {diasOpcoes.map(d=>(
+                      <button key={d} type="button" onClick={()=>setFormTurma(f=>({...f,dias:f.dias.includes(d)?f.dias.filter(x=>x!==d):[...f.dias,d]}))}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${formTurma.dias.includes(d)?'border-primary bg-primary/15 text-primary':'border-white/10 text-slate-400'}`}>
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm text-slate-400 mb-1.5 block">Cor</label>
+                  <div className="flex gap-2">
+                    {['#43f320','#60a5fa','#facc15','#f87171','#c084fc','#fb923c','#2dd4bf','#f472b6'].map(c=>(
+                      <button key={c} type="button" onClick={()=>setFormTurma(f=>({...f,cor:c}))}
+                        className={`w-8 h-8 rounded-full border-2 transition-all ${formTurma.cor===c?'border-white scale-110':'border-transparent'}`}
+                        style={{background:c}}/>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex gap-3 mt-2">
+                  <button onClick={()=>setShowModal(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
+                  <button onClick={salvarTurma} className="flex-1 btn-primary py-2.5 rounded-xl">{editItem?'Salvar Alterações':'Criar Turma'}</button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div><label className="text-sm text-slate-400 mb-1.5 block">Nome Completo</label>
+                  <input value={formAluno.nome} onChange={e=>setFormAluno(f=>({...f,nome:e.target.value}))} placeholder="Ex: João Silva"/>
+                </div>
+                <div><label className="text-sm text-slate-400 mb-1.5 block">Turma</label>
+                  <select value={formAluno.turma_id} onChange={e=>setFormAluno(f=>({...f,turma_id:e.target.value}))}>
+                    <option value="">Sem turma definida</option>
+                    {turmas.map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div><label className="text-sm text-slate-400 mb-1.5 block">Nível</label>
+                    <select value={formAluno.nivel} onChange={e=>setFormAluno(f=>({...f,nivel:e.target.value}))}>
+                      {niveis.map(n=><option key={n} value={n}>{n.charAt(0).toUpperCase()+n.slice(1)}</option>)}
+                    </select>
+                  </div>
+                  <div><label className="text-sm text-slate-400 mb-1.5 block">Objetivo</label>
+                    <select value={formAluno.objetivo} onChange={e=>setFormAluno(f=>({...f,objetivo:e.target.value}))}>
+                      {objetivos.map(o=><option key={o} value={o}>{o}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div><label className="text-sm text-slate-400 mb-1.5 block">Restrições / Observações</label>
+                  <textarea value={formAluno.restricoes} onChange={e=>setFormAluno(f=>({...f,restricoes:e.target.value}))} placeholder="Ex: Lesão no ombro, gestante, dor lombar..." rows={2} style={{resize:'none'}}/>
+                </div>
+                <div className="flex gap-3 mt-2">
+                  <button onClick={()=>setShowModal(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
+                  <button onClick={salvarAluno} className="flex-1 btn-primary py-2.5 rounded-xl">{editItem?'Salvar Alterações':'Cadastrar Aluno'}</button>
+                </div>
+              </div>
+            )}
+          </Modal>
+        </div>
+      );
+    };
+
     // ─── Coaches ───────────────────────────────────────────────────────────────
     const Coaches = () => {
       const [usuarios, setUsuarios] = useState([]);
@@ -2619,6 +2894,7 @@
         analise: <Analise toast={toast} filtro={filtro}/>,
         periodizacao: <Periodizacao toast={toast} filtro={filtro}/>,
         seguranca: <Seguranca toast={toast} filtro={filtro}/>,
+        cadastro: <CadastroTurmasAlunos toast={toast}/>,
         estrategico: <Estrategico/>,
         coaches: <Coaches/>,
         configuracoes: <Configuracoes toast={toast}/>,
@@ -2630,6 +2906,7 @@
         analise: ['Análise de Programação', 'Estatísticas detalhadas da programação'],
         periodizacao: ['Periodização', 'Planejamento estratégico de macrociclos'],
         seguranca: ['Verificação de Segurança', 'Auditoria de segurança e riscos da semana'],
+        cadastro: ['Turmas e Alunos', 'Cadastro e gestão de turmas e alunos da academia'],
         estrategico: ['Visão Estratégica', 'Recomendações de IA para gestão do negócio'],
         coaches: ['Gestão de Professores', 'Desempenho e métricas dos coaches'],
         configuracoes: ['Configurações', 'Perfil e dados da academia'],
