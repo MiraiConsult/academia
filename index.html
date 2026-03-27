@@ -106,6 +106,34 @@
     const COACH_ID = 'b1c2d3e4-f5a6-7890-abcd-ef1234567891';
     const DONO_ID = 'c2d3e4f5-a6b7-8901-bcde-f12345678902';
 
+    // ─── Alunos e Turmas Simulados ────────────────────────────────────────────
+    const TURMAS = [
+      {id:'turma-1', nome:'06:00 — CrossFit Manhã', horario:'06:00', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:20, cor:'#43f320'},
+      {id:'turma-2', nome:'07:30 — CrossFit Intermediário', horario:'07:30', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:18, cor:'#60a5fa'},
+      {id:'turma-3', nome:'12:00 — CrossFit Horário de Almoço', horario:'12:00', dias:['Seg','Qua','Sex'], max_alunos:15, cor:'#facc15'},
+      {id:'turma-4', nome:'18:00 — CrossFit Noite', horario:'18:00', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:22, cor:'#f87171'},
+      {id:'turma-5', nome:'19:30 — CrossFit Avançado', horario:'19:30', dias:['Seg','Ter','Qua','Qui'], max_alunos:16, cor:'#c084fc'},
+      {id:'turma-6', nome:'09:00 — Bootcamp Sábado', horario:'09:00', dias:['Sáb'], max_alunos:25, cor:'#fb923c'},
+    ];
+
+    const ALUNOS = [
+      {id:'aluno-1', nome:'Lucas Oliveira', turma_id:'turma-4', nivel:'intermediário', restricoes:'', objetivo:'Competição'},
+      {id:'aluno-2', nome:'Marina Santos', turma_id:'turma-1', nivel:'avançado', restricoes:'', objetivo:'Performance'},
+      {id:'aluno-3', nome:'Pedro Almeida', turma_id:'turma-2', nivel:'iniciante', restricoes:'Lesão no ombro direito', objetivo:'Saúde'},
+      {id:'aluno-4', nome:'Camila Costa', turma_id:'turma-4', nivel:'intermediário', restricoes:'', objetivo:'Condicionamento'},
+      {id:'aluno-5', nome:'Rafael Mendes', turma_id:'turma-5', nivel:'avançado', restricoes:'', objetivo:'Competição'},
+      {id:'aluno-6', nome:'Juliana Ferreira', turma_id:'turma-1', nivel:'intermediário', restricoes:'Problema no joelho', objetivo:'Saúde'},
+      {id:'aluno-7', nome:'Gustavo Lima', turma_id:'turma-3', nivel:'intermediário', restricoes:'', objetivo:'Emagrecimento'},
+      {id:'aluno-8', nome:'Amanda Rocha', turma_id:'turma-2', nivel:'iniciante', restricoes:'', objetivo:'Condicionamento'},
+      {id:'aluno-9', nome:'Thiago Barbosa', turma_id:'turma-5', nivel:'avançado', restricoes:'', objetivo:'Competição'},
+      {id:'aluno-10', nome:'Fernanda Dias', turma_id:'turma-4', nivel:'intermediário', restricoes:'Gestante — 4 meses', objetivo:'Saúde'},
+      {id:'aluno-11', nome:'Bruno Cavalcanti', turma_id:'turma-1', nivel:'avançado', restricoes:'', objetivo:'Performance'},
+      {id:'aluno-12', nome:'Isabela Martins', turma_id:'turma-3', nivel:'iniciante', restricoes:'', objetivo:'Emagrecimento'},
+      {id:'aluno-13', nome:'Diego Nascimento', turma_id:'turma-4', nivel:'intermediário', restricoes:'', objetivo:'Condicionamento'},
+      {id:'aluno-14', nome:'Larissa Souza', turma_id:'turma-2', nivel:'intermediário', restricoes:'Dor lombar crônica', objetivo:'Saúde'},
+      {id:'aluno-15', nome:'Felipe Araujo', turma_id:'turma-5', nivel:'avançado', restricoes:'', objetivo:'Competição'},
+    ];
+
     // ─── Helpers ───────────────────────────────────────────────────────────────
     const hoje = () => new Date().toISOString().split('T')[0];
     const fmtDate = (d) => d ? new Date(d).toLocaleDateString('pt-BR', {day:'2-digit',month:'long',year:'numeric'}) : '';
@@ -669,13 +697,39 @@
     };
 
     // ─── Topbar ────────────────────────────────────────────────────────────────
-    const Topbar = ({ title, subtitle, actions, alertCount, theme, toggleTheme }) => (
+    const Topbar = ({ title, subtitle, actions, alertCount, theme, toggleTheme, filtro, setFiltro }) => (
       <header className="flex items-center justify-between px-8 py-4 border-b border-white/5">
         <div>
           <h1 className="font-display font-bold text-2xl leading-tight">{title}</h1>
           {subtitle && <p className="text-slate-400 text-sm mt-0.5">{subtitle}</p>}
         </div>
         <div className="flex items-center gap-3">
+          {/* Filtro Global */}
+          {filtro !== undefined && (
+            <div className="flex items-center gap-2">
+              <select value={filtro.tipo} onChange={e => {
+                const tipo = e.target.value;
+                setFiltro({tipo, id: tipo === 'todos' ? null : tipo === 'turma' ? TURMAS[0]?.id : ALUNOS[0]?.id});
+              }} className="text-xs font-bold" style={{width:'auto',padding:'6px 10px',minWidth:'80px'}}>
+                <option value="todos">Todos</option>
+                <option value="turma">Por Turma</option>
+                <option value="aluno">Por Aluno</option>
+              </select>
+              {filtro.tipo === 'turma' && (
+                <select value={filtro.id||''} onChange={e=>setFiltro({...filtro,id:e.target.value})} className="text-xs" style={{width:'auto',padding:'6px 10px',minWidth:'120px'}}>
+                  {TURMAS.map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}
+                </select>
+              )}
+              {filtro.tipo === 'aluno' && (
+                <select value={filtro.id||''} onChange={e=>setFiltro({...filtro,id:e.target.value})} className="text-xs" style={{width:'auto',padding:'6px 10px',minWidth:'120px'}}>
+                  {ALUNOS.map(a=><option key={a.id} value={a.id}>{a.nome}</option>)}
+                </select>
+              )}
+              {filtro.tipo !== 'todos' && (
+                <button onClick={()=>setFiltro({tipo:'todos',id:null})} className="text-xs text-primary font-bold hover:underline">Limpar</button>
+              )}
+            </div>
+          )}
           {alertCount > 0 && (
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
               <Icon name="warning" size={16}/>{alertCount} alerta{alertCount>1?'s':''}
@@ -725,6 +779,8 @@
           wod: { nome: simNomes[idx], formato: formatos[idx % formatos.length], movimentos: simMovs[movsIdx], tempo_wod_min: 15 + (idx%8) },
           cooldown: { descricao: '5 min caminhada leve + Foam Roller + alongamento' },
           adaptacoes: { iniciante: 'Reduza cargas 30-40%. Substitua movimentos complexos.', avancado: 'Mantenha RX. Adicione colete 9kg.' },
+          turma_id: TURMAS[Math.abs(i+15) % TURMAS.length].id,
+          aluno_ids: ALUNOS.filter(a => a.turma_id === TURMAS[Math.abs(i+15) % TURMAS.length].id).map(a => a.id),
           status: 'publicado',
         });
       }
@@ -733,11 +789,11 @@
 
     const TREINOS_SIMULADOS = gerarTreinosSimulados();
 
-    const DashboardCoach = ({ setPage, toast }) => {
+    const DashboardCoach = ({ setPage, toast, filtro }) => {
       const [treinosDB, setTreinosDB] = useState([]);
       const [alertas, setAlertas] = useState([]);
       const [loading, setLoading] = useState(true);
-      const [viewMode, setViewMode] = useState('semana'); // 'semana' ou 'mes'
+      const [viewMode, setViewMode] = useState('semana');
       const [weekOffset, setWeekOffset] = useState(0);
 
       useEffect(() => {
@@ -753,12 +809,19 @@
         load();
       }, []);
 
-      // Combinar treinos do banco com simulados (simulados preenchem dias vazios)
+      // Combinar treinos do banco com simulados, e aplicar filtro
       const treinos = useMemo(() => {
         const dbDates = new Set((treinosDB||[]).map(t => t.data_treino));
         const simFiltered = TREINOS_SIMULADOS.filter(s => !dbDates.has(s.data_treino));
-        return [...(treinosDB||[]), ...simFiltered].sort((a,b) => a.data_treino > b.data_treino ? 1 : -1);
-      }, [treinosDB]);
+        let all = [...(treinosDB||[]), ...simFiltered].sort((a,b) => a.data_treino > b.data_treino ? 1 : -1);
+        // Aplicar filtro
+        if (filtro?.tipo === 'turma' && filtro.id) {
+          all = all.filter(t => t.turma_id === filtro.id);
+        } else if (filtro?.tipo === 'aluno' && filtro.id) {
+          all = all.filter(t => t.aluno_ids && t.aluno_ids.includes(filtro.id));
+        }
+        return all;
+      }, [treinosDB, filtro]);
 
       const treino_hoje = treinos.find(t => t.data_treino === hoje());
 
@@ -1041,8 +1104,8 @@
       );
     };
 
-    const GerarTreino = ({ toast }) => {
-      const [form, setForm] = useState({ metodologia: 'crossfit', data: hoje(), num_alunos: 15, foco: 'LPO + Condicionamento', restritcoes: '', modo_duplas: false, duracao: 55 });
+    const GerarTreino = ({ toast, filtro }) => {
+      const [form, setForm] = useState({ metodologia: 'crossfit', data: hoje(), num_alunos: 15, foco: 'LPO + Condicionamento', restritcoes: '', modo_duplas: false, duracao: 55, destino: 'turma', turma_id: TURMAS[0]?.id || '', aluno_id: '' });
       const [treino, setTreino] = useState(null);
       const [loading, setLoading] = useState(false);
       const [saved, setSaved] = useState(false);
@@ -1120,6 +1183,9 @@
           cooldown: { descricao: '3-5 min caminhada leve + Foam Roller (quadríceps, lombar, dorsais) + alongamento estático' },
           adaptacoes, tempo_previsto_min: tempoTotal,
           intensidade, logistica_nota: wod.logistica_nota || '',
+          turma_id: form.destino === 'turma' ? form.turma_id : null,
+          aluno_id: form.destino === 'aluno' ? form.aluno_id : null,
+          aluno_ids: form.destino === 'turma' ? ALUNOS.filter(a => a.turma_id === form.turma_id).map(a => a.id) : form.aluno_id ? [form.aluno_id] : [],
           status: 'rascunho',
         };
         setTreino(novo); setLoading(false);
@@ -1207,7 +1273,46 @@
           <div className="w-80 min-w-80 border-r border-white/5 p-6 overflow-y-auto space-y-5">
             <div>
               <h2 className="font-display font-bold text-lg mb-1">Gerador IA</h2>
-              <p className="text-slate-400 text-xs">Configure e gere treinos otimizados para sua academia.</p>
+              <p className="text-slate-400 text-xs">Configure e gere treinos otimizados.</p>
+            </div>
+
+            {/* Destino: Turma ou Aluno */}
+            <div>
+              <label className="text-sm text-primary font-semibold mb-2 block">Gerar Para</label>
+              <div className="grid grid-cols-2 gap-2 mb-3">
+                {[{v:'turma',l:'Turma',i:'groups'},{v:'aluno',l:'Aluno',i:'person'}].map(({v,l,i}) => (
+                  <button key={v} onClick={() => setForm(f=>({...f,destino:v}))}
+                    className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border text-xs font-bold transition-all ${form.destino===v?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
+                    <Icon name={i} size={16}/>{l}
+                  </button>
+                ))}
+              </div>
+              {form.destino === 'turma' ? (
+                <select value={form.turma_id} onChange={e => {
+                  const turma = TURMAS.find(t=>t.id===e.target.value);
+                  setForm(f=>({...f, turma_id: e.target.value, num_alunos: turma?.max_alunos || 15}));
+                }}>
+                  {TURMAS.map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}
+                </select>
+              ) : (
+                <select value={form.aluno_id} onChange={e => {
+                  const aluno = ALUNOS.find(a=>a.id===e.target.value);
+                  setForm(f=>({...f, aluno_id: e.target.value, num_alunos: 1, restritcoes: aluno?.restricoes || ''}));
+                }}>
+                  <option value="">Selecionar aluno...</option>
+                  {ALUNOS.map(a=><option key={a.id} value={a.id}>{a.nome} — {a.nivel} {a.restricoes ? '⚠️' : ''}</option>)}
+                </select>
+              )}
+              {form.destino === 'aluno' && form.aluno_id && (() => {
+                const al = ALUNOS.find(a=>a.id===form.aluno_id);
+                return al ? (
+                  <div className="mt-2 p-2.5 rounded-lg bg-primary/5 border border-primary/10 space-y-1">
+                    <p className="text-xs"><span className="font-bold">Nível:</span> <span className="text-primary font-bold">{al.nivel}</span></p>
+                    <p className="text-xs"><span className="font-bold">Objetivo:</span> {al.objetivo}</p>
+                    {al.restricoes && <p className="text-xs text-red-400"><span className="font-bold">Restrições:</span> {al.restricoes}</p>}
+                  </div>
+                ) : null;
+              })()}
             </div>
 
             <div>
@@ -1320,7 +1425,11 @@
               <div className="space-y-5 max-w-2xl">
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="tag tag-green mb-2 inline-block">Resultado IA</span>
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className="tag tag-green">Resultado IA</span>
+                      {treino.turma_id && <span className="tag tag-blue"><Icon name="groups" size={10} className="inline mr-1"/>{TURMAS.find(t=>t.id===treino.turma_id)?.nome?.split('—')[0]?.trim() || 'Turma'}</span>}
+                      {treino.aluno_id && <span className="tag tag-yellow"><Icon name="person" size={10} className="inline mr-1"/>{ALUNOS.find(a=>a.id===treino.aluno_id)?.nome || 'Aluno'}</span>}
+                    </div>
                     <h2 className="font-display font-bold text-3xl">{treino.nome}</h2>
                     <p className="text-slate-400 text-sm mt-1">{fmtDate(treino.data_treino)} · {metLabels[treino.metodologia]}</p>
                   </div>
@@ -1519,20 +1628,27 @@
       return found?.grupo || 'cardio';
     };
 
-    const Analise = ({ toast }) => {
-      const [treinos, setTreinos] = useState([]);
+    const Analise = ({ toast, filtro }) => {
+      const [treinosRaw, setTreinosRaw] = useState([]);
       const [loading, setLoading] = useState(true);
 
       useEffect(() => {
         sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', {ascending:false})
           .then(({data}) => {
-            // Se houver treinos no banco, usar eles. Senão, usar simulados para demonstração
             const dbTreinos = data || [];
             const usarSimulados = dbTreinos.length < 5;
-            setTreinos(usarSimulados ? [...dbTreinos, ...TREINOS_SIMULADOS] : dbTreinos);
+            setTreinosRaw(usarSimulados ? [...dbTreinos, ...TREINOS_SIMULADOS] : dbTreinos);
             setLoading(false);
           });
       }, []);
+
+      // Aplicar filtro
+      const treinos = useMemo(() => {
+        let all = treinosRaw;
+        if (filtro?.tipo === 'turma' && filtro.id) all = all.filter(t => t.turma_id === filtro.id);
+        else if (filtro?.tipo === 'aluno' && filtro.id) all = all.filter(t => t.aluno_ids && t.aluno_ids.includes(filtro.id));
+        return all;
+      }, [treinosRaw, filtro]);
 
       // Calcular estatísticas reais dos treinos
       const stats = useMemo(() => {
@@ -1796,11 +1912,11 @@
     };
 
     // ─── Periodização ──────────────────────────────────────────────────────────
-    const Periodizacao = ({ toast }) => {
+    const Periodizacao = ({ toast, filtro }) => {
       const [periodo, setPeriodo] = useState(null);
       const [loading, setLoading] = useState(true);
       const [showModal, setShowModal] = useState(false);
-      const [form, setForm] = useState({ nome: '', objetivo: 'Construção de base', data_inicio: hoje(), data_fim: '' });
+      const [form, setForm] = useState({ nome: '', objetivo: 'Construção de base', data_inicio: hoje(), data_fim: '', destino_tipo: 'academia', destino_id: '' });
 
       useEffect(() => {
         sb.from('periodizacoes').select('*').eq('academia_id', ACADEMIA_ID).eq('status','ativo').single()
@@ -2047,6 +2163,27 @@
           <Modal open={showModal} onClose={() => setShowModal(false)} title="Novo Ciclo de Periodização">
             <div className="space-y-4">
               <div><label className="text-sm text-slate-400 mb-1.5 block">Nome do ciclo</label><input value={form.nome} onChange={e=>setForm(f=>({...f,nome:e.target.value}))} placeholder="Ex: Macrociclo Open 2025"/></div>
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Destino</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[{v:'academia',l:'Academia (Geral)',i:'corporate_fare'},{v:'turma',l:'Turma',i:'groups'},{v:'aluno',l:'Aluno',i:'person'}].map(({v,l,i})=>(
+                    <button key={v} type="button" onClick={()=>setForm(f=>({...f,destino_tipo:v}))}
+                      className={`flex items-center justify-center gap-1.5 py-2 rounded-lg border text-xs font-bold transition-all ${form.destino_tipo===v?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400'}`}>
+                      <Icon name={i} size={14}/>{v==='academia'?'Geral':l}
+                    </button>
+                  ))}
+                </div>
+                {form.destino_tipo === 'turma' && (
+                  <select className="mt-2" value={form.destino_id||''} onChange={e=>setForm(f=>({...f,destino_id:e.target.value}))}>
+                    {TURMAS.map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}
+                  </select>
+                )}
+                {form.destino_tipo === 'aluno' && (
+                  <select className="mt-2" value={form.destino_id||''} onChange={e=>setForm(f=>({...f,destino_id:e.target.value}))}>
+                    <option value="">Selecionar aluno...</option>
+                    {ALUNOS.map(a=><option key={a.id} value={a.id}>{a.nome} — {a.nivel}</option>)}
+                  </select>
+                )}
+              </div>
               <div><label className="text-sm text-slate-400 mb-1.5 block">Objetivo</label>
                 <select value={form.objetivo} onChange={e=>setForm(f=>({...f,objetivo:e.target.value}))}>
                   {['Preparação para competição','Construção de base','Hipertrofia','Deload/Recuperação','Preparação para Open'].map(o=><option key={o}>{o}</option>)}
@@ -2074,7 +2211,7 @@
     };
 
     // ─── Segurança ─────────────────────────────────────────────────────────────
-    const Seguranca = ({ toast }) => {
+    const Seguranca = ({ toast, filtro }) => {
       const [alertas, setAlertas] = useState([]);
       const [loading, setLoading] = useState(true);
 
@@ -2449,6 +2586,7 @@
       const [toastState, setToastState] = useState(null);
       const [alertCount, setAlertCount] = useState(0);
       const [theme, setTheme] = useState('dark');
+      const [filtro, setFiltro] = useState({tipo:'todos', id:null});
 
       const toggleTheme = () => {
         const next = theme === 'dark' ? 'light' : 'dark';
@@ -2472,12 +2610,15 @@
       if (!user) return null;
 
       const isCoach = user.perfil === 'head_coach';
+      // Info do filtro ativo para exibir no subtitle
+      const filtroLabel = filtro.tipo === 'turma' ? TURMAS.find(t=>t.id===filtro.id)?.nome : filtro.tipo === 'aluno' ? ALUNOS.find(a=>a.id===filtro.id)?.nome : null;
+
       const pageMap = {
-        dashboard: isCoach ? <DashboardCoach setPage={setPage} toast={toast}/> : <DashboardDono setPage={setPage}/>,
-        gerar: <GerarTreino toast={toast}/>,
-        analise: <Analise toast={toast}/>,
-        periodizacao: <Periodizacao toast={toast}/>,
-        seguranca: <Seguranca toast={toast}/>,
+        dashboard: isCoach ? <DashboardCoach setPage={setPage} toast={toast} filtro={filtro}/> : <DashboardDono setPage={setPage}/>,
+        gerar: <GerarTreino toast={toast} filtro={filtro}/>,
+        analise: <Analise toast={toast} filtro={filtro}/>,
+        periodizacao: <Periodizacao toast={toast} filtro={filtro}/>,
+        seguranca: <Seguranca toast={toast} filtro={filtro}/>,
         estrategico: <Estrategico/>,
         coaches: <Coaches/>,
         configuracoes: <Configuracoes toast={toast}/>,
@@ -2500,7 +2641,7 @@
         <div className="flex h-screen overflow-hidden">
           <Sidebar user={user} page={page} setPage={setPage} onLogout={logout} academia={academia}/>
           <div className="flex-1 flex flex-col overflow-hidden">
-            <Topbar title={title} subtitle={subtitle} alertCount={isCoach ? alertCount : 0} theme={theme} toggleTheme={toggleTheme}/>
+            <Topbar title={title} subtitle={filtroLabel ? `${subtitle} — ${filtroLabel}` : subtitle} alertCount={isCoach ? alertCount : 0} theme={theme} toggleTheme={toggleTheme} filtro={filtro} setFiltro={setFiltro}/>
             <div className="flex-1 overflow-y-auto">
               {pageMap[page] || pageMap.dashboard}
             </div>
