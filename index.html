@@ -108,12 +108,18 @@
 
     // ─── Alunos e Turmas (editáveis via estado global) ──────────────────────
     let TURMAS = [
-      {id:'turma-1', nome:'06:00 — CrossFit Manhã', horario:'06:00', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:20, cor:'#43f320'},
-      {id:'turma-2', nome:'07:30 — CrossFit Intermediário', horario:'07:30', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:18, cor:'#60a5fa'},
-      {id:'turma-3', nome:'12:00 — CrossFit Horário de Almoço', horario:'12:00', dias:['Seg','Qua','Sex'], max_alunos:15, cor:'#facc15'},
-      {id:'turma-4', nome:'18:00 — CrossFit Noite', horario:'18:00', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:22, cor:'#f87171'},
-      {id:'turma-5', nome:'19:30 — CrossFit Avançado', horario:'19:30', dias:['Seg','Ter','Qua','Qui'], max_alunos:16, cor:'#c084fc'},
-      {id:'turma-6', nome:'09:00 — Bootcamp Sábado', horario:'09:00', dias:['Sáb'], max_alunos:25, cor:'#fb923c'},
+      {id:'turma-1', nome:'06:00 — CrossFit Manhã', horario:'06:00', modalidade:'crossfit', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:20, cor:'#43f320'},
+      {id:'turma-2', nome:'07:30 — CrossFit Intermediário', horario:'07:30', modalidade:'crossfit', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:18, cor:'#60a5fa'},
+      {id:'turma-3', nome:'12:00 — CrossFit Horário de Almoço', horario:'12:00', modalidade:'crossfit', dias:['Seg','Qua','Sex'], max_alunos:15, cor:'#facc15'},
+      {id:'turma-4', nome:'18:00 — CrossFit Noite', horario:'18:00', modalidade:'crossfit', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:22, cor:'#f87171'},
+      {id:'turma-5', nome:'19:30 — CrossFit Avançado', horario:'19:30', modalidade:'crossfit', dias:['Seg','Ter','Qua','Qui'], max_alunos:16, cor:'#c084fc'},
+      {id:'turma-6', nome:'09:00 — Bootcamp Sábado', horario:'09:00', modalidade:'bootcamp', dias:['Sáb'], max_alunos:25, cor:'#fb923c'},
+      {id:'turma-7', nome:'06:30 — Hyrox Manhã', horario:'06:30', modalidade:'hyrox', dias:['Seg','Qua','Sex'], max_alunos:14, cor:'#2dd4bf'},
+      {id:'turma-8', nome:'17:00 — Bootcamp Tarde', horario:'17:00', modalidade:'bootcamp', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:30, cor:'#f472b6'},
+      {id:'turma-9', nome:'18:30 — Hyrox Noite', horario:'18:30', modalidade:'hyrox', dias:['Ter','Qui'], max_alunos:12, cor:'#38bdf8'},
+      {id:'turma-10', nome:'08:00 — Bootcamp Manhã', horario:'08:00', modalidade:'bootcamp', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:28, cor:'#fbbf24'},
+      {id:'turma-11', nome:'20:00 — CrossFit Competition', horario:'20:00', modalidade:'crossfit', dias:['Seg','Qua','Sex'], max_alunos:12, cor:'#ef4444'},
+      {id:'turma-12', nome:'10:00 — Hyrox Sábado', horario:'10:00', modalidade:'hyrox', dias:['Sáb'], max_alunos:16, cor:'#a78bfa'},
     ];
 
     let ALUNOS = [
@@ -132,6 +138,16 @@
       {id:'aluno-13', nome:'Diego Nascimento', turma_id:'turma-4', nivel:'intermediário', restricoes:'', objetivo:'Condicionamento'},
       {id:'aluno-14', nome:'Larissa Souza', turma_id:'turma-2', nivel:'intermediário', restricoes:'Dor lombar crônica', objetivo:'Saúde'},
       {id:'aluno-15', nome:'Felipe Araujo', turma_id:'turma-5', nivel:'avançado', restricoes:'', objetivo:'Competição'},
+      {id:'aluno-16', nome:'Carolina Pires', turma_id:'turma-7', nivel:'intermediário', restricoes:'', objetivo:'Competição'},
+      {id:'aluno-17', nome:'André Moreira', turma_id:'turma-7', nivel:'avançado', restricoes:'', objetivo:'Performance'},
+      {id:'aluno-18', nome:'Patrícia Lopes', turma_id:'turma-8', nivel:'iniciante', restricoes:'', objetivo:'Emagrecimento'},
+      {id:'aluno-19', nome:'Rodrigo Cunha', turma_id:'turma-8', nivel:'iniciante', restricoes:'', objetivo:'Condicionamento'},
+      {id:'aluno-20', nome:'Tatiana Vieira', turma_id:'turma-9', nivel:'intermediário', restricoes:'Tendinite no tendão de Aquiles', objetivo:'Performance'},
+      {id:'aluno-21', nome:'Marcos Silva', turma_id:'turma-9', nivel:'avançado', restricoes:'', objetivo:'Competição'},
+      {id:'aluno-22', nome:'Renata Gomes', turma_id:'turma-10', nivel:'iniciante', restricoes:'', objetivo:'Emagrecimento'},
+      {id:'aluno-23', nome:'Eduardo Reis', turma_id:'turma-10', nivel:'intermediário', restricoes:'', objetivo:'Condicionamento'},
+      {id:'aluno-24', nome:'Vanessa Cardoso', turma_id:'turma-11', nivel:'avançado', restricoes:'', objetivo:'Competição'},
+      {id:'aluno-25', nome:'Leonardo Nunes', turma_id:'turma-12', nivel:'intermediário', restricoes:'Dor no ombro esquerdo', objetivo:'Performance'},
     ];
 
     // ─── Helpers ───────────────────────────────────────────────────────────────
@@ -1291,9 +1307,9 @@
               {form.destino === 'turma' ? (
                 <select value={form.turma_id} onChange={e => {
                   const turma = TURMAS.find(t=>t.id===e.target.value);
-                  setForm(f=>({...f, turma_id: e.target.value, num_alunos: turma?.max_alunos || 15}));
+                  setForm(f=>({...f, turma_id: e.target.value, num_alunos: turma?.max_alunos || 15, metodologia: turma?.modalidade || f.metodologia}));
                 }}>
-                  {TURMAS.map(t=><option key={t.id} value={t.id}>{t.nome}</option>)}
+                  {TURMAS.map(t=><option key={t.id} value={t.id}>{t.nome} [{metLabels[t.modalidade]||t.modalidade}]</option>)}
                 </select>
               ) : (
                 <select value={form.aluno_id} onChange={e => {
@@ -2492,7 +2508,8 @@
       const [tab, setTab] = useState('turmas');
       const [showModal, setShowModal] = useState(false);
       const [editItem, setEditItem] = useState(null);
-      const [formTurma, setFormTurma] = useState({nome:'',horario:'',dias:[],max_alunos:20,cor:'#43f320'});
+      const [formTurma, setFormTurma] = useState({nome:'',horario:'',modalidade:'crossfit',dias:[],max_alunos:20,cor:'#43f320'});
+      const [filtroModalidade, setFiltroModalidade] = useState('todas');
       const [formAluno, setFormAluno] = useState({nome:'',turma_id:'',nivel:'intermediário',restricoes:'',objetivo:''});
       const diasOpcoes = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
       const niveis = ['iniciante','intermediário','avançado'];
@@ -2504,25 +2521,26 @@
 
       const abrirNovo = () => {
         setEditItem(null);
-        if (tab === 'turmas') setFormTurma({nome:'',horario:'',dias:['Seg','Ter','Qua','Qui','Sex'],max_alunos:20,cor:'#43f320'});
+        if (tab === 'turmas') setFormTurma({nome:'',horario:'',modalidade:'crossfit',dias:['Seg','Ter','Qua','Qui','Sex'],max_alunos:20,cor:'#43f320'});
         else setFormAluno({nome:'',turma_id:turmas[0]?.id||'',nivel:'intermediário',restricoes:'',objetivo:'Condicionamento'});
         setShowModal(true);
       };
 
       const abrirEditar = (item) => {
         setEditItem(item);
-        if (tab === 'turmas') setFormTurma({nome:item.nome,horario:item.horario,dias:[...item.dias],max_alunos:item.max_alunos,cor:item.cor||'#43f320'});
+        if (tab === 'turmas') setFormTurma({nome:item.nome.split('—').pop()?.trim()||item.nome,horario:item.horario,modalidade:item.modalidade||'crossfit',dias:[...(item.dias||[])],max_alunos:item.max_alunos,cor:item.cor||'#43f320'});
         else setFormAluno({nome:item.nome,turma_id:item.turma_id,nivel:item.nivel,restricoes:item.restricoes||'',objetivo:item.objetivo||''});
         setShowModal(true);
       };
 
       const salvarTurma = () => {
         if (!formTurma.nome.trim()) { toast('Preencha o nome da turma','error'); return; }
+        const nomeCompleto = `${formTurma.horario} — ${formTurma.nome}`;
         if (editItem) {
-          setTurmas(prev => prev.map(t => t.id === editItem.id ? {...t,...formTurma, nome: `${formTurma.horario} — ${formTurma.nome}`} : t));
+          setTurmas(prev => prev.map(t => t.id === editItem.id ? {...t,...formTurma, nome: nomeCompleto} : t));
           toast('Turma atualizada!');
         } else {
-          const nova = {id:'turma-'+Date.now(), ...formTurma, nome: `${formTurma.horario} — ${formTurma.nome}`};
+          const nova = {id:'turma-'+Date.now(), ...formTurma, nome: nomeCompleto};
           setTurmas(prev => [...prev, nova]);
           toast('Turma criada!');
         }
@@ -2586,21 +2604,38 @@
           </div>
 
           {/* Lista de Turmas */}
-          {tab === 'turmas' && (
+          {tab === 'turmas' && (<>
+            {/* Filtro por modalidade */}
+            <div className="flex items-center gap-2">
+              {[{v:'todas',l:'Todas',i:'apps'},{v:'crossfit',l:'CrossFit',i:'fitness_center'},{v:'hyrox',l:'Hyrox',i:'timer'},{v:'bootcamp',l:'Bootcamp',i:'groups'}].map(({v,l,i})=>(
+                <button key={v} onClick={()=>setFiltroModalidade(v)}
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold border transition-all ${filtroModalidade===v?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
+                  <Icon name={i} size={14}/>{l}
+                  <span className="opacity-50 ml-0.5">({v==='todas'?turmas.length:turmas.filter(t=>t.modalidade===v).length})</span>
+                </button>
+              ))}
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {turmas.map(turma => {
+              {turmas.filter(t=>filtroModalidade==='todas'||t.modalidade===filtroModalidade).map(turma => {
                 const alunosDaTurma = alunos.filter(a => a.turma_id === turma.id);
                 const ocupacao = turma.max_alunos > 0 ? Math.round((alunosDaTurma.length / turma.max_alunos) * 100) : 0;
+                const modIcon = turma.modalidade==='crossfit'?'fitness_center':turma.modalidade==='hyrox'?'timer':'groups';
+                const modLabel = metLabels[turma.modalidade]||turma.modalidade;
                 return (
                   <div key={turma.id} className="card p-5 space-y-4">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{background:turma.cor+'20',border:`1px solid ${turma.cor}40`}}>
-                          <Icon name="groups" size={20} style={{color:turma.cor}}/>
+                          <Icon name={modIcon} size={20} style={{color:turma.cor}}/>
                         </div>
                         <div>
-                          <h4 className="font-bold text-sm">{turma.nome}</h4>
-                          <p className="text-xs text-slate-400">{turma.dias?.join(', ')}</p>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-bold text-sm">{turma.nome}</h4>
+                          </div>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className={`tag text-xs ${turma.modalidade==='crossfit'?'tag-green':turma.modalidade==='hyrox'?'tag-blue':'tag-yellow'}`}>{modLabel}</span>
+                            <span className="text-xs text-slate-500">{turma.dias?.join(', ')}</span>
+                          </div>
                         </div>
                       </div>
                       <div className="flex gap-1">
@@ -2627,7 +2662,7 @@
                 );
               })}
             </div>
-          )}
+          </>)}
 
           {/* Lista de Alunos */}
           {tab === 'alunos' && (
@@ -2685,8 +2720,19 @@
           <Modal open={showModal} onClose={()=>setShowModal(false)} title={editItem ? `Editar ${tab==='turmas'?'Turma':'Aluno'}` : `Nova ${tab==='turmas'?'Turma':'Aluno'}`}>
             {tab === 'turmas' ? (
               <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-slate-400 mb-2 block">Modalidade</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[{v:'crossfit',l:'CrossFit',i:'fitness_center'},{v:'hyrox',l:'Hyrox',i:'timer'},{v:'bootcamp',l:'Bootcamp',i:'groups'}].map(({v,l,i})=>(
+                      <button key={v} type="button" onClick={()=>setFormTurma(f=>({...f,modalidade:v}))}
+                        className={`flex flex-col items-center py-3 rounded-xl border text-xs font-bold transition-all ${formTurma.modalidade===v?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
+                        <Icon name={i} size={20} className="mb-1"/>{l}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div><label className="text-sm text-slate-400 mb-1.5 block">Nome da Turma</label>
-                  <input value={formTurma.nome} onChange={e=>setFormTurma(f=>({...f,nome:e.target.value}))} placeholder="Ex: CrossFit Iniciante"/>
+                  <input value={formTurma.nome} onChange={e=>setFormTurma(f=>({...f,nome:e.target.value}))} placeholder="Ex: Manhã, Noite, Avançado..."/>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div><label className="text-sm text-slate-400 mb-1.5 block">Horário</label>
