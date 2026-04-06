@@ -766,9 +766,9 @@
         { id: 'analise', icon: 'monitoring', label: 'Análise' },
         { id: 'periodizacao', icon: 'calendar_month', label: 'Periodização' },
         { id: 'seguranca', icon: 'verified_user', label: 'Segurança' },
-        { id: 'cadastro', icon: 'badge', label: 'Turmas e Alunos' },
         { id: 'focos', icon: 'category', label: 'Focos de Sessão' },
         { id: 'equipamentos', icon: 'inventory_2', label: 'Equipamentos' },
+        { id: 'admin', icon: 'admin_panel_settings', label: 'Admin' },
       ];
       const donoLinks = [
         { id: 'dashboard', icon: 'dashboard', label: 'Painel' },
@@ -1432,51 +1432,7 @@
               <p className="text-slate-400 text-xs">Configure e gere treinos otimizados.</p>
             </div>
 
-            {/* Destino: Turma ou Aluno */}
-            <div>
-              <label className="text-sm text-primary font-semibold mb-2 block">Gerar Para</label>
-              <div className="grid grid-cols-2 gap-2 mb-3">
-                {[{v:'turma',l:'Turmas',i:'groups'},{v:'aluno',l:'Aluno',i:'person'}].map(({v,l,i}) => (
-                  <button key={v} onClick={() => setForm(f=>({...f, destino:v, ...(v==='aluno'?{num_alunos:1,modo_equipe:'solo'}:{num_alunos:Math.max(...TURMAS.filter(t=>t.modalidade===f.metodologia).map(t=>t.max_alunos),15)})}))}
-                    className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border text-xs font-bold transition-all ${form.destino===v?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
-                    <Icon name={i} size={16}/>{l}
-                  </button>
-                ))}
-              </div>
-              {form.destino === 'turma' ? (
-                (() => {
-                  const turmasMod = TURMAS.filter(t => t.modalidade === form.metodologia);
-                  return (
-                    <div className="p-3 rounded-lg bg-primary/5 border border-primary/10 space-y-1.5">
-                      <p className="text-xs text-slate-400">O treino será aplicado a <span className="font-bold text-primary">todas as {turmasMod.length} turmas</span> de <span className="font-bold text-primary">{metLabels[form.metodologia]}</span> do dia:</p>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {turmasMod.length > 0 ? turmasMod.map(t => (
-                          <span key={t.id} className="text-xs px-2 py-0.5 rounded-md bg-primary/10 text-primary font-medium">{t.horario}</span>
-                        )) : <span className="text-xs text-slate-500">Nenhuma turma cadastrada para esta modalidade</span>}
-                      </div>
-                    </div>
-                  );
-                })()
-              ) : (
-                <select value={form.aluno_id} onChange={e => {
-                  const aluno = ALUNOS.find(a=>a.id===e.target.value);
-                  setForm(f=>({...f, aluno_id: e.target.value, num_alunos: 1}));
-                }}>
-                  <option value="">Selecionar aluno...</option>
-                  {ALUNOS.map(a=><option key={a.id} value={a.id}>{a.nome} — {a.nivel} {a.restricoes ? '⚠️' : ''}</option>)}
-                </select>
-              )}
-              {form.destino === 'aluno' && form.aluno_id && (() => {
-                const al = ALUNOS.find(a=>a.id===form.aluno_id);
-                return al ? (
-                  <div className="mt-2 p-2.5 rounded-lg bg-primary/5 border border-primary/10 space-y-1">
-                    <p className="text-xs"><span className="font-bold">Nível:</span> <span className="text-primary font-bold">{al.nivel}</span></p>
-                    <p className="text-xs"><span className="font-bold">Objetivo:</span> {al.objetivo}</p>
-                    {al.restricoes && <p className="text-xs text-red-400"><span className="font-bold">Restrições do aluno:</span> {al.restricoes}</p>}
-                  </div>
-                ) : null;
-              })()}
-            </div>
+            {/* Seção de destino/turmas removida — foco na geração geral do treino */}
 
             <div>
               <label className="text-sm text-primary font-semibold mb-2 block">Metodologia</label>
@@ -1893,6 +1849,23 @@
     const Analise = ({ toast, filtro }) => {
       const [treinosRaw, setTreinosRaw] = useState([]);
       const [loading, setLoading] = useState(true);
+      // Período padrão: últimos 30 dias
+      const hoje30 = () => { const d = new Date(); d.setDate(d.getDate() - 30); return d.toISOString().split('T')[0]; };
+      const [periodo, setPeriodo] = useState({ inicio: hoje30(), fim: hoje() });
+      const [periodoPreset, setPeriodoPreset] = useState('30d');
+
+      const aplicarPreset = (preset) => {
+        setPeriodoPreset(preset);
+        const d = new Date();
+        const ini = new Date();
+        if (preset === '7d') ini.setDate(d.getDate() - 7);
+        else if (preset === '30d') ini.setDate(d.getDate() - 30);
+        else if (preset === '90d') ini.setDate(d.getDate() - 90);
+        else if (preset === 'mes') { ini.setDate(1); }
+        else if (preset === 'ano') { ini.setMonth(0); ini.setDate(1); }
+        else if (preset === 'tudo') { ini.setFullYear(2020); }
+        setPeriodo({ inicio: ini.toISOString().split('T')[0], fim: d.toISOString().split('T')[0] });
+      };
 
       useEffect(() => {
         sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', {ascending:false})
@@ -1904,13 +1877,18 @@
           });
       }, []);
 
-      // Aplicar filtro
+      // Aplicar filtro + período
       const treinos = useMemo(() => {
         let all = treinosRaw;
         if (filtro?.tipo === 'turma' && filtro.id) all = all.filter(t => t.turma_id === filtro.id || (t.turma_ids && t.turma_ids.includes(filtro.id)));
         else if (filtro?.tipo === 'aluno' && filtro.id) all = all.filter(t => t.aluno_ids && t.aluno_ids.includes(filtro.id));
+        // Filtro por período
+        all = all.filter(t => {
+          if (!t.data_treino) return false;
+          return t.data_treino >= periodo.inicio && t.data_treino <= periodo.fim;
+        });
         return all;
-      }, [treinosRaw, filtro]);
+      }, [treinosRaw, filtro, periodo]);
 
       // Calcular estatísticas reais dos treinos
       const stats = useMemo(() => {
@@ -2016,6 +1994,37 @@
 
       return (
         <div className="p-8 space-y-6 fade-in">
+          {/* Filtro de Período */}
+          <div className="card p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <Icon name="date_range" className="text-primary" size={20}/>
+              <h3 className="font-display font-bold">Período de Análise</h3>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {[
+                  {v:'7d',l:'7 dias'},
+                  {v:'30d',l:'30 dias'},
+                  {v:'90d',l:'90 dias'},
+                  {v:'mes',l:'Este mês'},
+                  {v:'ano',l:'Este ano'},
+                  {v:'tudo',l:'Todos'},
+                ].map(({v,l})=>(
+                  <button key={v} onClick={()=>aplicarPreset(v)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${periodoPreset===v?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
+                    {l}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 ml-auto flex-wrap">
+                <input type="date" value={periodo.inicio} onChange={e=>{setPeriodo(p=>({...p,inicio:e.target.value}));setPeriodoPreset('custom');}} style={{width:'auto',padding:'6px 10px'}} className="text-xs"/>
+                <span className="text-xs text-slate-500">até</span>
+                <input type="date" value={periodo.fim} onChange={e=>{setPeriodo(p=>({...p,fim:e.target.value}));setPeriodoPreset('custom');}} style={{width:'auto',padding:'6px 10px'}} className="text-xs"/>
+              </div>
+            </div>
+            <p className="text-xs text-slate-500 mt-3">Analisando treinos de <span className="font-bold text-primary">{new Date(periodo.inicio).toLocaleDateString('pt-BR')}</span> até <span className="font-bold text-primary">{new Date(periodo.fim).toLocaleDateString('pt-BR')}</span> · {treinos.length} treino{treinos.length!==1?'s':''} encontrado{treinos.length!==1?'s':''}</p>
+          </div>
+
           {/* KPIs */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
@@ -2178,7 +2187,78 @@
       const [periodo, setPeriodo] = useState(null);
       const [loading, setLoading] = useState(true);
       const [showModal, setShowModal] = useState(false);
+      const [showImport, setShowImport] = useState(false);
+      const [importForm, setImportForm] = useState({ nome: '', texto: '', data_inicio: hoje() });
       const [form, setForm] = useState({ nome: '', objetivo: 'Construção de base', data_inicio: hoje(), data_fim: '', destino_tipo: 'academia', destino_id: '' });
+
+      // Parser de periodização em texto livre
+      const parseImportacao = (texto) => {
+        const linhas = texto.split('\n').map(l => l.trim()).filter(Boolean);
+        const semanas = [];
+        let semanaAtual = null;
+
+        linhas.forEach(linha => {
+          // Detecta "Semana X" ou "Sem X" ou "Week X" ou "S1"
+          const matchSem = linha.match(/^(?:semana|sem|week|s)\s*(\d+)[:.\s-]*(.*)$/i);
+          if (matchSem) {
+            if (semanaAtual) semanas.push(semanaAtual);
+            const num = parseInt(matchSem[1]);
+            semanaAtual = {
+              semana: num,
+              fase: matchSem[2] || `Semana ${num}`,
+              volume: 70 + Math.floor(Math.random()*20),
+              intensidade: 65 + Math.floor(Math.random()*25),
+              deload: /deload|descanso|recupera/i.test(matchSem[2]),
+              foco_semana: matchSem[2] || '',
+              detalhes: [],
+            };
+            return;
+          }
+          // Linha com fase/descrição
+          if (semanaAtual) {
+            // Tenta extrair volume/intensidade
+            const volMatch = linha.match(/volume[:\s]*(\d+)/i);
+            const intMatch = linha.match(/intensidade[:\s]*(\d+)/i);
+            if (volMatch) semanaAtual.volume = parseInt(volMatch[1]);
+            if (intMatch) semanaAtual.intensidade = parseInt(intMatch[1]);
+            if (/deload|descanso|recupera/i.test(linha)) semanaAtual.deload = true;
+            semanaAtual.detalhes.push(linha);
+            if (!semanaAtual.foco_semana) semanaAtual.foco_semana = linha;
+          }
+        });
+        if (semanaAtual) semanas.push(semanaAtual);
+        return semanas;
+      };
+
+      const importarPeriodizacao = () => {
+        if (!importForm.nome.trim() || !importForm.texto.trim()) {
+          toast('Preencha nome e cole o texto da periodização', 'error');
+          return;
+        }
+        const semanas = parseImportacao(importForm.texto);
+        if (semanas.length === 0) {
+          toast('Não foi possível identificar semanas. Use "Semana 1: ..." por linha.', 'error');
+          return;
+        }
+        const dataInicio = new Date(importForm.data_inicio);
+        const dataFim = new Date(dataInicio); dataFim.setDate(dataFim.getDate() + (semanas.length * 7));
+        const novo = {
+          id: 'imp-' + Date.now(),
+          academia_id: ACADEMIA_ID, criado_por: COACH_ID,
+          nome: importForm.nome,
+          objetivo: 'Importada (usuário)',
+          data_inicio: importForm.data_inicio,
+          data_fim: dataFim.toISOString().split('T')[0],
+          semanas,
+          status: 'ativo',
+          importada: true,
+          texto_original: importForm.texto,
+        };
+        setPeriodo(novo);
+        setShowImport(false);
+        setImportForm({ nome: '', texto: '', data_inicio: hoje() });
+        toast(`Periodização importada com ${semanas.length} semanas!`, 'success');
+      };
 
       useEffect(() => {
         sb.from('periodizacoes').select('*').eq('academia_id', ACADEMIA_ID).eq('status','ativo').single()
@@ -2290,9 +2370,14 @@
               <h2 className="font-display font-bold text-2xl">{periodo?.nome || 'Planejamento de Periodização'}</h2>
               <p className="text-slate-400 text-sm mt-0.5">{periodo ? `${fmtDate(periodo.data_inicio)} → ${fmtDate(periodo.data_fim)}` : 'Nenhum ciclo ativo'}</p>
             </div>
-            <button onClick={() => setShowModal(true)} className="btn-primary px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm">
-              <Icon name="add" size={18}/>Novo Ciclo
-            </button>
+            <div className="flex gap-2">
+              <button onClick={() => setShowImport(true)} className="btn-ghost px-4 py-2.5 rounded-xl flex items-center gap-2 text-sm">
+                <Icon name="upload_file" size={18}/>Importar
+              </button>
+              <button onClick={() => setShowModal(true)} className="btn-primary px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm">
+                <Icon name="add" size={18}/>Novo Ciclo
+              </button>
+            </div>
           </div>
 
           {periodo ? (
@@ -2465,6 +2550,31 @@
               <div className="flex gap-3 mt-2">
                 <button onClick={() => setShowModal(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
                 <button onClick={criar} className="flex-1 btn-primary py-2.5 rounded-xl">Criar com IA</button>
+              </div>
+            </div>
+          </Modal>
+
+          {/* Modal Importar Periodização */}
+          <Modal open={showImport} onClose={()=>setShowImport(false)} title="Importar Periodização Própria">
+            <div className="space-y-4">
+              <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs text-blue-300">
+                <Icon name="info" size={14} className="inline mr-1.5"/>
+                Cole sua periodização. Use uma linha por semana começando com "Semana 1:", "Sem 1:" ou "S1:". A IA lerá e disponibilizará para análise.
+              </div>
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Nome da Periodização</label>
+                <input value={importForm.nome} onChange={e=>setImportForm(f=>({...f,nome:e.target.value}))} placeholder="Ex: Minha Periodização 2026 Q1"/>
+              </div>
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Data de Início</label>
+                <input type="date" value={importForm.data_inicio} onChange={e=>setImportForm(f=>({...f,data_inicio:e.target.value}))}/>
+              </div>
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Texto da Periodização</label>
+                <textarea value={importForm.texto} onChange={e=>setImportForm(f=>({...f,texto:e.target.value}))}
+                  placeholder={"Exemplo:\nSemana 1: Base geral — volume 70, intensidade 60\nSemana 2: Construção aeróbia — volume 75, intensidade 65\nSemana 3: Força base — volume 80, intensidade 70\nSemana 4: Deload — volume 50, intensidade 50\n..."}
+                  rows={12} style={{resize:'vertical', fontFamily:'monospace', fontSize:'12px'}}/>
+              </div>
+              <div className="flex gap-3 mt-2">
+                <button onClick={()=>setShowImport(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
+                <button onClick={importarPeriodizacao} className="flex-1 btn-primary py-2.5 rounded-xl">Importar</button>
               </div>
             </div>
           </Modal>
@@ -2747,6 +2857,281 @@
     );
 
     // ─── Cadastro de Focos de Sessão ────────────────────────────────────────────
+    // ─── Admin: Reset e Recuperação ───────────────────────────────────────
+    const Admin = ({ toast }) => {
+      const LS_KEY = 'iacoach_backups';
+      const [backups, setBackups] = useState(() => {
+        try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; }
+      });
+      const [showReset, setShowReset] = useState(false);
+      const [showBackup, setShowBackup] = useState(false);
+      const [backupNome, setBackupNome] = useState('');
+      const [alvos, setAlvos] = useState({
+        turmas: true, alunos: true, treinos: true, equipamentos: true,
+        focos: true, periodizacoes: true, alertas: true,
+      });
+
+      const salvarBackups = (lista) => {
+        setBackups(lista);
+        try { localStorage.setItem(LS_KEY, JSON.stringify(lista)); } catch {}
+      };
+
+      const criarBackup = async (nomeCustom) => {
+        // Coleta estado atual de tudo
+        const [{data:treinosDB},{data:periodDB},{data:alertsDB}] = await Promise.all([
+          sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID),
+          sb.from('periodizacoes').select('*').eq('academia_id', ACADEMIA_ID),
+          sb.from('alertas_seguranca').select('*').eq('academia_id', ACADEMIA_ID),
+        ]);
+        const snap = {
+          id: 'bkp-' + Date.now(),
+          nome: nomeCustom || `Backup ${new Date().toLocaleString('pt-BR')}`,
+          data: new Date().toISOString(),
+          dados: {
+            TURMAS: JSON.parse(JSON.stringify(TURMAS)),
+            ALUNOS: JSON.parse(JSON.stringify(ALUNOS)),
+            FOCOS_SESSAO: JSON.parse(JSON.stringify(FOCOS_SESSAO)),
+            ESTOQUE_EQUIPAMENTOS: JSON.parse(JSON.stringify(ESTOQUE_EQUIPAMENTOS)),
+            treinos: treinosDB || [],
+            periodizacoes: periodDB || [],
+            alertas: alertsDB || [],
+          },
+        };
+        salvarBackups([snap, ...backups]);
+        return snap;
+      };
+
+      const executarBackupManual = async () => {
+        const snap = await criarBackup(backupNome || null);
+        setShowBackup(false);
+        setBackupNome('');
+        toast(`Backup "${snap.nome}" criado com sucesso!`, 'success');
+      };
+
+      const executarReset = async () => {
+        // Sempre criar um backup automático antes do reset
+        await criarBackup(`Auto-reset ${new Date().toLocaleString('pt-BR')}`);
+
+        if (alvos.turmas) TURMAS = [];
+        if (alvos.alunos) ALUNOS = [];
+        if (alvos.focos) FOCOS_SESSAO = [];
+        if (alvos.equipamentos) ESTOQUE_EQUIPAMENTOS = {};
+        if (alvos.treinos) {
+          try { await sb.from('treinos').delete().eq('academia_id', ACADEMIA_ID); } catch {}
+        }
+        if (alvos.periodizacoes) {
+          try { await sb.from('periodizacoes').delete().eq('academia_id', ACADEMIA_ID); } catch {}
+        }
+        if (alvos.alertas) {
+          try { await sb.from('alertas_seguranca').delete().eq('academia_id', ACADEMIA_ID); } catch {}
+        }
+        setShowReset(false);
+        toast('Reset executado! Backup automático salvo antes do reset.', 'success');
+        setTimeout(() => window.location.reload(), 1500);
+      };
+
+      const restaurar = async (bkp) => {
+        if (!confirm(`Restaurar backup "${bkp.nome}"? Os dados atuais serão sobrescritos.`)) return;
+        // Restaura em memória
+        TURMAS = JSON.parse(JSON.stringify(bkp.dados.TURMAS || []));
+        ALUNOS = JSON.parse(JSON.stringify(bkp.dados.ALUNOS || []));
+        FOCOS_SESSAO = JSON.parse(JSON.stringify(bkp.dados.FOCOS_SESSAO || []));
+        ESTOQUE_EQUIPAMENTOS = JSON.parse(JSON.stringify(bkp.dados.ESTOQUE_EQUIPAMENTOS || {}));
+        // Restaura no banco
+        try {
+          if (bkp.dados.treinos?.length) {
+            await sb.from('treinos').delete().eq('academia_id', ACADEMIA_ID);
+            await sb.from('treinos').insert(bkp.dados.treinos.map(t => { const {id,...rest} = t; return rest; }));
+          }
+        } catch {}
+        toast(`Backup "${bkp.nome}" restaurado!`, 'success');
+        setTimeout(() => window.location.reload(), 1500);
+      };
+
+      const removerBackup = (id) => {
+        if (!confirm('Remover este backup permanentemente?')) return;
+        salvarBackups(backups.filter(b => b.id !== id));
+        toast('Backup removido');
+      };
+
+      const exportarBackup = (bkp) => {
+        const blob = new Blob([JSON.stringify(bkp, null, 2)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `${bkp.nome.replace(/[^a-z0-9]/gi,'_')}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      };
+
+      const importarArquivo = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try {
+            const bkp = JSON.parse(ev.target.result);
+            if (!bkp.dados) throw new Error('Arquivo inválido');
+            salvarBackups([{...bkp, id: 'bkp-' + Date.now(), importado: true}, ...backups]);
+            toast('Backup importado com sucesso!');
+          } catch (err) {
+            toast('Arquivo de backup inválido', 'error');
+          }
+        };
+        reader.readAsText(file);
+      };
+
+      const alvosLabels = {
+        turmas: 'Turmas',
+        alunos: 'Alunos',
+        treinos: 'Treinos gerados',
+        equipamentos: 'Equipamentos',
+        focos: 'Focos de Sessão',
+        periodizacoes: 'Periodizações',
+        alertas: 'Alertas de Segurança',
+      };
+
+      return (
+        <div className="p-8 space-y-6 fade-in max-w-5xl">
+          {/* Cabeçalho */}
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+              <Icon name="admin_panel_settings" className="text-red-400" size={26}/>
+            </div>
+            <div>
+              <h2 className="font-display font-bold text-xl">Área de Administração</h2>
+              <p className="text-slate-400 text-sm mt-0.5">Reset do sistema, backups e recuperação de dados</p>
+            </div>
+          </div>
+
+          {/* Aviso */}
+          <div className="card-ai p-5 border border-yellow-500/20 bg-yellow-500/5">
+            <div className="flex items-start gap-3">
+              <Icon name="warning" className="text-yellow-400 shrink-0" size={22}/>
+              <div className="text-sm text-slate-300">
+                <p className="font-bold mb-1">Atenção: Operações Críticas</p>
+                <p className="text-slate-400 text-xs">Antes de qualquer reset, um backup automático é criado. Você sempre pode restaurar o estado anterior usando a lista de backups abaixo. Backups ficam salvos localmente no navegador.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Ações principais */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button onClick={()=>setShowBackup(true)} className="card p-5 text-left hover:border-primary/30 transition-all">
+              <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-3">
+                <Icon name="save" className="text-primary" size={22}/>
+              </div>
+              <h4 className="font-display font-bold mb-1">Criar Backup Manual</h4>
+              <p className="text-xs text-slate-400">Salve um ponto de recuperação com todos os dados atuais.</p>
+            </button>
+
+            <label className="card p-5 text-left hover:border-primary/30 transition-all cursor-pointer">
+              <div className="w-11 h-11 rounded-xl bg-blue-500/10 flex items-center justify-center mb-3">
+                <Icon name="upload_file" className="text-blue-400" size={22}/>
+              </div>
+              <h4 className="font-display font-bold mb-1">Importar Backup</h4>
+              <p className="text-xs text-slate-400">Importe um arquivo .json de backup salvo anteriormente.</p>
+              <input type="file" accept=".json" onChange={importarArquivo} className="hidden"/>
+            </label>
+
+            <button onClick={()=>setShowReset(true)} className="card p-5 text-left hover:border-red-500/30 transition-all">
+              <div className="w-11 h-11 rounded-xl bg-red-500/10 flex items-center justify-center mb-3">
+                <Icon name="delete_forever" className="text-red-400" size={22}/>
+              </div>
+              <h4 className="font-display font-bold mb-1">Reset do Sistema</h4>
+              <p className="text-xs text-slate-400">Limpe dados selecionados para começar uma academia do zero.</p>
+            </button>
+          </div>
+
+          {/* Lista de backups */}
+          <div className="card p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-display font-bold text-lg">Histórico de Backups</h3>
+              <span className="text-xs text-slate-400">{backups.length} backup{backups.length!==1?'s':''}</span>
+            </div>
+            {backups.length === 0 ? (
+              <div className="py-12 text-center">
+                <Icon name="history" className="text-primary/20" size={48}/>
+                <p className="text-slate-400 text-sm mt-3">Nenhum backup salvo ainda</p>
+                <p className="text-slate-500 text-xs mt-1">Crie seu primeiro backup antes de fazer alterações críticas</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {backups.map(bkp => (
+                  <div key={bkp.id} className="flex items-center gap-3 p-3 rounded-xl border border-white/5 hover:border-primary/20 transition-all">
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <Icon name={bkp.importado?'upload':'history'} className="text-primary" size={18}/>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm truncate">{bkp.nome}</p>
+                      <p className="text-xs text-slate-400">{new Date(bkp.data).toLocaleString('pt-BR')} · {(bkp.dados?.treinos?.length||0)} treinos · {(bkp.dados?.TURMAS?.length||0)} turmas · {(bkp.dados?.ALUNOS?.length||0)} alunos</p>
+                    </div>
+                    <div className="flex gap-1 shrink-0">
+                      <button onClick={()=>restaurar(bkp)} className="p-2 rounded-lg hover:bg-primary/10 text-slate-400 hover:text-primary transition-colors" title="Restaurar">
+                        <Icon name="restore" size={18}/>
+                      </button>
+                      <button onClick={()=>exportarBackup(bkp)} className="p-2 rounded-lg hover:bg-blue-500/10 text-slate-400 hover:text-blue-400 transition-colors" title="Exportar">
+                        <Icon name="download" size={18}/>
+                      </button>
+                      <button onClick={()=>removerBackup(bkp.id)} className="p-2 rounded-lg hover:bg-red-500/10 text-slate-400 hover:text-red-400 transition-colors" title="Remover">
+                        <Icon name="delete" size={18}/>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Modal Backup Manual */}
+          <Modal open={showBackup} onClose={()=>setShowBackup(false)} title="Criar Backup Manual">
+            <div className="space-y-4">
+              <p className="text-sm text-slate-400">Salve um ponto de recuperação com todos os dados atuais (turmas, alunos, treinos, equipamentos, focos e periodizações).</p>
+              <div>
+                <label className="text-sm text-slate-400 mb-1.5 block">Nome do Backup (opcional)</label>
+                <input value={backupNome} onChange={e=>setBackupNome(e.target.value)} placeholder="Ex: Antes de limpar alunos"/>
+              </div>
+              <div className="flex gap-3 mt-2">
+                <button onClick={()=>setShowBackup(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
+                <button onClick={executarBackupManual} className="flex-1 btn-primary py-2.5 rounded-xl">Criar Backup</button>
+              </div>
+            </div>
+          </Modal>
+
+          {/* Modal Reset */}
+          <Modal open={showReset} onClose={()=>setShowReset(false)} title="Reset do Sistema">
+            <div className="space-y-4">
+              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                <p className="text-xs text-red-300"><Icon name="warning" size={12} className="inline mr-1"/>Atenção: esta operação removerá os dados selecionados. Um backup automático será criado antes para permitir a restauração.</p>
+              </div>
+              <div>
+                <label className="text-sm text-slate-400 mb-2 block font-bold">Selecione o que deseja limpar:</label>
+                <div className="space-y-2">
+                  {Object.entries(alvosLabels).map(([key, label])=>(
+                    <label key={key} className="flex items-center gap-3 p-3 rounded-lg border border-white/5 hover:border-primary/20 cursor-pointer transition-all">
+                      <input type="checkbox" checked={alvos[key]} onChange={e=>setAlvos(a=>({...a,[key]:e.target.checked}))}
+                        className="w-4 h-4 rounded accent-primary"/>
+                      <span className="text-sm font-medium">{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-2 pt-2">
+                <button onClick={()=>setAlvos(Object.keys(alvos).reduce((a,k)=>({...a,[k]:true}),{}))} className="text-xs text-primary font-bold hover:underline">Marcar todos</button>
+                <span className="text-xs text-slate-500">·</span>
+                <button onClick={()=>setAlvos(Object.keys(alvos).reduce((a,k)=>({...a,[k]:false}),{}))} className="text-xs text-slate-400 font-bold hover:underline">Desmarcar todos</button>
+              </div>
+              <div className="flex gap-3 mt-2">
+                <button onClick={()=>setShowReset(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
+                <button onClick={executarReset} className="flex-1 py-2.5 rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition-colors flex items-center justify-center gap-2">
+                  <Icon name="delete_forever" size={16}/>Confirmar Reset
+                </button>
+              </div>
+            </div>
+          </Modal>
+        </div>
+      );
+    };
+
     // ─── Cadastro de Equipamentos ──────────────────────────────────────────
     const CadastroEquipamentos = ({ toast }) => {
       const [estoque, setEstoque] = useState({...ESTOQUE_EQUIPAMENTOS});
@@ -3447,6 +3832,7 @@
         cadastro: <CadastroTurmasAlunos toast={toast}/>,
         focos: <CadastroFocos toast={toast}/>,
         equipamentos: <CadastroEquipamentos toast={toast}/>,
+        admin: <Admin toast={toast}/>,
         estrategico: <Estrategico/>,
         coaches: <Coaches/>,
         configuracoes: <Configuracoes toast={toast}/>,
@@ -3461,6 +3847,7 @@
         cadastro: ['Turmas e Alunos', 'Cadastro e gestão de turmas e alunos da academia'],
         focos: ['Focos de Sessão', 'Gerenciar tipos de foco disponíveis na geração de treinos'],
         equipamentos: ['Equipamentos', 'Cadastro de equipamentos disponíveis na academia para geração inteligente de treinos'],
+        admin: ['Admin', 'Reset do sistema, backups e recuperação'],
         estrategico: ['Visão Estratégica', 'Recomendações de IA para gestão do negócio'],
         coaches: ['Gestão de Professores', 'Desempenho e métricas dos coaches'],
         configuracoes: ['Configurações', 'Perfil e dados da academia'],
