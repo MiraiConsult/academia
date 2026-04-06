@@ -156,6 +156,90 @@
       {id:'aluno-25', nome:'Leonardo Nunes', turma_id:'turma-12', nivel:'intermediário', restricoes:'Dor no ombro esquerdo', objetivo:'Performance'},
     ];
 
+    // ─── Catálogo de Equipamentos Pré-definido ─────────────────────────────
+    // Lista pré-definida que o dono marca o que tem e a quantidade
+    const CATALOGO_EQUIPAMENTOS = [
+      // Ergômetros
+      {id:'eq-row', nome:'Remo (Rower)', categoria:'ergometros', keywords:['remo','row']},
+      {id:'eq-bike', nome:'Assault Bike', categoria:'ergometros', keywords:['bike','assault bike']},
+      {id:'eq-ski', nome:'Ski Erg', categoria:'ergometros', keywords:['ski','ski erg']},
+      // Barras
+      {id:'eq-barra-m', nome:'Barras Olímpicas Masculinas (20kg)', categoria:'barras', keywords:['barra']},
+      {id:'eq-barra-f', nome:'Barras Olímpicas Femininas (15kg)', categoria:'barras', keywords:['barra']},
+      {id:'eq-barra-tec', nome:'Barras Técnicas (PVC)', categoria:'barras', keywords:['pvc']},
+      {id:'eq-rack', nome:'Racks de Agachamento', categoria:'barras', keywords:['rack']},
+      // Anilhas
+      {id:'eq-anilha-25', nome:'Anilhas 25kg (par)', categoria:'anilhas', keywords:['anilha']},
+      {id:'eq-anilha-20', nome:'Anilhas 20kg (par)', categoria:'anilhas', keywords:['anilha']},
+      {id:'eq-anilha-15', nome:'Anilhas 15kg (par)', categoria:'anilhas', keywords:['anilha']},
+      {id:'eq-anilha-10', nome:'Anilhas 10kg (par)', categoria:'anilhas', keywords:['anilha']},
+      {id:'eq-anilha-5', nome:'Anilhas 5kg (par)', categoria:'anilhas', keywords:['anilha']},
+      {id:'eq-anilha-2', nome:'Anilhas 2.5kg (par)', categoria:'anilhas', keywords:['anilha']},
+      // Kettlebells
+      {id:'eq-kb-6', nome:'Kettlebell 6kg', categoria:'kettlebells', keywords:['kettlebell','kb']},
+      {id:'eq-kb-8', nome:'Kettlebell 8kg', categoria:'kettlebells', keywords:['kettlebell','kb']},
+      {id:'eq-kb-10', nome:'Kettlebell 10kg', categoria:'kettlebells', keywords:['kettlebell','kb']},
+      {id:'eq-kb-12', nome:'Kettlebell 12kg', categoria:'kettlebells', keywords:['kettlebell','kb']},
+      {id:'eq-kb-14', nome:'Kettlebell 14kg', categoria:'kettlebells', keywords:['kettlebell','kb']},
+      {id:'eq-kb-16', nome:'Kettlebell 16kg', categoria:'kettlebells', keywords:['kettlebell','kb']},
+      {id:'eq-kb-20', nome:'Kettlebell 20kg', categoria:'kettlebells', keywords:['kettlebell','kb']},
+      {id:'eq-kb-24', nome:'Kettlebell 24kg', categoria:'kettlebells', keywords:['kettlebell','kb']},
+      {id:'eq-kb-32', nome:'Kettlebell 32kg', categoria:'kettlebells', keywords:['kettlebell','kb']},
+      // Dumbbells
+      {id:'eq-db-5', nome:'Dumbbell 5kg (par)', categoria:'dumbbells', keywords:['dumbbell','halter']},
+      {id:'eq-db-7', nome:'Dumbbell 7.5kg (par)', categoria:'dumbbells', keywords:['dumbbell','halter']},
+      {id:'eq-db-10', nome:'Dumbbell 10kg (par)', categoria:'dumbbells', keywords:['dumbbell','halter']},
+      {id:'eq-db-12', nome:'Dumbbell 12.5kg (par)', categoria:'dumbbells', keywords:['dumbbell','halter']},
+      {id:'eq-db-15', nome:'Dumbbell 15kg (par)', categoria:'dumbbells', keywords:['dumbbell','halter']},
+      {id:'eq-db-20', nome:'Dumbbell 20kg (par)', categoria:'dumbbells', keywords:['dumbbell','halter']},
+      {id:'eq-db-22', nome:'Dumbbell 22.5kg (par)', categoria:'dumbbells', keywords:['dumbbell','halter']},
+      {id:'eq-db-25', nome:'Dumbbell 25kg (par)', categoria:'dumbbells', keywords:['dumbbell','halter']},
+      // Medicine Balls / Wall Balls
+      {id:'eq-wb-6', nome:'Wall Ball 6kg', categoria:'medballs', keywords:['wall ball','medball']},
+      {id:'eq-wb-9', nome:'Wall Ball 9kg', categoria:'medballs', keywords:['wall ball','medball']},
+      {id:'eq-wb-14', nome:'Wall Ball 14kg', categoria:'medballs', keywords:['wall ball','medball']},
+      // Ginástica
+      {id:'eq-pullup', nome:'Barras Fixas (Pull-up)', categoria:'ginastica', keywords:['barra fixa','pull-up']},
+      {id:'eq-argolas', nome:'Argolas de Ginástica', categoria:'ginastica', keywords:['argolas','rings']},
+      {id:'eq-corda-esc', nome:'Cordas de Escalada', categoria:'ginastica', keywords:['corda de escalada','rope']},
+      {id:'eq-ghd', nome:'Bancos GHD', categoria:'ginastica', keywords:['ghd']},
+      // Caixas / Plyo
+      {id:'eq-box-60', nome:'Plyo Box 60cm', categoria:'box', keywords:['box','plyo']},
+      {id:'eq-box-50', nome:'Plyo Box 50cm', categoria:'box', keywords:['box','plyo']},
+      {id:'eq-box-40', nome:'Plyo Box 40cm', categoria:'box', keywords:['box','plyo']},
+      // Outros
+      {id:'eq-corda', nome:'Cordas de Pular', categoria:'outros', keywords:['corda','jump rope']},
+      {id:'eq-sandbag', nome:'Sandbags', categoria:'outros', keywords:['sandbag']},
+      {id:'eq-slam-ball', nome:'Slam Balls', categoria:'outros', keywords:['slam ball']},
+      {id:'eq-sled', nome:'Sled (Trenó)', categoria:'outros', keywords:['sled']},
+      {id:'eq-yoke', nome:'Yoke', categoria:'outros', keywords:['yoke']},
+    ];
+
+    const CATEGORIAS_EQUIP = [
+      {id:'ergometros', nome:'Ergômetros', icone:'speed'},
+      {id:'barras', nome:'Barras e Racks', icone:'fitness_center'},
+      {id:'anilhas', nome:'Anilhas', icone:'album'},
+      {id:'kettlebells', nome:'Kettlebells', icone:'sports_martial_arts'},
+      {id:'dumbbells', nome:'Dumbbells', icone:'exercise'},
+      {id:'medballs', nome:'Wall Balls / Med Balls', icone:'sports_basketball'},
+      {id:'ginastica', nome:'Ginástica', icone:'sports_gymnastics'},
+      {id:'box', nome:'Plyo Boxes', icone:'inventory_2'},
+      {id:'outros', nome:'Outros', icone:'category'},
+    ];
+
+    // Estoque global em memória (formato: { [equip_id]: quantidade })
+    let ESTOQUE_EQUIPAMENTOS = {
+      'eq-row':4,'eq-bike':3,'eq-ski':2,
+      'eq-barra-m':12,'eq-barra-f':6,'eq-barra-tec':20,'eq-rack':8,
+      'eq-anilha-25':8,'eq-anilha-20':12,'eq-anilha-15':12,'eq-anilha-10':16,'eq-anilha-5':20,'eq-anilha-2':24,
+      'eq-kb-8':4,'eq-kb-12':6,'eq-kb-16':8,'eq-kb-20':6,'eq-kb-24':6,'eq-kb-32':2,
+      'eq-db-5':4,'eq-db-10':4,'eq-db-15':4,'eq-db-20':4,'eq-db-25':2,
+      'eq-wb-6':6,'eq-wb-9':8,
+      'eq-pullup':12,'eq-argolas':6,'eq-corda-esc':2,'eq-ghd':2,
+      'eq-box-60':10,'eq-box-50':10,'eq-box-40':6,
+      'eq-corda':15,'eq-sandbag':4,'eq-slam-ball':4,
+    };
+
     // ─── Focos de Sessão (editáveis) ────────────────────────────────────────
     let FOCOS_SESSAO = [
       {id:'foco-1', nome:'LPO + Condicionamento', descricao:'Levantamento de Peso Olímpico combinado com condicionamento metabólico. Foco em técnica e potência.', icone:'fitness_center', ativo:true},
@@ -684,6 +768,7 @@
         { id: 'seguranca', icon: 'verified_user', label: 'Segurança' },
         { id: 'cadastro', icon: 'badge', label: 'Turmas e Alunos' },
         { id: 'focos', icon: 'category', label: 'Focos de Sessão' },
+        { id: 'equipamentos', icon: 'inventory_2', label: 'Equipamentos' },
       ];
       const donoLinks = [
         { id: 'dashboard', icon: 'dashboard', label: 'Painel' },
@@ -850,7 +935,7 @@
         let all = [...(treinosDB||[]), ...simFiltered].sort((a,b) => a.data_treino > b.data_treino ? 1 : -1);
         // Aplicar filtro
         if (filtro?.tipo === 'turma' && filtro.id) {
-          all = all.filter(t => t.turma_id === filtro.id);
+          all = all.filter(t => t.turma_id === filtro.id || (t.turma_ids && t.turma_ids.includes(filtro.id)));
         } else if (filtro?.tipo === 'aluno' && filtro.id) {
           all = all.filter(t => t.aluno_ids && t.aluno_ids.includes(filtro.id));
         }
@@ -953,8 +1038,8 @@
                     </div>
                   )}
                   <div className="flex gap-3">
-                    <button onClick={() => setPage('gerar')} className="btn-primary px-5 py-2.5 rounded-xl text-sm">Ver Treino Completo</button>
-                    <button onClick={() => setPage('gerar')} className="btn-ghost px-5 py-2.5 rounded-xl text-sm">Editar WOD</button>
+                    <button onClick={() => { window.__treinoEdicao = treino_hoje; setPage('gerar'); }} className="btn-primary px-5 py-2.5 rounded-xl text-sm">Ver Treino Completo</button>
+                    <button onClick={() => { window.__treinoEdicao = treino_hoje; window.__modoEdicao = true; setPage('gerar'); }} className="btn-ghost px-5 py-2.5 rounded-xl text-sm">Editar WOD</button>
                   </div>
                 </div>
               ) : (
@@ -969,13 +1054,13 @@
               )}
             </div>
 
-            {/* Stats */}
+            {/* Stats — apenas métricas relevantes de treinos */}
             <div className="space-y-4">
               {[
-                {l:'Acessos Hoje', v:'84 / 120', i:'group'},
-                {l:'Recordes Pessoais', v:'12', i:'emoji_events'},
-                {l:'Membros Ativos', v:'342', i:'fitness_center'},
                 {l:'Treinos Este Mês', v: treinos.filter(t=> { const d=new Date(t.data_treino); const n=new Date(); return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear(); }).length, i:'calendar_month'},
+                {l:'Treinos Esta Semana', v: treinos.filter(t=> { const d=new Date(t.data_treino); const n=new Date(); const diff=(n-d)/(1000*60*60*24); return diff>=0 && diff<=7; }).length, i:'date_range'},
+                {l:'Turmas Cadastradas', v: TURMAS.length, i:'groups'},
+                {l:'Focos Ativos', v: FOCOS_SESSAO.filter(f=>f.ativo).length, i:'category'},
               ].map(({l,v,i}) => (
                 <div key={l} className="card p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -1139,7 +1224,7 @@
     };
 
     const GerarTreino = ({ toast, filtro }) => {
-      const [form, setForm] = useState({ metodologia: 'crossfit', data: hoje(), num_alunos: 15, foco: 'LPO + Condicionamento', restritcoes: '', modo_duplas: false, duracao: 55, destino: 'turma', turma_id: TURMAS[0]?.id || '', aluno_id: '' });
+      const [form, setForm] = useState({ metodologia: 'crossfit', data: hoje(), num_alunos: 15, focos: ['LPO + Condicionamento'], foco: 'LPO + Condicionamento', modo_equipe: 'solo', duracao: 55, destino: 'turma', aluno_id: '' });
       const [treino, setTreino] = useState(null);
       const [loading, setLoading] = useState(false);
       const [saved, setSaved] = useState(false);
@@ -1157,8 +1242,21 @@
           sb.from('equipamentos').select('*').eq('academia_id', ACADEMIA_ID),
           sb.from('academias').select('*').eq('id', ACADEMIA_ID).single(),
         ]).then(([{data:t},{data:e},{data:a}]) => {
-          setTreinos(t||[]); if(t&&t.length) setTreino(t[0]);
-          setEquipamentos(e||[]);
+          setTreinos(t||[]);
+          // Se há um treino passado do painel, usa ele; senão o mais recente
+          if (window.__treinoEdicao) {
+            setTreino(window.__treinoEdicao);
+            if (window.__modoEdicao) setEditando(true);
+            window.__treinoEdicao = null;
+            window.__modoEdicao = false;
+          } else if (t && t.length) {
+            setTreino(t[0]);
+          }
+          // Mescla equipamentos do banco com o estoque da página de equipamentos
+          const fromCatalogo = CATALOGO_EQUIPAMENTOS
+            .filter(c => (ESTOQUE_EQUIPAMENTOS[c.id] || 0) > 0)
+            .map(c => ({ id: c.id, nome: c.nome, quantidade: ESTOQUE_EQUIPAMENTOS[c.id] }));
+          setEquipamentos([...(e||[]), ...fromCatalogo]);
           setAcademia(a);
           if(a?.max_alunos_por_aula) setForm(f=>({...f, num_alunos: a.max_alunos_por_aula}));
         });
@@ -1169,26 +1267,46 @@
         await new Promise(r => setTimeout(r, 800));
 
         const numAlunos = parseInt(form.num_alunos) || 15;
-        const foco = form.foco;
+        const focos = (form.focos && form.focos.length>0) ? form.focos : [form.foco || 'LPO + Condicionamento'];
+        const focoPrincipal = focos[0];
         const duracaoAlvo = parseInt(form.duracao) || 55;
 
-        // Distribuir o tempo: ~20% aquecimento, ~25% skill, ~45% WOD, ~10% cooldown
+        // Restrições vêm dos equipamentos sem estoque + restrições do aluno selecionado
+        const equipSemEstoque = equipamentos.filter(e => !e.quantidade || e.quantidade === 0).map(e => e.nome).join(', ');
+        const alunoRest = form.destino === 'aluno' && form.aluno_id ? (ALUNOS.find(a=>a.id===form.aluno_id)?.restricoes || '') : '';
+        const restricoes = [equipSemEstoque, alunoRest].filter(Boolean).join(', ');
+
         const cooldownMin = 5;
         const aquecMin = Math.round(duracaoAlvo * 0.2);
         const skillMin = Math.round(duracaoAlvo * 0.25);
         const wodMin = duracaoAlvo - aquecMin - skillMin - cooldownMin;
 
         const metAquec = AQUECIMENTOS[form.metodologia] || AQUECIMENTOS['crossfit'];
-        const aquecOpts = metAquec[foco] || metAquec['LPO + Condicionamento'] || Object.values(metAquec)[0];
+        const aquecOpts = metAquec[focoPrincipal] || metAquec['LPO + Condicionamento'] || Object.values(metAquec)[0];
         const aquecDesc = aquecOpts[Math.floor(Math.random() * aquecOpts.length)];
         const aquecimento = { descricao: aquecDesc, duracao_min: aquecMin };
 
-        const skillOpts = SKILLS[foco] || SKILLS['Força Pura'];
+        // Skill: escolhe de um dos focos selecionados
+        const skillFoco = focos[Math.floor(Math.random() * focos.length)];
+        const skillOpts = SKILLS[skillFoco] || SKILLS['Força Pura'];
         const skillBase = skillOpts[Math.floor(Math.random() * skillOpts.length)];
         const skill = { ...skillBase, duracao_min: skillMin };
 
-        const wod = gerarWodInteligente(foco, numAlunos, equipamentos, form.restritcoes, form.modo_duplas);
+        // WOD: combina focos — gera com o foco principal mas mistura movimentos dos outros
+        const modoDuplas = form.modo_equipe === 'duplas' || form.modo_equipe === 'trios' || form.modo_equipe === 'quartetos';
+        const tamanhoEquipe = {'solo':1,'duplas':2,'trios':3,'quartetos':4}[form.modo_equipe || 'solo'] || 1;
+        const wod = gerarWodInteligente(focoPrincipal, numAlunos, equipamentos, restricoes, modoDuplas);
         wod.tempo_wod_min = wodMin;
+
+        // Se múltiplos focos, adiciona movimentos extras dos outros focos
+        if (focos.length > 1) {
+          for (let i=1; i<focos.length && i<3; i++) {
+            const extraWod = gerarWodInteligente(focos[i], numAlunos, equipamentos, restricoes, modoDuplas);
+            if (extraWod.movimentos && extraWod.movimentos.length > 0) {
+              wod.movimentos.push(extraWod.movimentos[0]);
+            }
+          }
+        }
 
         const tempoTotal = aquecMin + skillMin + wodMin + cooldownMin;
 
@@ -1205,21 +1323,25 @@
             : 'Mantenha RX. Adicione colete de 9kg e aumente reps em 20%.',
         };
 
-        const intensidade = foco.includes('Força') || foco.includes('Resistência') ? 'alta' : 'media';
+        const intensidade = focos.some(f=>f.includes('Força')||f.includes('Resistência')) ? 'alta' : 'media';
 
         const novo = {
           academia_id: ACADEMIA_ID, criado_por: COACH_ID,
           data_treino: form.data, metodologia: form.metodologia,
           nome: wod.nome, num_alunos: numAlunos,
-          foco, restritcoes: form.restritcoes,
-          modo_duplas: form.modo_duplas,
+          foco: focos.join(' + '),
+          focos,
+          restritcoes: restricoes,
+          modo_equipe: form.modo_equipe || 'solo',
+          tamanho_equipe: tamanhoEquipe,
+          modo_duplas: modoDuplas,
           aquecimento, skill, wod,
           cooldown: { descricao: '3-5 min caminhada leve + Foam Roller (quadríceps, lombar, dorsais) + alongamento estático' },
           adaptacoes, tempo_previsto_min: tempoTotal,
           intensidade, logistica_nota: wod.logistica_nota || '',
-          turma_id: form.destino === 'turma' ? form.turma_id : null,
+          turma_ids: form.destino === 'turma' ? TURMAS.filter(t=>t.modalidade===form.metodologia).map(t=>t.id) : [],
           aluno_id: form.destino === 'aluno' ? form.aluno_id : null,
-          aluno_ids: form.destino === 'turma' ? ALUNOS.filter(a => a.turma_id === form.turma_id).map(a => a.id) : form.aluno_id ? [form.aluno_id] : [],
+          aluno_ids: form.destino === 'turma' ? ALUNOS.filter(a => TURMAS.find(t=>t.id===a.turma_id)?.modalidade === form.metodologia).map(a => a.id) : form.aluno_id ? [form.aluno_id] : [],
           status: 'rascunho',
         };
         setTreino(novo); setLoading(false);
@@ -1231,7 +1353,7 @@
         setSaved(false); setEditando(false); setShowBenchmarks(false);
         const duracaoAlvo = parseInt(form.duracao) || 55;
         const aquecMin = Math.round(duracaoAlvo * 0.2);
-        const foco = form.foco;
+        const foco = (form.focos && form.focos[0]) || form.foco || 'LPO + Condicionamento';
         const metAquec = AQUECIMENTOS[form.metodologia] || AQUECIMENTOS['crossfit'];
         const aquecOpts = metAquec[foco] || metAquec['LPO + Condicionamento'] || Object.values(metAquec)[0];
         const aquecDesc = aquecOpts[Math.floor(Math.random() * aquecOpts.length)];
@@ -1314,24 +1436,31 @@
             <div>
               <label className="text-sm text-primary font-semibold mb-2 block">Gerar Para</label>
               <div className="grid grid-cols-2 gap-2 mb-3">
-                {[{v:'turma',l:'Turma',i:'groups'},{v:'aluno',l:'Aluno',i:'person'}].map(({v,l,i}) => (
-                  <button key={v} onClick={() => setForm(f=>({...f, destino:v, ...(v==='aluno'?{num_alunos:1,modo_duplas:false}:{num_alunos:TURMAS.find(t=>t.id===f.turma_id)?.max_alunos||15})}))}
+                {[{v:'turma',l:'Turmas',i:'groups'},{v:'aluno',l:'Aluno',i:'person'}].map(({v,l,i}) => (
+                  <button key={v} onClick={() => setForm(f=>({...f, destino:v, ...(v==='aluno'?{num_alunos:1,modo_equipe:'solo'}:{num_alunos:Math.max(...TURMAS.filter(t=>t.modalidade===f.metodologia).map(t=>t.max_alunos),15)})}))}
                     className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border text-xs font-bold transition-all ${form.destino===v?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
                     <Icon name={i} size={16}/>{l}
                   </button>
                 ))}
               </div>
               {form.destino === 'turma' ? (
-                <select value={form.turma_id} onChange={e => {
-                  const turma = TURMAS.find(t=>t.id===e.target.value);
-                  setForm(f=>({...f, turma_id: e.target.value, num_alunos: turma?.max_alunos || 15, metodologia: turma?.modalidade || f.metodologia}));
-                }}>
-                  {TURMAS.map(t=><option key={t.id} value={t.id}>{t.nome} [{metLabels[t.modalidade]||t.modalidade}]</option>)}
-                </select>
+                (() => {
+                  const turmasMod = TURMAS.filter(t => t.modalidade === form.metodologia);
+                  return (
+                    <div className="p-3 rounded-lg bg-primary/5 border border-primary/10 space-y-1.5">
+                      <p className="text-xs text-slate-400">O treino será aplicado a <span className="font-bold text-primary">todas as {turmasMod.length} turmas</span> de <span className="font-bold text-primary">{metLabels[form.metodologia]}</span> do dia:</p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {turmasMod.length > 0 ? turmasMod.map(t => (
+                          <span key={t.id} className="text-xs px-2 py-0.5 rounded-md bg-primary/10 text-primary font-medium">{t.horario}</span>
+                        )) : <span className="text-xs text-slate-500">Nenhuma turma cadastrada para esta modalidade</span>}
+                      </div>
+                    </div>
+                  );
+                })()
               ) : (
                 <select value={form.aluno_id} onChange={e => {
                   const aluno = ALUNOS.find(a=>a.id===e.target.value);
-                  setForm(f=>({...f, aluno_id: e.target.value, num_alunos: 1, restritcoes: aluno?.restricoes || ''}));
+                  setForm(f=>({...f, aluno_id: e.target.value, num_alunos: 1}));
                 }}>
                   <option value="">Selecionar aluno...</option>
                   {ALUNOS.map(a=><option key={a.id} value={a.id}>{a.nome} — {a.nivel} {a.restricoes ? '⚠️' : ''}</option>)}
@@ -1343,7 +1472,7 @@
                   <div className="mt-2 p-2.5 rounded-lg bg-primary/5 border border-primary/10 space-y-1">
                     <p className="text-xs"><span className="font-bold">Nível:</span> <span className="text-primary font-bold">{al.nivel}</span></p>
                     <p className="text-xs"><span className="font-bold">Objetivo:</span> {al.objetivo}</p>
-                    {al.restricoes && <p className="text-xs text-red-400"><span className="font-bold">Restrições:</span> {al.restricoes}</p>}
+                    {al.restricoes && <p className="text-xs text-red-400"><span className="font-bold">Restrições do aluno:</span> {al.restricoes}</p>}
                   </div>
                 ) : null;
               })()}
@@ -1380,27 +1509,36 @@
             ))}
 
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Foco da Sessão</label>
-              <select value={form.foco} onChange={e=>setForm(f=>({...f,foco:e.target.value}))}>
-                {FOCOS_SESSAO.filter(f=>f.ativo).map(f=><option key={f.id} value={f.nome}>{f.nome}</option>)}
-              </select>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium mb-1.5 block">Restrições</label>
-              <textarea value={form.restritcoes} onChange={e=>setForm(f=>({...f,restritcoes:e.target.value}))} placeholder="Ex: Sem remo, sem box jump..." rows={2} style={{resize:'none'}}/>
+              <label className="text-sm font-medium mb-1.5 block">Foco da Sessão <span className="text-xs text-slate-500 font-normal">(seleção múltipla)</span></label>
+              <div className="flex flex-wrap gap-1.5">
+                {FOCOS_SESSAO.filter(f=>f.ativo).map(f=>{
+                  const selected = (form.focos||[]).includes(f.nome);
+                  return (
+                    <button key={f.id} type="button" onClick={()=>setForm(prev=>{
+                      const focos = prev.focos || [];
+                      const next = selected ? focos.filter(x=>x!==f.nome) : [...focos, f.nome];
+                      return {...prev, focos: next.length>0?next:[f.nome], foco: (next.length>0?next:[f.nome])[0]};
+                    })}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${selected?'border-primary bg-primary/15 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
+                      {f.nome}
+                    </button>
+                  );
+                })}
+              </div>
+              {form.focos && form.focos.length > 1 && <p className="text-xs text-slate-500 mt-1.5">IA combinará {form.focos.length} focos no treino gerado.</p>}
             </div>
 
             {form.destino !== 'aluno' && (
-            <div className="flex items-center justify-between p-3 rounded-xl bg-primary/5 border border-primary/10">
-              <div>
-                <p className="text-sm font-bold">Treino em Duplas</p>
-                <p className="text-xs text-slate-400">Equipes de 2</p>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Modo de Treino</label>
+              <div className="grid grid-cols-4 gap-1.5">
+                {[{v:'solo',l:'Solo',i:'person'},{v:'duplas',l:'Duplas',i:'group'},{v:'trios',l:'Trios',i:'groups_2'},{v:'quartetos',l:'Quartetos',i:'groups_3'}].map(({v,l,i})=>(
+                  <button key={v} type="button" onClick={()=>setForm(f=>({...f,modo_equipe:v}))}
+                    className={`flex flex-col items-center py-2 rounded-xl border text-xs font-bold transition-all ${(form.modo_equipe||'solo')===v?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
+                    <Icon name={i} size={16} className="mb-0.5"/>{l}
+                  </button>
+                ))}
               </div>
-              <label className="toggle">
-                <input type="checkbox" checked={form.modo_duplas} onChange={e=>setForm(f=>({...f,modo_duplas:e.target.checked}))}/>
-                <span className="toggle-slider"/>
-              </label>
             </div>
             )}
 
@@ -1463,6 +1601,7 @@
                   <div>
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <span className="tag tag-green">Resultado IA</span>
+                      {treino.turma_ids && treino.turma_ids.length > 0 && <span className="tag tag-blue"><Icon name="groups" size={10} className="inline mr-1"/>{treino.turma_ids.length} turma{treino.turma_ids.length>1?'s':''} de {metLabels[treino.metodologia]}</span>}
                       {treino.turma_id && <span className="tag tag-blue"><Icon name="groups" size={10} className="inline mr-1"/>{TURMAS.find(t=>t.id===treino.turma_id)?.nome?.split('—')[0]?.trim() || 'Turma'}</span>}
                       {treino.aluno_id && <span className="tag tag-yellow"><Icon name="person" size={10} className="inline mr-1"/>{ALUNOS.find(a=>a.id===treino.aluno_id)?.nome || 'Aluno'}</span>}
                     </div>
@@ -1641,7 +1780,12 @@
                         <Icon name="add" size={16}/>Adicionar Movimento
                       </button>
                     )}
-                    {treino.modo_duplas && (
+                    {treino.modo_equipe && treino.modo_equipe !== 'solo' && (
+                      <div className="mt-4 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center gap-2 text-sm text-blue-300">
+                        <Icon name="group" size={16}/>Adaptado para <span className="font-bold capitalize">{treino.modo_equipe}</span> — equipes de {treino.tamanho_equipe||2}, alternar movimentos por rodada
+                      </div>
+                    )}
+                    {!treino.modo_equipe && treino.modo_duplas && (
                       <div className="mt-4 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center gap-2 text-sm text-blue-300">
                         <Icon name="group" size={16}/>Adaptado para duplas — alternar movimentos por rodada
                       </div>
@@ -1684,15 +1828,17 @@
                         </div>
                       ) : null;
                     })()}
-                    {treino.turma_id && (() => {
-                      const turma = TURMAS.find(t=>t.id===treino.turma_id);
-                      return turma ? (
+                    {treino.turma_ids && treino.turma_ids.length > 0 && (() => {
+                      const turmasDoTreino = TURMAS.filter(t => treino.turma_ids.includes(t.id));
+                      return (
                         <div className="p-3 rounded-lg bg-primary/5 border border-primary/10 space-y-1.5">
-                          <p><Icon name="groups" size={14} className="text-primary inline mr-1.5"/>Treino para <span className="font-bold text-primary">{turma.nome}</span></p>
-                          <p className="text-slate-400 text-xs">Modalidade: <span className="font-bold">{metLabels[turma.modalidade]}</span> · Capacidade: {turma.max_alunos} alunos · Dias: {turma.dias?.join(', ')}</p>
-                          <p className="text-slate-400 text-xs">Logística otimizada para {treino.num_alunos} alunos com equipamentos disponíveis da academia.</p>
+                          <p><Icon name="groups" size={14} className="text-primary inline mr-1.5"/>Treino para <span className="font-bold text-primary">todas as {turmasDoTreino.length} turmas de {metLabels[treino.metodologia]}</span></p>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {turmasDoTreino.map(t => <span key={t.id} className="text-xs px-2 py-0.5 rounded-md bg-primary/10 text-primary">{t.horario} ({t.dias?.join('/')})</span>)}
+                          </div>
+                          <p className="text-slate-400 text-xs mt-1">Logística otimizada com equipamentos disponíveis da academia.</p>
                         </div>
-                      ) : null;
+                      );
                     })()}
                     <ul className="space-y-1.5 text-slate-400 text-xs mt-2">
                       <li className="flex items-start gap-2"><Icon name="check_circle" size={14} className="text-primary shrink-0 mt-0.5"/>Foco da sessão: <span className="font-bold text-slate-300">{treino.foco}</span> — movimentos selecionados para atender este objetivo.</li>
@@ -1761,7 +1907,7 @@
       // Aplicar filtro
       const treinos = useMemo(() => {
         let all = treinosRaw;
-        if (filtro?.tipo === 'turma' && filtro.id) all = all.filter(t => t.turma_id === filtro.id);
+        if (filtro?.tipo === 'turma' && filtro.id) all = all.filter(t => t.turma_id === filtro.id || (t.turma_ids && t.turma_ids.includes(filtro.id)));
         else if (filtro?.tipo === 'aluno' && filtro.id) all = all.filter(t => t.aluno_ids && t.aluno_ids.includes(filtro.id));
         return all;
       }, [treinosRaw, filtro]);
@@ -2601,6 +2747,124 @@
     );
 
     // ─── Cadastro de Focos de Sessão ────────────────────────────────────────────
+    // ─── Cadastro de Equipamentos ──────────────────────────────────────────
+    const CadastroEquipamentos = ({ toast }) => {
+      const [estoque, setEstoque] = useState({...ESTOQUE_EQUIPAMENTOS});
+      const [categoriaAtiva, setCategoriaAtiva] = useState('todas');
+      const [busca, setBusca] = useState('');
+
+      useEffect(() => { ESTOQUE_EQUIPAMENTOS = estoque; }, [estoque]);
+
+      const atualizar = (id, valor) => {
+        const qtd = parseInt(valor) || 0;
+        setEstoque(prev => ({...prev, [id]: qtd}));
+      };
+
+      const toggle = (id) => {
+        setEstoque(prev => ({...prev, [id]: prev[id] && prev[id] > 0 ? 0 : 1}));
+      };
+
+      const salvar = () => {
+        ESTOQUE_EQUIPAMENTOS = estoque;
+        toast('Equipamentos salvos!','success');
+      };
+
+      const equipFiltrados = CATALOGO_EQUIPAMENTOS.filter(eq => {
+        if (categoriaAtiva !== 'todas' && eq.categoria !== categoriaAtiva) return false;
+        if (busca && !eq.nome.toLowerCase().includes(busca.toLowerCase())) return false;
+        return true;
+      });
+
+      const totalDisponiveis = Object.values(estoque).filter(v => v > 0).length;
+      const totalItens = Object.values(estoque).reduce((s,v)=>s+(v||0),0);
+
+      return (
+        <div className="p-8 space-y-6 fade-in">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-display font-bold text-xl">Equipamentos da Academia</h2>
+              <p className="text-slate-400 text-sm mt-1">Marque os equipamentos disponíveis e informe a quantidade. A IA usará essas informações para gerar treinos compatíveis.</p>
+            </div>
+            <button onClick={salvar} className="btn-primary px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm">
+              <Icon name="save" size={18}/>Salvar Alterações
+            </button>
+          </div>
+
+          {/* KPIs */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              {l:'Tipos Disponíveis', v:totalDisponiveis, i:'inventory_2', c:'text-primary'},
+              {l:'Total de Itens', v:totalItens, i:'inventory', c:'text-blue-400'},
+              {l:'Categorias', v:CATEGORIAS_EQUIP.length, i:'category', c:'text-yellow-400'},
+              {l:'Catálogo Total', v:CATALOGO_EQUIPAMENTOS.length, i:'list', c:'text-purple-400'},
+            ].map(({l,v,i,c})=>(
+              <div key={l} className="card p-4 flex items-center gap-3">
+                <Icon name={i} className={c} size={24}/>
+                <div><p className="font-display font-bold text-xl">{v}</p><p className="text-xs text-slate-400">{l}</p></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Busca e filtro */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <div className="flex-1 min-w-[200px]">
+              <input type="text" value={busca} onChange={e=>setBusca(e.target.value)} placeholder="🔍 Buscar equipamento..."/>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <button onClick={()=>setCategoriaAtiva('todas')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${categoriaAtiva==='todas'?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
+                <Icon name="apps" size={14}/>Todas
+              </button>
+              {CATEGORIAS_EQUIP.map(cat=>(
+                <button key={cat.id} onClick={()=>setCategoriaAtiva(cat.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${categoriaAtiva===cat.id?'border-primary bg-primary/10 text-primary':'border-white/10 text-slate-400 hover:border-primary/30'}`}>
+                  <Icon name={cat.icone} size={14}/>{cat.nome}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Lista de equipamentos agrupados por categoria */}
+          {CATEGORIAS_EQUIP.filter(cat => categoriaAtiva === 'todas' || categoriaAtiva === cat.id).map(cat => {
+            const items = equipFiltrados.filter(eq => eq.categoria === cat.id);
+            if (items.length === 0) return null;
+            return (
+              <div key={cat.id} className="card p-5">
+                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-white/5">
+                  <Icon name={cat.icone} className="text-primary" size={20}/>
+                  <h3 className="font-display font-bold">{cat.nome}</h3>
+                  <span className="text-xs text-slate-500 ml-1">({items.length})</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {items.map(eq => {
+                    const qtd = estoque[eq.id] || 0;
+                    const ativo = qtd > 0;
+                    return (
+                      <div key={eq.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${ativo?'border-primary/30 bg-primary/5':'border-white/5 bg-white/2'}`}>
+                        <button onClick={()=>toggle(eq.id)} className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all shrink-0 ${ativo?'bg-primary border-primary':'border-white/20'}`}>
+                          {ativo && <Icon name="check" size={14} className="text-bg-dark"/>}
+                        </button>
+                        <span className="flex-1 text-sm font-medium">{eq.nome}</span>
+                        <input type="number" value={qtd||''} onChange={e=>atualizar(eq.id, e.target.value)} placeholder="0" min="0"
+                          className="w-20 text-center" style={{padding:'6px 8px'}}/>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+
+          {equipFiltrados.length === 0 && (
+            <div className="card p-12 text-center">
+              <Icon name="search_off" className="text-primary/20" size={48}/>
+              <p className="text-slate-400 text-sm mt-3">Nenhum equipamento encontrado</p>
+            </div>
+          )}
+        </div>
+      );
+    };
+
     const CadastroFocos = ({ toast }) => {
       const [focos, setFocos] = useState([...FOCOS_SESSAO]);
       const [showModal, setShowModal] = useState(false);
@@ -3182,6 +3446,7 @@
         seguranca: <Seguranca toast={toast} filtro={filtro}/>,
         cadastro: <CadastroTurmasAlunos toast={toast}/>,
         focos: <CadastroFocos toast={toast}/>,
+        equipamentos: <CadastroEquipamentos toast={toast}/>,
         estrategico: <Estrategico/>,
         coaches: <Coaches/>,
         configuracoes: <Configuracoes toast={toast}/>,
@@ -3195,6 +3460,7 @@
         seguranca: ['Verificação de Segurança', 'Auditoria de segurança e riscos da semana'],
         cadastro: ['Turmas e Alunos', 'Cadastro e gestão de turmas e alunos da academia'],
         focos: ['Focos de Sessão', 'Gerenciar tipos de foco disponíveis na geração de treinos'],
+        equipamentos: ['Equipamentos', 'Cadastro de equipamentos disponíveis na academia para geração inteligente de treinos'],
         estrategico: ['Visão Estratégica', 'Recomendações de IA para gestão do negócio'],
         coaches: ['Gestão de Professores', 'Desempenho e métricas dos coaches'],
         configuracoes: ['Configurações', 'Perfil e dados da academia'],
