@@ -111,50 +111,11 @@
     const ACADEMIA_ID = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
     const COACH_ID = 'b1c2d3e4-f5a6-7890-abcd-ef1234567891';
     const DONO_ID = 'c2d3e4f5-a6b7-8901-bcde-f12345678902';
+    const DEMO_MODE = false; // true = mostra botões de acesso rápido no login
 
-    // ─── Alunos e Turmas (editáveis via estado global) ──────────────────────
-    let TURMAS = [
-      {id:'turma-1', nome:'06:00 — CrossFit Manhã', horario:'06:00', modalidade:'crossfit', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:20, cor:'#43f320'},
-      {id:'turma-2', nome:'07:30 — CrossFit Intermediário', horario:'07:30', modalidade:'crossfit', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:18, cor:'#60a5fa'},
-      {id:'turma-3', nome:'12:00 — CrossFit Horário de Almoço', horario:'12:00', modalidade:'crossfit', dias:['Seg','Qua','Sex'], max_alunos:15, cor:'#facc15'},
-      {id:'turma-4', nome:'18:00 — CrossFit Noite', horario:'18:00', modalidade:'crossfit', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:22, cor:'#f87171'},
-      {id:'turma-5', nome:'19:30 — CrossFit Avançado', horario:'19:30', modalidade:'crossfit', dias:['Seg','Ter','Qua','Qui'], max_alunos:16, cor:'#c084fc'},
-      {id:'turma-6', nome:'09:00 — Bootcamp Sábado', horario:'09:00', modalidade:'bootcamp', dias:['Sáb'], max_alunos:25, cor:'#fb923c'},
-      {id:'turma-7', nome:'06:30 — Hyrox Manhã', horario:'06:30', modalidade:'hyrox', dias:['Seg','Qua','Sex'], max_alunos:14, cor:'#2dd4bf'},
-      {id:'turma-8', nome:'17:00 — Bootcamp Tarde', horario:'17:00', modalidade:'bootcamp', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:30, cor:'#f472b6'},
-      {id:'turma-9', nome:'18:30 — Hyrox Noite', horario:'18:30', modalidade:'hyrox', dias:['Ter','Qui'], max_alunos:12, cor:'#38bdf8'},
-      {id:'turma-10', nome:'08:00 — Bootcamp Manhã', horario:'08:00', modalidade:'bootcamp', dias:['Seg','Ter','Qua','Qui','Sex'], max_alunos:28, cor:'#fbbf24'},
-      {id:'turma-11', nome:'20:00 — CrossFit Competition', horario:'20:00', modalidade:'crossfit', dias:['Seg','Qua','Sex'], max_alunos:12, cor:'#ef4444'},
-      {id:'turma-12', nome:'10:00 — Hyrox Sábado', horario:'10:00', modalidade:'hyrox', dias:['Sáb'], max_alunos:16, cor:'#a78bfa'},
-    ];
-
-    let ALUNOS = [
-      {id:'aluno-1', nome:'Lucas Oliveira', turma_id:'turma-4', nivel:'intermediário', restricoes:'', objetivo:'Competição'},
-      {id:'aluno-2', nome:'Marina Santos', turma_id:'turma-1', nivel:'avançado', restricoes:'', objetivo:'Performance'},
-      {id:'aluno-3', nome:'Pedro Almeida', turma_id:'turma-2', nivel:'iniciante', restricoes:'Lesão no ombro direito', objetivo:'Saúde'},
-      {id:'aluno-4', nome:'Camila Costa', turma_id:'turma-4', nivel:'intermediário', restricoes:'', objetivo:'Condicionamento'},
-      {id:'aluno-5', nome:'Rafael Mendes', turma_id:'turma-5', nivel:'avançado', restricoes:'', objetivo:'Competição'},
-      {id:'aluno-6', nome:'Juliana Ferreira', turma_id:'turma-1', nivel:'intermediário', restricoes:'Problema no joelho', objetivo:'Saúde'},
-      {id:'aluno-7', nome:'Gustavo Lima', turma_id:'turma-3', nivel:'intermediário', restricoes:'', objetivo:'Emagrecimento'},
-      {id:'aluno-8', nome:'Amanda Rocha', turma_id:'turma-2', nivel:'iniciante', restricoes:'', objetivo:'Condicionamento'},
-      {id:'aluno-9', nome:'Thiago Barbosa', turma_id:'turma-5', nivel:'avançado', restricoes:'', objetivo:'Competição'},
-      {id:'aluno-10', nome:'Fernanda Dias', turma_id:'turma-4', nivel:'intermediário', restricoes:'Gestante — 4 meses', objetivo:'Saúde'},
-      {id:'aluno-11', nome:'Bruno Cavalcanti', turma_id:'turma-1', nivel:'avançado', restricoes:'', objetivo:'Performance'},
-      {id:'aluno-12', nome:'Isabela Martins', turma_id:'turma-3', nivel:'iniciante', restricoes:'', objetivo:'Emagrecimento'},
-      {id:'aluno-13', nome:'Diego Nascimento', turma_id:'turma-4', nivel:'intermediário', restricoes:'', objetivo:'Condicionamento'},
-      {id:'aluno-14', nome:'Larissa Souza', turma_id:'turma-2', nivel:'intermediário', restricoes:'Dor lombar crônica', objetivo:'Saúde'},
-      {id:'aluno-15', nome:'Felipe Araujo', turma_id:'turma-5', nivel:'avançado', restricoes:'', objetivo:'Competição'},
-      {id:'aluno-16', nome:'Carolina Pires', turma_id:'turma-7', nivel:'intermediário', restricoes:'', objetivo:'Competição'},
-      {id:'aluno-17', nome:'André Moreira', turma_id:'turma-7', nivel:'avançado', restricoes:'', objetivo:'Performance'},
-      {id:'aluno-18', nome:'Patrícia Lopes', turma_id:'turma-8', nivel:'iniciante', restricoes:'', objetivo:'Emagrecimento'},
-      {id:'aluno-19', nome:'Rodrigo Cunha', turma_id:'turma-8', nivel:'iniciante', restricoes:'', objetivo:'Condicionamento'},
-      {id:'aluno-20', nome:'Tatiana Vieira', turma_id:'turma-9', nivel:'intermediário', restricoes:'Tendinite no tendão de Aquiles', objetivo:'Performance'},
-      {id:'aluno-21', nome:'Marcos Silva', turma_id:'turma-9', nivel:'avançado', restricoes:'', objetivo:'Competição'},
-      {id:'aluno-22', nome:'Renata Gomes', turma_id:'turma-10', nivel:'iniciante', restricoes:'', objetivo:'Emagrecimento'},
-      {id:'aluno-23', nome:'Eduardo Reis', turma_id:'turma-10', nivel:'intermediário', restricoes:'', objetivo:'Condicionamento'},
-      {id:'aluno-24', nome:'Vanessa Cardoso', turma_id:'turma-11', nivel:'avançado', restricoes:'', objetivo:'Competição'},
-      {id:'aluno-25', nome:'Leonardo Nunes', turma_id:'turma-12', nivel:'intermediário', restricoes:'Dor no ombro esquerdo', objetivo:'Performance'},
-    ];
+    // ─── Alunos e Turmas (estado global em memória, editável) ───────────────
+    let TURMAS = [];
+    let ALUNOS = [];
 
     // ─── Catálogo de Equipamentos Pré-definido ─────────────────────────────
     // Lista pré-definida que o dono marca o que tem e a quantidade
@@ -228,17 +189,7 @@
     ];
 
     // Estoque global em memória (formato: { [equip_id]: quantidade })
-    let ESTOQUE_EQUIPAMENTOS = {
-      'eq-row':4,'eq-bike':3,'eq-ski':2,
-      'eq-barra-m':12,'eq-barra-f':6,'eq-barra-tec':20,'eq-rack':8,
-      'eq-anilha-25':8,'eq-anilha-20':12,'eq-anilha-15':12,'eq-anilha-10':16,'eq-anilha-5':20,'eq-anilha-2':24,
-      'eq-kb-8':4,'eq-kb-12':6,'eq-kb-16':8,'eq-kb-20':6,'eq-kb-24':6,'eq-kb-32':2,
-      'eq-db-5':4,'eq-db-10':4,'eq-db-15':4,'eq-db-20':4,'eq-db-25':2,
-      'eq-wb-6':6,'eq-wb-9':8,
-      'eq-pullup':12,'eq-argolas':6,'eq-corda-esc':2,'eq-ghd':2,
-      'eq-box-60':10,'eq-box-50':10,'eq-box-40':6,
-      'eq-corda':15,'eq-sandbag':4,'eq-slam-ball':4,
-    };
+    let ESTOQUE_EQUIPAMENTOS = {};
 
     // ─── Focos de Sessão (editáveis) ────────────────────────────────────────
     let FOCOS_SESSAO = [
@@ -710,19 +661,22 @@
                   <button type="submit" disabled={loading} className="btn-primary w-full py-3 rounded-xl mt-2 flex items-center justify-center gap-2">
                     {loading ? <div className="loading-spinner" style={{width:20,height:20,borderWidth:2}}/> : <><Icon name="login" size={18}/>Entrar na Plataforma</>}
                   </button>
-                  <p className="text-center text-slate-500 text-xs">Acesso rápido para demo:</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button type="button" onClick={()=>quickLogin('head_coach')} className="btn-ghost rounded-lg py-2 text-sm flex items-center justify-center gap-2">
-                      <Icon name="sports_gymnastics" size={16}/>Head Coach
-                    </button>
-                    <button type="button" onClick={()=>quickLogin('dono')} className="btn-ghost rounded-lg py-2 text-sm flex items-center justify-center gap-2">
-                      <Icon name="corporate_fare" size={16}/>Dono
-                    </button>
-                  </div>
+                  {DEMO_MODE && (<>
+                    <p className="text-center text-slate-500 text-xs">Acesso rápido para demo:</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button type="button" onClick={()=>quickLogin('head_coach')} className="btn-ghost rounded-lg py-2 text-sm flex items-center justify-center gap-2">
+                        <Icon name="sports_gymnastics" size={16}/>Head Coach
+                      </button>
+                      <button type="button" onClick={()=>quickLogin('dono')} className="btn-ghost rounded-lg py-2 text-sm flex items-center justify-center gap-2">
+                        <Icon name="corporate_fare" size={16}/>Dono
+                      </button>
+                    </div>
+                  </>)}
                 </form>
               </div>
 
-              {/* Perfis */}
+              {/* Perfis — só visível em modo demo */}
+              {DEMO_MODE && (
               <div className="space-y-4">
                 <h3 className="font-display font-bold text-lg">Selecione seu perfil</h3>
                 <div className="grid grid-cols-1 gap-4">
@@ -752,6 +706,7 @@
                   </div>
                 </div>
               </div>
+              )}
             </div>
           </div>
         </div>
@@ -863,51 +818,6 @@
     );
 
     // ─── Dashboard Head Coach ──────────────────────────────────────────────────
-    // ─── Treinos Simulados para Demo ──────────────────────────────────────────
-    const gerarTreinosSimulados = () => {
-      const h = new Date();
-      const simNomes = ['Tempestade','Forja','Trovão','Fênix','Motor','Ignição','Vulcão','Arsenal','Titânio','Centelha','Impacto','Turbo','Vendaval','Aço','Nitro','Apogeu','Gladiador','Inferno','Rugido','Horizonte','Onda','Barreira','Resgate','Supremo','Ataque','Domínio','Impulso','Fortuna','Ascensão','Guerreiro'];
-      const simFocos = ['LPO + Condicionamento','Ginástica','Resistência','Força Pura','Cardio','Mobilidade + Técnica'];
-      const simMovs = [
-        [{nome:'Thrusters',reps:15,carga:'43/29kg',modalidade:'levantamento'},{nome:'Pull-ups',reps:12,carga:'',modalidade:'ginastica'},{nome:'Run 400m',reps:1,carga:'',modalidade:'monoestrutural'}],
-        [{nome:'Deadlift',reps:12,carga:'100/70kg',modalidade:'levantamento'},{nome:'Box Jumps',reps:15,carga:'',modalidade:'ginastica'},{nome:'Push-ups',reps:20,carga:'',modalidade:'ginastica'}],
-        [{nome:'Power Clean',reps:9,carga:'80/55kg',modalidade:'levantamento'},{nome:'Toes-to-Bar',reps:12,carga:'',modalidade:'ginastica'},{nome:'Row 500m',reps:1,carga:'',modalidade:'monoestrutural'}],
-        [{nome:'Wall Ball Shots',reps:20,carga:'9/6kg',modalidade:'levantamento'},{nome:'Burpees',reps:10,carga:'',modalidade:'ginastica'},{nome:'Kettlebell Swings',reps:15,carga:'24/16kg',modalidade:'levantamento'}],
-        [{nome:'Snatch',reps:7,carga:'60/42kg',modalidade:'levantamento'},{nome:'Double Unders',reps:30,carga:'',modalidade:'ginastica'},{nome:'Lunges',reps:20,carga:'',modalidade:'ginastica'}],
-        [{nome:'Front Squat',reps:10,carga:'80/55kg',modalidade:'levantamento'},{nome:'Handstand Push-ups',reps:8,carga:'',modalidade:'ginastica'},{nome:'Run 400m',reps:1,carga:'',modalidade:'monoestrutural'}],
-        [{nome:'Clean & Jerk',reps:5,carga:'80/55kg',modalidade:'levantamento'},{nome:'Pull-ups',reps:15,carga:'',modalidade:'ginastica'},{nome:'Air Squats',reps:20,carga:'',modalidade:'ginastica'}],
-      ];
-      const formatos = ['AMRAP 15 min','For Time (TC 18 min)','3 Rounds For Time','EMOM 16 min','5 Rounds For Time','AMRAP 20 min'];
-      const result = [];
-      for (let i = -15; i <= 15; i++) {
-        const d = new Date(h); d.setDate(d.getDate() + i);
-        const dow = d.getDay();
-        if (dow === 0) continue; // Domingo - descanso
-        const dateStr = d.toISOString().split('T')[0];
-        const idx = Math.abs(i + 15) % simNomes.length;
-        const movsIdx = Math.abs(i + 15) % simMovs.length;
-        const focoIdx = Math.abs(i + 15) % simFocos.length;
-        result.push({
-          id: `sim-${i+15}`, academia_id: ACADEMIA_ID, criado_por: COACH_ID,
-          data_treino: dateStr, metodologia: 'crossfit',
-          nome: simNomes[idx], num_alunos: 12 + (idx % 8),
-          foco: simFocos[focoIdx], intensidade: idx % 3 === 0 ? 'alta' : 'media',
-          tempo_previsto_min: 50 + (idx % 12),
-          aquecimento: { descricao: '3 Rounds: 200m corrida + 10 Air Squats + mobilidade específica', duracao_min: 10 },
-          skill: { nome: ['Back Squat','Snatch','Clean','Front Squat','Deadlift','Push Press'][idx%6], series: [{set:1,reps:5,pct:60},{set:2,reps:5,pct:70},{set:3,reps:3,pct:80}], duracao_min: 14 },
-          wod: { nome: simNomes[idx], formato: formatos[idx % formatos.length], movimentos: simMovs[movsIdx], tempo_wod_min: 15 + (idx%8) },
-          cooldown: { descricao: '5 min caminhada leve + Foam Roller + alongamento' },
-          adaptacoes: { iniciante: 'Reduza cargas 30-40%. Substitua movimentos complexos.', avancado: 'Mantenha RX. Adicione colete 9kg.' },
-          turma_id: TURMAS[Math.abs(i+15) % TURMAS.length].id,
-          aluno_ids: ALUNOS.filter(a => a.turma_id === TURMAS[Math.abs(i+15) % TURMAS.length].id).map(a => a.id),
-          status: 'publicado',
-        });
-      }
-      return result;
-    };
-
-    const TREINOS_SIMULADOS = gerarTreinosSimulados();
-
     const DashboardCoach = ({ setPage, toast, filtro }) => {
       const [treinosDB, setTreinosDB] = useState([]);
       const [alertas, setAlertas] = useState([]);
@@ -928,18 +838,9 @@
         load();
       }, []);
 
-      // Combinar treinos do banco com simulados, e aplicar filtro
+      // Usar apenas dados reais do Supabase
       const treinos = useMemo(() => {
-        const dbDates = new Set((treinosDB||[]).map(t => t.data_treino));
-        const simFiltered = TREINOS_SIMULADOS.filter(s => !dbDates.has(s.data_treino));
-        let all = [...(treinosDB||[]), ...simFiltered].sort((a,b) => a.data_treino > b.data_treino ? 1 : -1);
-        // Aplicar filtro
-        if (filtro?.tipo === 'turma' && filtro.id) {
-          all = all.filter(t => t.turma_id === filtro.id || (t.turma_ids && t.turma_ids.includes(filtro.id)));
-        } else if (filtro?.tipo === 'aluno' && filtro.id) {
-          all = all.filter(t => t.aluno_ids && t.aluno_ids.includes(filtro.id));
-        }
-        return all;
+        return [...(treinosDB||[])].sort((a,b) => a.data_treino > b.data_treino ? 1 : -1);
       }, [treinosDB, filtro]);
 
       const treino_hoje = treinos.find(t => t.data_treino === hoje());
@@ -1045,11 +946,18 @@
               ) : (
                 <div className="card-ai p-8 h-full flex flex-col items-center justify-center text-center">
                   <Icon name="fitness_center" className="text-primary/30" size={48}/>
-                  <h3 className="font-display font-bold text-xl mt-4 mb-2">Nenhum treino hoje</h3>
-                  <p className="text-slate-400 text-sm mb-5">Clique abaixo para gerar o treino do dia com IA</p>
-                  <button onClick={() => setPage('gerar')} className="btn-primary px-6 py-3 rounded-xl flex items-center gap-2">
-                    <Icon name="auto_awesome" size={18}/>Gerar Treino IA
-                  </button>
+                  <h3 className="font-display font-bold text-xl mt-4 mb-2">{treinos.length === 0 ? 'Nenhum treino cadastrado ainda' : 'Nenhum treino para hoje'}</h3>
+                  <p className="text-slate-400 text-sm mb-5 max-w-sm">{treinos.length === 0 ? 'Comece cadastrando seus equipamentos e gere seu primeiro treino com IA.' : 'Gere um novo treino para hoje ou selecione um WOD clássico.'}</p>
+                  <div className="flex gap-3 flex-wrap justify-center">
+                    <button onClick={() => setPage('gerar')} className="btn-primary px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm">
+                      <Icon name="auto_awesome" size={18}/>Gerar Treino IA
+                    </button>
+                    {treinos.length === 0 && (
+                      <button onClick={() => setPage('equipamentos')} className="btn-ghost px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm">
+                        <Icon name="inventory_2" size={18}/>Cadastrar Equipamentos
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -1870,9 +1778,7 @@
       useEffect(() => {
         sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', {ascending:false})
           .then(({data}) => {
-            const dbTreinos = data || [];
-            const usarSimulados = dbTreinos.length < 5;
-            setTreinosRaw(usarSimulados ? [...dbTreinos, ...TREINOS_SIMULADOS] : dbTreinos);
+            setTreinosRaw(data || []);
             setLoading(false);
           });
       }, []);
@@ -2025,7 +1931,20 @@
             <p className="text-xs text-slate-500 mt-3">Analisando treinos de <span className="font-bold text-primary">{new Date(periodo.inicio).toLocaleDateString('pt-BR')}</span> até <span className="font-bold text-primary">{new Date(periodo.fim).toLocaleDateString('pt-BR')}</span> · {treinos.length} treino{treinos.length!==1?'s':''} encontrado{treinos.length!==1?'s':''}</p>
           </div>
 
+          {/* Empty state quando não há treinos */}
+          {treinos.length === 0 && (
+            <div className="card p-12 text-center">
+              <Icon name="monitoring" className="text-primary/20" size={56}/>
+              <h3 className="font-display font-bold text-xl mt-4 mb-2">Nenhum treino para analisar</h3>
+              <p className="text-slate-400 text-sm mb-5 max-w-md mx-auto">Gere e salve treinos para que a IA analise sua programação, identifique padrões e sugira melhorias.</p>
+              <button onClick={()=>toast('Navegue para "Gerar Treino" no menu lateral.')} className="btn-primary px-6 py-3 rounded-xl inline-flex items-center gap-2">
+                <Icon name="auto_awesome" size={18}/>Ir para Gerar Treino
+              </button>
+            </div>
+          )}
+
           {/* KPIs */}
+          {treinos.length > 0 && <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {l:'Treinos Analisados', v: s.totalTreinos, i:'fitness_center', c:'text-primary'},
@@ -2178,6 +2097,7 @@
               </div>
             </div>
           </div>
+          </>}
         </div>
       );
     };
@@ -3789,8 +3709,7 @@
 
     // ─── App Root ──────────────────────────────────────────────────────────────
     const App = () => {
-      const defaultUser = { id: COACH_ID, nome: 'Coach Demonstração', email: 'coach@crossfititron.com', perfil: 'head_coach', academia_id: ACADEMIA_ID };
-      const [user, setUser] = useState(defaultUser);
+      const [user, setUser] = useState(null);
       const [page, setPage] = useState('dashboard');
       const [academia, setAcademia] = useState(null);
       const [toastState, setToastState] = useState(null);
@@ -3817,7 +3736,7 @@
 
       const logout = () => { setUser(null); setPage('dashboard'); };
 
-      if (!user) return null;
+      if (!user) return <LoginPage onLogin={setUser}/>;
 
       const isCoach = user.perfil === 'head_coach';
       // Info do filtro ativo para exibir no subtitle
