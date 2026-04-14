@@ -1208,7 +1208,9 @@
 
     const GerarTreino = ({ toast, filtro, treinoInicial, dataFixa, onSaved, user }) => {
       const ctx = useAcademia();
-      const [form, setForm] = useState({ metodologia: 'crossfit', data: dataFixa || hoje(), num_alunos: 15, focos: ['LPO'], foco: 'LPO', modo_equipe: 'solo', duracao: 55, destino: 'turma', aluno_id: '' });
+      const [form, setForm] = useState({ metodologia: 'crossfit', data: dataFixa || hoje(), num_alunos: 15, focos: ['LPO'], foco: 'LPO', modo_equipe: 'solo', duracao: 55, duracao_wod: 0, duracao_skill: 0, movimentos_custom: [], destino: 'turma', aluno_id: '' });
+      const [showMovPicker, setShowMovPicker] = useState(false);
+      const [buscaMov, setBuscaMov] = useState('');
       const [treino, setTreino] = useState(treinoInicial || null);
       const [loading, setLoading] = useState(false);
       const [saved, setSaved] = useState(!!treinoInicial);
@@ -1273,10 +1275,31 @@
         const alunoRest = form.destino === 'aluno' && form.aluno_id ? (ALUNOS.find(a=>a.id===form.aluno_id)?.restricoes || '') : '';
         const restricoes = [equipSemEstoque, alunoRest].filter(Boolean).join(', ');
 
+        // Cálculo de tempos — respeita customizações do usuário
         const cooldownMin = 5;
-        const aquecMin = Math.round(duracaoAlvo * 0.2);
-        const skillMin = Math.round(duracaoAlvo * 0.25);
-        const wodMin = duracaoAlvo - aquecMin - skillMin - cooldownMin;
+        const duracaoWodUser = parseInt(form.duracao_wod) || 0;
+        const duracaoSkillUser = parseInt(form.duracao_skill) || 0;
+        let wodMin, skillMin, aquecMin;
+
+        if (duracaoWodUser > 0 && duracaoSkillUser > 0) {
+          wodMin = duracaoWodUser;
+          skillMin = duracaoSkillUser;
+          aquecMin = Math.max(5, duracaoAlvo - wodMin - skillMin - cooldownMin);
+        } else if (duracaoWodUser > 0) {
+          wodMin = duracaoWodUser;
+          const restante = duracaoAlvo - wodMin - cooldownMin;
+          aquecMin = Math.max(5, Math.round(restante * 0.40));
+          skillMin = Math.max(5, restante - aquecMin);
+        } else if (duracaoSkillUser > 0) {
+          skillMin = duracaoSkillUser;
+          const restante = duracaoAlvo - skillMin - cooldownMin;
+          aquecMin = Math.max(5, Math.round(restante * 0.30));
+          wodMin = Math.max(5, restante - aquecMin);
+        } else {
+          aquecMin = Math.round(duracaoAlvo * 0.20);
+          skillMin = Math.round(duracaoAlvo * 0.25);
+          wodMin = duracaoAlvo - aquecMin - skillMin - cooldownMin;
+        }
 
         const metAquec = AQUECIMENTOS[form.metodologia] || AQUECIMENTOS['crossfit'];
         const aquecOpts = metAquec[focoPrincipal] || metAquec['LPO'] || Object.values(metAquec)[0];
@@ -1289,14 +1312,39 @@
         const skillBase = skillOpts[Math.floor(Math.random() * skillOpts.length)];
         const skill = { ...skillBase, duracao_min: skillMin };
 
-        // WOD: combina focos — gera com o foco principal mas mistura movimentos dos outros
         const modoDuplas = form.modo_equipe === 'duplas' || form.modo_equipe === 'trios' || form.modo_equipe === 'quartetos';
         const tamanhoEquipe = {'solo':1,'duplas':2,'trios':3,'quartetos':4}[form.modo_equipe || 'solo'] || 1;
-        const wod = gerarWodInteligente(focoPrincipal, numAlunos, equipamentos, restricoes, modoDuplas);
-        wod.tempo_wod_min = wodMin;
 
-        // Se múltiplos focos, adiciona movimentos extras dos outros focos
-        if (focos.length > 1) {
+        // WOD: se movimentos custom, usa eles; senão IA gera
+        let wod;
+        if (form.movimentos_custom && form.movimentos_custom.length > 0) {
+          const repsOpts = { ginastica:[10,12,15,20], levantamento:[5,9,12,15], monoestrutural:[1] };
+          const movimentos = form.movimentos_custom.map(m => {
+            const reps = repsOpts[m.modalidade] ? repsOpts[m.modalidade][Math.floor(Math.random() * repsOpts[m.modalidade].length)] : 10;
+            return {
+              nome: m.nome,
+              reps: m.reps || reps,
+              carga: m.carga || (m.rx_m ? `${m.rx_m}/${m.rx_f}` : ''),
+              modalidade: m.modalidade,
+            };
+          });
+          const formatosArr = ['AMRAP','For Time','RFT','EMOM'];
+          const fmt = formatosArr[Math.floor(Math.random() * formatosArr.length)];
+          const nomes = ['Forja','Ignição','Custom','Personalizado','Select'];
+          wod = {
+            nome: nomes[Math.floor(Math.random() * nomes.length)],
+            formato: fmt === 'AMRAP' ? `AMRAP ${wodMin} min` : fmt === 'RFT' ? `${[3,4,5][Math.floor(Math.random()*3)]} Rounds For Time` : fmt === 'EMOM' ? `EMOM ${wodMin} min` : `For Time (TC ${wodMin} min)`,
+            movimentos,
+            tempo_wod_min: wodMin,
+            logistica_nota: '',
+          };
+        } else {
+          wod = gerarWodInteligente(focoPrincipal, numAlunos, equipamentos, restricoes, modoDuplas);
+          wod.tempo_wod_min = wodMin;
+        }
+
+        // Se múltiplos focos, adiciona movimentos extras dos outros focos (só se IA gerou)
+        if (focos.length > 1 && (!form.movimentos_custom || form.movimentos_custom.length === 0)) {
           for (let i=1; i<focos.length && i<3; i++) {
             const extraWod = gerarWodInteligente(focos[i], numAlunos, equipamentos, restricoes, modoDuplas);
             if (extraWod.movimentos && extraWod.movimentos.length > 0) {
@@ -1782,6 +1830,63 @@
               {form.focos && form.focos.length > 1 && <p className="text-xs text-slate-500 mt-1.5">IA combinará {form.focos.length} focos no treino gerado.</p>}
             </div>
 
+            {/* Tempo de Skill e WOD customizados */}
+            <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wide text-primary">Distribuição de Tempo</span>
+                <button type="button" onClick={()=>setForm(f=>({...f,duracao_wod:0,duracao_skill:0}))}
+                  className="text-xs text-slate-400 hover:text-primary">Auto</button>
+              </div>
+              <div>
+                <label className="text-xs mb-1 flex items-center justify-between">
+                  <span>Skill</span>
+                  <span className="text-primary font-bold">{form.duracao_skill > 0 ? `${form.duracao_skill} min` : 'auto'}</span>
+                </label>
+                <input type="range" min="0" max={Math.max(5, form.duracao - 15)} value={form.duracao_skill||0}
+                  onChange={e=>setForm(f=>({...f,duracao_skill:parseInt(e.target.value)}))}
+                  style={{background:'transparent',border:'none',padding:0,width:'100%',accentColor:'var(--primary)'}}/>
+              </div>
+              <div>
+                <label className="text-xs mb-1 flex items-center justify-between">
+                  <span>WOD</span>
+                  <span className="text-primary font-bold">{form.duracao_wod > 0 ? `${form.duracao_wod} min` : 'auto'}</span>
+                </label>
+                <input type="range" min="0" max={Math.max(5, form.duracao - 10)} value={form.duracao_wod||0}
+                  onChange={e=>setForm(f=>({...f,duracao_wod:parseInt(e.target.value)}))}
+                  style={{background:'transparent',border:'none',padding:0,width:'100%',accentColor:'var(--primary)'}}/>
+              </div>
+              <p className="text-xs text-slate-500">Em "auto", a IA distribui: 20% aquecimento, 25% skill, 55% WOD.</p>
+            </div>
+
+            {/* Seleção manual de movimentos */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium">Movimentos do WOD <span className="text-xs text-slate-500 font-normal">(opcional)</span></label>
+                <button type="button" onClick={()=>setShowMovPicker(true)} className="text-xs text-primary font-bold hover:underline flex items-center gap-1">
+                  <Icon name="add" size={14}/>Adicionar
+                </button>
+              </div>
+              {(form.movimentos_custom||[]).length === 0 ? (
+                <p className="text-xs text-slate-500">Sem seleção — a IA escolherá movimentos automaticamente conforme o foco.</p>
+              ) : (
+                <div className="space-y-1.5">
+                  {form.movimentos_custom.map((m, i) => (
+                    <div key={i} className="flex items-center gap-2 p-2 rounded-lg bg-primary/10 border border-primary/20">
+                      <span className={`tag ${m.modalidade==='ginastica'?'tag-blue':m.modalidade==='levantamento'?'tag-red':'tag-yellow'} text-xs`}>
+                        {m.modalidade==='ginastica'?'G':m.modalidade==='levantamento'?'W':'M'}
+                      </span>
+                      <span className="flex-1 text-xs font-medium truncate">{m.nome}</span>
+                      <button type="button" onClick={()=>setForm(f=>({...f, movimentos_custom: f.movimentos_custom.filter((_,idx)=>idx!==i)}))}
+                        className="p-1 rounded hover:bg-red-500/20 text-slate-400 hover:text-red-400">
+                        <Icon name="close" size={14}/>
+                      </button>
+                    </div>
+                  ))}
+                  <p className="text-xs text-primary">{form.movimentos_custom.length} movimentos · IA gera o formato (AMRAP/For Time/EMOM) automaticamente.</p>
+                </div>
+              )}
+            </div>
+
             {form.destino !== 'aluno' && (
             <div>
               <label className="text-sm font-medium mb-1.5 block">Modo de Treino</label>
@@ -2125,6 +2230,63 @@
 
           {/* Modal de exercício */}
           {exercicioModal && <ExercicioModal nome={exercicioModal} onClose={() => setExercicioModal(null)}/>}
+
+          {/* Modal de seleção de movimentos */}
+          <Modal open={showMovPicker} onClose={()=>setShowMovPicker(false)} title="Selecionar Movimentos">
+            <div className="space-y-3">
+              <input type="text" value={buscaMov} onChange={e=>setBuscaMov(e.target.value)} placeholder="🔍 Buscar movimento..."/>
+              <p className="text-xs text-slate-400">Clique nos movimentos que devem aparecer no WOD. A IA gerará o formato (AMRAP, For Time, EMOM) e as reps conforme o foco selecionado.</p>
+              {/* Categorias */}
+              {[
+                {key:'ginastica', label:'Ginástica', color:'tag-blue', tag:'G'},
+                {key:'levantamento', label:'Levantamento', color:'tag-red', tag:'W'},
+                {key:'monoestrutural', label:'Monoestrutural', color:'tag-yellow', tag:'M'},
+              ].map(cat => {
+                const lista = MOVIMENTOS[cat.key].filter(m => !buscaMov || m.nome.toLowerCase().includes(buscaMov.toLowerCase()));
+                if (lista.length === 0) return null;
+                return (
+                  <div key={cat.key}>
+                    <h4 className="text-xs font-bold uppercase tracking-wide text-primary mb-2 flex items-center gap-2">
+                      <span className={`tag ${cat.color} text-xs`}>{cat.tag}</span>
+                      {cat.label} <span className="text-slate-500 font-normal">({lista.length})</span>
+                    </h4>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {lista.map(m => {
+                        const selected = (form.movimentos_custom||[]).some(x => x.nome === m.nome);
+                        return (
+                          <button key={m.nome} type="button" onClick={()=>{
+                            setForm(f => {
+                              const atual = f.movimentos_custom || [];
+                              if (selected) return {...f, movimentos_custom: atual.filter(x => x.nome !== m.nome)};
+                              return {...f, movimentos_custom: [...atual, {...m, modalidade: cat.key}]};
+                            });
+                          }}
+                          className={`text-xs text-left p-2 rounded-lg border transition-all ${selected?'border-primary bg-primary/15 text-primary':'border-white/10 text-slate-300 hover:border-primary/30'}`}>
+                            <div className="flex items-center gap-1.5">
+                              {selected && <Icon name="check" size={12} className="text-primary shrink-0"/>}
+                              <span className="truncate">{m.nome}</span>
+                            </div>
+                            {m.rx_m && <span className="text-xs text-slate-500 block mt-0.5">{m.rx_m}/{m.rx_f}</span>}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+              <div className="flex items-center justify-between gap-3 mt-2 pt-3 border-t border-white/5">
+                <span className="text-xs text-slate-400">
+                  {(form.movimentos_custom||[]).length} movimentos selecionados
+                </span>
+                <div className="flex gap-2">
+                  {(form.movimentos_custom||[]).length > 0 && (
+                    <button onClick={()=>setForm(f=>({...f, movimentos_custom: []}))} className="px-3 py-1.5 text-xs text-slate-400 hover:text-red-400">Limpar</button>
+                  )}
+                  <button onClick={()=>setShowMovPicker(false)} className="btn-primary px-5 py-1.5 rounded-lg text-xs font-bold">Pronto</button>
+                </div>
+              </div>
+            </div>
+          </Modal>
 
           {/* Modal de importação em lote de treinos */}
           <Modal open={showImportBatch} onClose={()=>setShowImportBatch(false)} title="Importar Treinos em Lote">
