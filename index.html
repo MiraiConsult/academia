@@ -2206,7 +2206,8 @@
     };
 
     // ─── Periodização ──────────────────────────────────────────────────────────
-    const Periodizacao = ({ toast, filtro, setPage }) => {
+    const Periodizacao = ({ toast, filtro, setPage, user }) => {
+      const ctx = useAcademia();
       const [periodo, setPeriodo] = useState(null);
       const [loading, setLoading] = useState(true);
       const [showModal, setShowModal] = useState(false);
@@ -2333,34 +2334,72 @@
 
       // Cria um treino para um dia específico da periodização
       const criarTreinoDoDia = async (data_treino, semana) => {
-        const focoMap = {
-          'base': 'Resistência', 'força': 'Força Pura', 'pico': 'LPO + Condicionamento',
-          'hiper': 'Força Pura', 'metcon': 'Resistência', 'taper': 'Mobilidade + Técnica',
-          'deload': 'Mobilidade + Técnica', 'skill': 'Ginástica',
-        };
-        const foco = Object.entries(focoMap).find(([k]) => (semana.fase||'').toLowerCase().includes(k))?.[1] || 'LPO + Condicionamento';
-        const numAlunos = 15;
-        const equipDisp = CATALOGO_EQUIPAMENTOS.filter(c => (ctx.estoque[c.id]||0) > 0).map(c => ({id:c.id, nome:c.nome, quantidade:ctx.estoque[c.id]}));
-        const wod = gerarWodInteligente(foco, numAlunos, equipDisp, '', false);
-        const aquecOpts = (AQUECIMENTOS[periodo.modalidade || 'crossfit'] || AQUECIMENTOS['crossfit'])[foco] || Object.values(AQUECIMENTOS['crossfit'])[0];
-        const skillOpts = SKILLS[foco] || SKILLS['Força Pura'];
-        const skillBase = skillOpts[Math.floor(Math.random() * skillOpts.length)];
-        const novo = {
-          academia_id: ACADEMIA_ID, criado_por: COACH_ID,
-          data_treino, metodologia: periodo.modalidade || 'crossfit',
-          nome: wod.nome, num_alunos: numAlunos, foco, focos: [foco],
-          aquecimento: { descricao: aquecOpts[0], duracao_min: 12 },
-          skill: { ...skillBase, duracao_min: 14 },
-          wod: { ...wod, tempo_wod_min: 20 },
-          cooldown: { descricao: '5 min caminhada leve + mobilidade' },
-          adaptacoes: { iniciante: 'Reduza cargas 30-40%.', avancado: 'RX + colete 9kg.' },
-          tempo_previsto_min: 55, intensidade: 'media',
-          status: 'rascunho',
-        };
-        const { data, error } = await sb.from('treinos').insert([novo]).select().single();
-        if (error) { toast('Erro: ' + error.message, 'error'); return; }
-        setTreinosDoPeriodo(prev => [...prev, data]);
-        toast('Treino criado para ' + new Date(data_treino).toLocaleDateString('pt-BR'), 'success');
+        try {
+          const focoMap = {
+            'base': 'Resistência', 'força': 'Força Pura', 'forca': 'Força Pura', 'pico': 'LPO + Condicionamento',
+            'hiper': 'Força Pura', 'metcon': 'Resistência', 'taper': 'Mobilidade + Técnica',
+            'deload': 'Mobilidade + Técnica', 'recupera': 'Mobilidade + Técnica', 'skill': 'Ginástica',
+            'técnic': 'Ginástica', 'acumulação': 'Resistência', 'intensific': 'Força Pura',
+          };
+          const fase = (semana.fase||'').toLowerCase();
+          const focoSemana = (semana.foco_semana||'').toLowerCase();
+          const foco = Object.entries(focoMap).find(([k]) => fase.includes(k) || focoSemana.includes(k))?.[1] || 'LPO + Condicionamento';
+          const numAlunos = 15;
+          // Equipamentos cadastrados (pode ser vazio — gerarWodInteligente aceita)
+          const equipDisp = CATALOGO_EQUIPAMENTOS.filter(c => (ctx.estoque[c.id]||0) > 0).map(c => ({id:c.id, nome:c.nome, quantidade:ctx.estoque[c.id]}));
+          const wod = gerarWodInteligente(foco, numAlunos, equipDisp, '', false);
+
+          // Garantir que WOD tenha movimentos — fallback bodyweight
+          if (!wod.movimentos || wod.movimentos.length === 0) {
+            wod.movimentos = [
+              {nome:'Air Squats', reps:20, carga:'', modalidade:'ginastica'},
+              {nome:'Push-ups', reps:15, carga:'', modalidade:'ginastica'},
+              {nome:'Burpees', reps:10, carga:'', modalidade:'ginastica'},
+            ];
+            wod.nome = wod.nome || 'Bodyweight';
+            wod.formato = wod.formato || 'AMRAP 15 min';
+          }
+
+          const modalidade = periodo.modalidade || 'crossfit';
+          const metAquec = AQUECIMENTOS[modalidade] || AQUECIMENTOS['crossfit'];
+          const aquecOpts = metAquec[foco] || metAquec['LPO + Condicionamento'] || Object.values(metAquec)[0];
+          const aquecDesc = Array.isArray(aquecOpts) && aquecOpts.length > 0 ? aquecOpts[0] : '3 Rounds: 200m corrida + 10 air squats + mobilidade geral';
+          const skillOpts = SKILLS[foco] || SKILLS['Força Pura'];
+          const skillBase = skillOpts && skillOpts.length > 0 ? skillOpts[Math.floor(Math.random() * skillOpts.length)] : {nome:'Técnica', series:[{set:1,reps:'3min',pct:0}]};
+
+          const criadoPor = user?.id && typeof user.id === 'string' && user.id.length === 36 ? user.id : null;
+
+          const novo = {
+            academia_id: ACADEMIA_ID,
+            criado_por: criadoPor,
+            data_treino,
+            metodologia: modalidade,
+            nome: wod.nome || 'Treino',
+            num_alunos: numAlunos,
+            foco,
+            focos: [foco],
+            aquecimento: { descricao: aquecDesc, duracao_min: 12 },
+            skill: { ...skillBase, duracao_min: 14 },
+            wod: { ...wod, tempo_wod_min: 20 },
+            cooldown: { descricao: '5 min caminhada leve + mobilidade' },
+            adaptacoes: { iniciante: 'Reduza cargas 30-40%.', avancado: 'RX + colete 9kg.' },
+            tempo_previsto_min: 55,
+            intensidade: (semana.intensidade || 0) >= 75 ? 'alta' : 'media',
+            status: 'rascunho',
+          };
+
+          const { data, error } = await sb.from('treinos').insert([novo]).select().single();
+          if (error) {
+            console.error('Erro ao criar treino:', error);
+            toast('Erro ao salvar: ' + error.message, 'error');
+            return;
+          }
+          setTreinosDoPeriodo(prev => [...prev, data]);
+          toast('Treino criado para ' + new Date(data_treino).toLocaleDateString('pt-BR'), 'success');
+        } catch (err) {
+          console.error('Exceção ao criar treino:', err);
+          toast('Erro inesperado: ' + (err.message || err), 'error');
+        }
       };
 
       const carregarPeriodo = async () => {
@@ -4293,7 +4332,7 @@
         dashboard: isCoach ? <DashboardCoach setPage={setPage} toast={toast} filtro={filtro}/> : <DashboardDono setPage={setPage}/>,
         gerar: <GerarTreino toast={toast} filtro={filtro}/>,
         analise: <Analise toast={toast} filtro={filtro}/>,
-        periodizacao: <Periodizacao toast={toast} filtro={filtro} setPage={setPage}/>,
+        periodizacao: <Periodizacao toast={toast} filtro={filtro} setPage={setPage} user={user}/>,
         seguranca: <Seguranca toast={toast} filtro={filtro}/>,
         cadastro: <CadastroTurmasAlunos toast={toast}/>,
         focos: <CadastroFocos toast={toast}/>,
