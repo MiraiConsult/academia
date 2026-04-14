@@ -1402,69 +1402,232 @@
       };
 
       // Parser de treinos em texto livre — múltiplos treinos separados por "---" ou data
+      // Detecta modalidade do movimento cruzando com base
+      const detectarModalidade = (nomeMov) => {
+        const n = (nomeMov || '').toLowerCase();
+        const todosMovs = Object.entries(MOVIMENTOS).flatMap(([cat, lista]) => lista.map(m => ({...m, cat})));
+        const found = todosMovs.find(m => n.includes(m.nome.toLowerCase()) || m.nome.toLowerCase().split(' ')[0] === n.split(' ')[0]);
+        if (found) return found.cat;
+        // Heurísticas
+        if (/run|corrida|row|remo|bike|ski|sprint|cardio/i.test(n)) return 'monoestrutural';
+        if (/squat|deadlift|press|clean|snatch|jerk|thruster|swing|wall ball|kb|kettlebell|dumbbell|barbell|carga|kg|lb/i.test(n)) return 'levantamento';
+        return 'ginastica';
+      };
+
+      // Parser de uma linha de movimento.
+      // Aceita: "21 Thrusters 43kg", "21-15-9 Pull-ups", "5 Strict Press @70%",
+      // "10 KB Swings 24/16kg", "Run 400m", "Wall Ball 9/6kg", "5x Box Jump"
+      const parseLinhaMovimento = (linha) => {
+        const l = linha.replace(/^[-•*]\s*/, '').trim();
+        if (!l) return null;
+        // Match: prefixo de reps opcional + nome + carga opcional
+        const m = l.match(/^([\d]+(?:[-x×][\d]+)*(?:\s*reps?)?|\d+\s*m|\d+\s*km)?\s*[\.\)]?\s*([A-ZÁÉÍÓÚÇa-záéíóúç][^@]*?)(?:\s*[@—-]?\s*([\d]+\s*(?:kg|lb|%|\/[\d]+\s*(?:kg|lb))?(?:\/[\d]+\s*(?:kg|lb))?(?:\s*\/\s*[\d]+\s*(?:kg|lb))?)?)?$/i);
+        if (!m) {
+          // Fallback: linha que começa com letra é movimento sem reps
+          if (/^[A-ZÁÉÍÓÚa-záéíóú]/.test(l)) {
+            return { nome: l.slice(0,80), reps: '', carga: '', modalidade: detectarModalidade(l) };
+          }
+          return null;
+        }
+        let reps = (m[1] || '').trim();
+        const nomeMov = (m[2] || '').trim();
+        const carga = (m[3] || '').trim();
+        if (!nomeMov || nomeMov.length < 2) return null;
+        return { nome: nomeMov.slice(0,80), reps, carga, modalidade: detectarModalidade(nomeMov) };
+      };
+
+      // Detectar dia da semana → offset em dias a partir de segunda
+      const diasSemMap = {
+        'segunda':0, 'seg':0, 'monday':0, 'mon':0,
+        'terça':1, 'terca':1, 'ter':1, 'tuesday':1, 'tue':1,
+        'quarta':2, 'qua':2, 'wednesday':2, 'wed':2,
+        'quinta':3, 'qui':3, 'thursday':3, 'thu':3,
+        'sexta':4, 'sex':4, 'friday':4, 'fri':4,
+        'sábado':5, 'sabado':5, 'sáb':5, 'sab':5, 'saturday':5, 'sat':5,
+        'domingo':6, 'dom':6, 'sunday':6, 'sun':6,
+      };
+
+      // Detecta se uma linha é cabeçalho de dia da semana
+      const detectarDia = (linha) => {
+        const l = linha.toLowerCase().trim().replace(/[:.,]/g, '').replace(/\s+/g, ' ');
+        // Match palavra do dia + opcionalmente data
+        for (const [palavra, offset] of Object.entries(diasSemMap)) {
+          const re = new RegExp(`^${palavra}\\b`, 'i');
+          if (re.test(l)) return offset;
+        }
+        return null;
+      };
+
       const parseTreinosLote = (texto) => {
-        const blocos = texto.split(/\n\s*---+\s*\n|\n(?=##\s|\n=====)/g).map(b => b.trim()).filter(Boolean);
-        return blocos.map((bloco, idx) => {
-          const linhas = bloco.split('\n').map(l => l.trim());
-          let nome = `Treino ${idx + 1}`;
+        // Normaliza separadores de tabela (tabs e | viram quebra de linha)
+        const normalizado = texto
+          .replace(/\r/g, '')
+          .replace(/\|/g, '\n')
+          .replace(/\t+/g, '\n');
+
+        // Estratégia 1: separação explícita por "---"
+        const temSeparador = /\n\s*---+\s*\n/.test(normalizado);
+
+        // Estratégia 2: separação por dia da semana
+        const temDias = /\b(segunda|terça|terca|quarta|quinta|sexta|sábado|sabado|domingo)\b/i.test(normalizado);
+
+        let blocos = [];
+        if (temSeparador) {
+          blocos = normalizado.split(/\n\s*---+\s*\n/).map(b => b.trim()).filter(Boolean);
+        } else if (temDias) {
+          // Quebra por dia da semana detectado em qualquer linha
+          const linhas = normalizado.split('\n');
+          let blocoAtual = [];
+          let diaAtual = null;
+          let dataInicialDetectada = null;
+          // Tenta detectar uma data no topo (ex: "Abril 13 a 17")
+          for (const linha of linhas.slice(0, 5)) {
+            const m = linha.match(/(\d{4}-\d{2}-\d{2})|(\d{1,2}\/\d{1,2}(?:\/\d{2,4})?)/);
+            if (m) { dataInicialDetectada = m[0]; break; }
+          }
+          for (const linha of linhas) {
+            const dia = detectarDia(linha);
+            if (dia !== null) {
+              // Salva bloco anterior
+              if (blocoAtual.length > 0) {
+                blocos.push({ texto: blocoAtual.join('\n'), diaOffset: diaAtual, dataInicial: dataInicialDetectada });
+              }
+              blocoAtual = [];
+              diaAtual = dia;
+            } else if (linha.trim()) {
+              blocoAtual.push(linha);
+            }
+          }
+          if (blocoAtual.length > 0) {
+            blocos.push({ texto: blocoAtual.join('\n'), diaOffset: diaAtual, dataInicial: dataInicialDetectada });
+          }
+        } else {
+          blocos = [normalizado];
+        }
+
+        return blocos.map((blocoEntrada, idx) => {
+          const isObj = typeof blocoEntrada === 'object';
+          const bloco = isObj ? blocoEntrada.texto : blocoEntrada;
+          const diaOffset = isObj ? blocoEntrada.diaOffset : null;
+          const dataInicial = isObj ? blocoEntrada.dataInicial : null;
+
+          const linhas = bloco.split('\n').map(l => l.trim()).filter(Boolean);
+          let nome = '';
           let dataTreino = null;
-          let formato = 'For Time';
+          let formato = '';
           const movimentos = [];
           let aquecimento = '';
           let skill = '';
-          let secao = null;
+          let secao = 'wod'; // padrão começa em WOD
 
-          linhas.forEach(linha => {
-            if (!linha) return;
+          // Sub-bloco atual (skill/wod podem ter múltiplos blocos)
+          let subBlocoAtivo = null;
+
+          linhas.forEach((linha) => {
             const baixo = linha.toLowerCase();
 
-            // Detectar seções
+            // Cabeçalhos / metadata
             if (/^(##\s*)?nome[:\s]/i.test(linha) || /^#\s/.test(linha)) {
               nome = linha.replace(/^(##|#|nome:|nome\s*-)\s*/i, '').trim() || nome;
               return;
             }
             if (/^(data|dia)[:\s]/i.test(linha)) {
-              const m = linha.match(/(\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}|\d{2}-\d{2}-\d{4})/);
+              const m = linha.match(/(\d{4}-\d{2}-\d{2}|\d{1,2}\/\d{1,2}\/\d{2,4}|\d{1,2}-\d{1,2}-\d{2,4})/);
               if (m) {
                 let s = m[1].replace(/\//g,'-');
-                if (s.length === 10 && s[2] === '-') s = s.split('-').reverse().join('-');
+                const partes = s.split('-');
+                if (partes.length === 3 && partes[0].length <= 2) {
+                  // DD-MM-YYYY → YYYY-MM-DD
+                  if (partes[2].length === 2) partes[2] = '20' + partes[2];
+                  s = `${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`;
+                }
                 dataTreino = s;
               }
               return;
             }
-            if (/^aquec/i.test(linha) || baixo.startsWith('warm')) { secao = 'aquec'; return; }
-            if (/^skill/i.test(linha) || /^técnica/i.test(linha)) { secao = 'skill'; return; }
-            if (/^wod/i.test(linha) || /^metcon/i.test(linha) || /^treino/i.test(linha)) { secao = 'wod'; return; }
-            if (/^(formato|format)[:\s]/i.test(linha)) { formato = linha.split(/[:]/)[1]?.trim() || formato; return; }
+
+            // Detectar seção
+            if (/^(aquec|warm|mobilidade)/i.test(baixo)) {
+              secao = 'aquec';
+              const resto = linha.replace(/^(aquec[a-z]*|warm[a-z]*|mobilidade)[:\s.-]*/i, '').trim();
+              if (resto) aquecimento += (aquecimento ? '\n' : '') + resto;
+              return;
+            }
+            if (/^(skill|técnica|tecnica|olimpico|olímpico|força|forca)\b/i.test(baixo) && !/wod|metcon/i.test(baixo)) {
+              secao = 'skill';
+              const resto = linha.replace(/^(skill|técnica|tecnica|olimpico|olímpico|força|forca)[:\s.-]*/i, '').trim();
+              if (resto) skill += (skill ? '\n' : '') + resto;
+              return;
+            }
+            if (/^(wod|metcon|treino|condicionamento)\b/i.test(baixo) || /^(emom|amrap|for time|tabata|chipper|rft|every|todo)/i.test(baixo)) {
+              secao = 'wod';
+              // Se a própria linha é o formato (ex: "EMOM 12'", "FOR TIME 35'", "AMRAP 5min")
+              const formatoMatch = linha.match(/(emom|amrap|for time|tabata|chipper|rft|every minute on the minute|todo o minuto)\s*[\d'\:'mins\s]*/i);
+              if (formatoMatch) formato = formatoMatch[0].trim();
+              return;
+            }
+            if (/^(formato|format)[:\s]/i.test(linha)) {
+              formato = linha.split(/[:]/)[1]?.trim() || formato;
+              return;
+            }
+            if (/^(rest|descanso)/i.test(baixo)) {
+              // Pula linha de rest
+              return;
+            }
 
             // Conteúdo por seção
-            if (secao === 'aquec') aquecimento += (aquecimento ? '\n' : '') + linha;
-            else if (secao === 'skill') skill += (skill ? '\n' : '') + linha;
-            else if (secao === 'wod' || secao === null) {
-              // Tenta parse de movimento: "21 Thrusters 43kg" ou "21-15-9 Thrusters"
-              const matchMov = linha.match(/^(?:[-•*]\s*)?(\d+(?:[-x]\d+)*|\d+m|\d+\s*reps?)?\s*([A-ZÁÉÍÓÚÇa-záéíóúç][^@]+?)(?:\s*[@—-]\s*(.+))?$/);
-              if (matchMov) {
-                const reps = matchMov[1] || '';
-                const nomeMov = matchMov[2].trim();
-                const carga = matchMov[3] || '';
-                const movMatch = Object.values(MOVIMENTOS).flat().find(m => nomeMov.toLowerCase().includes(m.nome.toLowerCase()) || m.nome.toLowerCase().includes(nomeMov.toLowerCase().split(' ')[0]));
-                const modalidade = movMatch ? (MOVIMENTOS.ginastica.includes(movMatch) ? 'ginastica' : MOVIMENTOS.levantamento.includes(movMatch) ? 'levantamento' : 'monoestrutural') : 'ginastica';
-                movimentos.push({ nome: nomeMov, reps, carga, modalidade });
-              } else if (idx === 0 && !nome.startsWith('Treino')) {
-                // Primeira linha sem padrão pode ser o nome
-                if (nome === `Treino ${idx + 1}`) nome = linha.slice(0, 60);
+            if (secao === 'aquec') {
+              aquecimento += (aquecimento ? '\n' : '') + linha;
+            } else if (secao === 'skill') {
+              skill += (skill ? '\n' : '') + linha;
+              // Skill também pode ter movimentos detectáveis (ex: "3x5 70% Back Squat")
+              const mov = parseLinhaMovimento(linha);
+              if (mov) {
+                mov.modalidade = 'levantamento';
+                movimentos.push(mov);
               }
+            } else if (secao === 'wod') {
+              // Detectar formato no início
+              const formatoInline = linha.match(/^(EMOM|AMRAP|FOR TIME|TABATA|CHIPPER|RFT|\d+\s*ROUNDS)/i);
+              if (formatoInline && !formato) formato = linha.slice(0, 30);
+              const mov = parseLinhaMovimento(linha);
+              if (mov) movimentos.push(mov);
+              else if (!nome) nome = linha.slice(0, 60);
             }
           });
+
+          // Definir data
+          if (!dataTreino && diaOffset !== null) {
+            // Calcular a partir da data inicial detectada ou a data base do form
+            const base = dataInicial ? new Date(dataInicial.replace(/\//g,'-')) : new Date(importBatchDate);
+            // Achar a segunda-feira da semana
+            const baseDay = base.getDay() || 7; // 1=seg, 7=dom
+            const monday = new Date(base);
+            monday.setDate(monday.getDate() - (baseDay - 1));
+            const dt = new Date(monday);
+            dt.setDate(dt.getDate() + diaOffset);
+            dataTreino = dt.toISOString().split('T')[0];
+          }
+
+          // Nome padrão se vazio
+          if (!nome) {
+            if (diaOffset !== null) {
+              const labels = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+              nome = `${labels[diaOffset]} — ${movimentos.length>0?movimentos[0].nome:'Treino'}`;
+            } else {
+              nome = `Treino ${idx + 1}`;
+            }
+          }
 
           return {
             data_treino: dataTreino,
             nome: nome.slice(0, 80),
-            aquecimento: { descricao: aquecimento || 'Aquecimento padrão', duracao_min: 10 },
+            formato: formato || 'For Time',
+            aquecimento: { descricao: aquecimento || 'Aquecimento padrão (3 rounds: 200m corrida + mobilidade)', duracao_min: 10 },
             skill: skill ? { nome: skill.split('\n')[0].slice(0,60), series: [], duracao_min: 12, nota: skill } : null,
-            wod: { nome, formato, movimentos, tempo_wod_min: 20 },
+            wod: { nome: nome.slice(0,40), formato: formato || 'For Time', movimentos, tempo_wod_min: 20 },
           };
-        });
+        }).filter(t => t.wod.movimentos.length > 0 || t.skill); // só inclui se tem ao menos algo
       };
 
       const importarTreinosBatch = async () => {
@@ -1968,22 +2131,33 @@
             <div className="space-y-4">
               <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs text-blue-300">
                 <Icon name="info" size={14} className="inline mr-1.5"/>
-                <strong>Cole seus treinos no formato livre.</strong> Separe múltiplos treinos com <code className="px-1 bg-blue-500/20 rounded">---</code> em uma linha. Cada treino pode ter:
+                <strong>O parser identifica automaticamente:</strong>
                 <ul className="mt-2 ml-4 list-disc space-y-0.5 text-blue-200/80">
-                  <li><code>Data: 2026-04-15</code> ou <code>Data: 15/04/2026</code></li>
-                  <li><code>Nome: Fran</code></li>
-                  <li><code>Aquecimento:</code> seguido de descrição</li>
-                  <li><code>Skill:</code> seguido de descrição</li>
-                  <li><code>WOD:</code> seguido de movimentos: <code>21 Thrusters 43kg</code></li>
+                  <li><strong>Dia da semana:</strong> Segunda, Terça, Quarta... (cada dia vira um treino)</li>
+                  <li><strong>Movimentos:</strong> "21 Thrusters 43kg", "5 Pull-ups", "Run 400m"</li>
+                  <li><strong>Cargas:</strong> kg, lb, %, ou formato 70/50kg (M/F)</li>
+                  <li><strong>Formato WOD:</strong> EMOM, AMRAP, FOR TIME, RFT, Tabata, Chipper</li>
+                  <li><strong>Seções:</strong> Aquecimento, Skill, WOD/Metcon</li>
+                  <li><strong>Datas:</strong> 2026-04-15 ou 15/04/2026 (auto-calcula a partir do dia da semana)</li>
                 </ul>
+                <p className="mt-2 text-blue-200/60">Você pode colar direto de planilhas (Excel/Sheets) — tabs e barras viram quebra de linha automaticamente.</p>
               </div>
-              <div><label className="text-sm text-slate-400 mb-1.5 block">Data inicial (se treinos não tiverem data)</label>
-                <input type="date" value={importBatchDate} onChange={e=>setImportBatchDate(e.target.value)}/>
+              <div className="grid grid-cols-2 gap-3">
+                <div><label className="text-sm text-slate-400 mb-1.5 block">Modalidade</label>
+                  <select value={form.metodologia} onChange={e=>setForm(f=>({...f,metodologia:e.target.value}))}>
+                    <option value="crossfit">CrossFit</option>
+                    <option value="hyrox">Hyrox</option>
+                    <option value="bootcamp">Bootcamp</option>
+                  </select>
+                </div>
+                <div><label className="text-sm text-slate-400 mb-1.5 block">Data de referência (semana)</label>
+                  <input type="date" value={importBatchDate} onChange={e=>setImportBatchDate(e.target.value)}/>
+                </div>
               </div>
               <div><label className="text-sm text-slate-400 mb-1.5 block">Texto dos Treinos</label>
                 <textarea value={importBatchText} onChange={e=>setImportBatchText(e.target.value)}
-                  placeholder={`Exemplo:\n\nNome: Fran\nData: 2026-04-15\nWOD:\n21 Thrusters 43kg\n21 Pull-ups\n15 Thrusters 43kg\n15 Pull-ups\n9 Thrusters 43kg\n9 Pull-ups\n\n---\n\nNome: Helen\nData: 2026-04-16\nWOD:\nRun 400m\n21 Kettlebell Swings 24kg\n12 Pull-ups\n(3 rounds)\n\n---\n\nNome: Treino do dia\nData: 2026-04-17\nAquecimento:\n3 Rounds: 200m corrida + 10 air squats\nSkill: Back Squat 5x5 @ 80%\nWOD:\nAMRAP 12 min\n10 Wall Balls\n10 Box Jumps\n10 Burpees`}
-                  rows={14} style={{resize:'vertical', fontFamily:'monospace', fontSize:'12px'}}/>
+                  placeholder={`Exemplos suportados:\n\n══════════════════════════════════\nFORMATO TABELA SEMANAL (cole da planilha):\n══════════════════════════════════\nSegunda\n3x5 70% Back Squat\nWOD:\n4x AMRAP 5min\n16 Wall Ball\n12 Strict Sit-ups\n10 Box Jumps\n\nTerça\nSkill: Pull-up\n3 Rounds For Quality\n8/8 RDL\nWOD:\nFOR TIME 20'\n3 Rounds\n50 Double Unders\n100m Run\n\nQuarta\nEmom 12'\nM1: 5 Excentric Pull-up\nM2: 50ft H/S Walk\n\n══════════════════════════════════\nFORMATO LISTA (treinos separados por ---):\n══════════════════════════════════\nNome: Fran\nData: 2026-04-15\nWOD: 21-15-9 Thrusters 43kg / Pull-ups\n\n---\n\nNome: Helen\nData: 2026-04-16\nWOD:\n3 Rounds For Time\nRun 400m\n21 KB Swings 24kg\n12 Pull-ups`}
+                  rows={16} style={{resize:'vertical', fontFamily:'monospace', fontSize:'12px'}}/>
               </div>
               <div className="flex gap-3 mt-2">
                 <button onClick={()=>setShowImportBatch(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
