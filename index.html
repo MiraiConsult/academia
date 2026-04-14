@@ -261,7 +261,7 @@
 
     const AQUECIMENTOS = {
       'crossfit': {
-        'LPO + Condicionamento': [
+        'LPO': [
           '3 Rounds: 200m corrida + 10 PVC Pass-throughs + 10 Air Squats + 5 Snatch Grip Deadlifts (barra vazia)',
           '2 Rounds: 250m Row + 10 Ring Rows + 10 Good Mornings (PVC) + 10 Overhead Squats (PVC)',
         ],
@@ -277,7 +277,7 @@
           '3 Rounds: 200m corrida + 10 Empty Bar Deadlifts + 10 Air Squats + 5 Strict Press (barra vazia) + Band Pull-aparts',
           '5min Bike leve + 2 Rounds: 10 Good Mornings (barra) + 10 Front Squats (barra vazia) + 5 Push Press (barra vazia)',
         ],
-        'Cardio': [
+        'Metabólico': [
           '5min corrida progressiva (leve → moderado) + 2 Rounds: 10 Air Squats + 10 Lunges + 10 Jumping Jacks + mobilidade de tornozelo',
           '3min Row leve + 2min Bike leve + 2 Rounds: 10 Mountain Climbers + 10 High Knees + 10 Butt Kickers + mobilidade geral',
         ],
@@ -287,7 +287,7 @@
         ],
       },
       'bootcamp': {
-        'LPO + Condicionamento': [
+        'LPO': [
           '2 Rounds: 1min polichinelos + 30s skipping alto + 10 agachamentos livres + 10 flexões + mobilidade de ombro e quadril',
           '3min corrida no lugar com intensidade crescente + 2 Rounds: 10 lunges alternados + 10 mountain climbers + 10 arm circles',
         ],
@@ -303,7 +303,7 @@
           '3min corrida leve + 2 Rounds: 10 agachamentos livres + 10 flexões no joelho + 10 glute bridges + 10 superman holds + mobilidade',
           '2 Rounds: 1min polichinelos + 10 lunges + 10 push-ups + 10 good mornings sem peso + band pull-aparts',
         ],
-        'Cardio': [
+        'Metabólico': [
           '5min corrida progressiva (caminhada → trote → corrida leve) + 2 Rounds: 10 polichinelos + 10 high knees + 10 mountain climbers + 30s descanso ativo',
           '3 Rounds: 30s step touch + 30s skipping + 30s corrida no lugar + 10 air squats + mobilidade de tornozelo e quadril',
         ],
@@ -313,7 +313,7 @@
         ],
       },
       'hyrox': {
-        'LPO + Condicionamento': [
+        'LPO': [
           '5min corrida leve + 2 Rounds: 10 air squats + 10 walking lunges + 10 KB swings leves + mobilidade de quadril',
           '3min row leve + 2 Rounds: 10 lunges + 10 burpees leves + 10 farmer carry steps + mobilidade de ombro',
         ],
@@ -329,7 +329,7 @@
           '5min corrida leve + 2 Rounds: 10 KB deadlifts leves + 10 wall balls leves + 10 lunges + mobilidade',
           '3min row leve + 2 Rounds: 10 air squats + 10 push-ups + 10 glute bridges + band pull-aparts',
         ],
-        'Cardio': [
+        'Metabólico': [
           '8min corrida progressiva (caminhada → trote → ritmo de prova) + 2 Rounds: 10 high knees + 10 butt kickers + 10 air squats',
           '3min Ski Erg leve + 3min Row leve + 2 Rounds: 10 lunges + 10 jumping jacks + mobilidade de tornozelo',
         ],
@@ -341,7 +341,7 @@
     };
 
     const SKILLS = {
-      'LPO + Condicionamento': [
+      'LPO': [
         {nome:'Snatch', series:[{set:1,reps:3,pct:60},{set:2,reps:3,pct:65},{set:3,reps:2,pct:70},{set:4,reps:2,pct:75},{set:5,reps:1,pct:80}]},
         {nome:'Clean & Jerk', series:[{set:1,reps:3,pct:60},{set:2,reps:3,pct:65},{set:3,reps:2,pct:70},{set:4,reps:2,pct:75}]},
         {nome:'Power Clean', series:[{set:1,reps:5,pct:55},{set:2,reps:5,pct:60},{set:3,reps:3,pct:70},{set:4,reps:3,pct:75}]},
@@ -360,7 +360,7 @@
         {nome:'Front Squat', series:[{set:1,reps:5,pct:60},{set:2,reps:5,pct:65},{set:3,reps:3,pct:75},{set:4,reps:3,pct:80}]},
         {nome:'Strict Press', series:[{set:1,reps:5,pct:60},{set:2,reps:5,pct:65},{set:3,reps:5,pct:70},{set:4,reps:3,pct:75}]},
       ],
-      'Cardio': [
+      'Metabólico': [
         {nome:'Intervalos de Corrida', series:[{set:1,reps:'400m',pct:70},{set:2,reps:'400m',pct:75},{set:3,reps:'400m',pct:80},{set:4,reps:'400m',pct:85}], nota:'Descanso de 1:30 entre cada intervalo. Foco em manter ritmo constante.'},
         {nome:'Engine Builder (Row/Bike)', series:[{set:1,reps:'2min',pct:65},{set:2,reps:'2min',pct:70},{set:3,reps:'2min',pct:75},{set:4,reps:'2min',pct:80},{set:5,reps:'2min',pct:85}], nota:'Alternar entre Row e Bike a cada set. Construção de capacidade aeróbia.'},
       ],
@@ -484,15 +484,15 @@
       const nomes = [];
 
       const focoConfig = {
-        'LPO + Condicionamento': {g:1, w:2, m:1, formatos:['AMRAP','For Time','RFT'], tempoRange:[12,18]},
+        'LPO': {g:1, w:2, m:1, formatos:['AMRAP','For Time','RFT'], tempoRange:[12,18]},
         'Ginástica': {g:3, w:0, m:1, formatos:['AMRAP','EMOM','For Time'], tempoRange:[14,20]},
         'Resistência': {g:1, w:1, m:2, formatos:['AMRAP','For Time','Chipper'], tempoRange:[18,25]},
         'Força Pura': {g:0, w:3, m:0, formatos:['For Time','RFT','EMOM'], tempoRange:[10,16]},
-        'Cardio': {g:1, w:1, m:3, formatos:['AMRAP','For Time','Chipper','EMOM'], tempoRange:[15,25]},
+        'Metabólico': {g:1, w:1, m:3, formatos:['AMRAP','For Time','Chipper','EMOM'], tempoRange:[15,25]},
         'Mobilidade + Técnica': {g:2, w:1, m:1, formatos:['AMRAP','EMOM'], tempoRange:[12,16]},
       };
 
-      const cfg = focoConfig[foco] || focoConfig['LPO + Condicionamento'];
+      const cfg = focoConfig[foco] || focoConfig['LPO'];
       formato = cfg.formatos[Math.floor(Math.random() * cfg.formatos.length)];
       tempo = cfg.tempoRange[0] + Math.floor(Math.random() * (cfg.tempoRange[1] - cfg.tempoRange[0] + 1));
 
@@ -1092,7 +1092,7 @@
                   <button onClick={async ()=>{
                     if (!confirm('Isso irá substituir o treino atual por um novo gerado. Continuar?')) return;
                     // Chama gerarWodInteligente e atualiza via update
-                    const foco = treinoAcao.treino.foco || 'LPO + Condicionamento';
+                    const foco = treinoAcao.treino.foco || 'LPO';
                     const met = treinoAcao.treino.metodologia || 'crossfit';
                     const numAlunos = treinoAcao.treino.num_alunos || 15;
                     const equipDisp = CATALOGO_EQUIPAMENTOS.filter(c => (ESTOQUE_EQUIPAMENTOS[c.id]||0) > 0).map(c => ({id:c.id, nome:c.nome, quantidade:ESTOQUE_EQUIPAMENTOS[c.id]}));
@@ -1208,7 +1208,7 @@
 
     const GerarTreino = ({ toast, filtro, treinoInicial, dataFixa, onSaved, user }) => {
       const ctx = useAcademia();
-      const [form, setForm] = useState({ metodologia: 'crossfit', data: dataFixa || hoje(), num_alunos: 15, focos: ['LPO + Condicionamento'], foco: 'LPO + Condicionamento', modo_equipe: 'solo', duracao: 55, destino: 'turma', aluno_id: '' });
+      const [form, setForm] = useState({ metodologia: 'crossfit', data: dataFixa || hoje(), num_alunos: 15, focos: ['LPO'], foco: 'LPO', modo_equipe: 'solo', duracao: 55, destino: 'turma', aluno_id: '' });
       const [treino, setTreino] = useState(treinoInicial || null);
       const [loading, setLoading] = useState(false);
       const [saved, setSaved] = useState(!!treinoInicial);
@@ -1264,7 +1264,7 @@
         await new Promise(r => setTimeout(r, 800));
 
         const numAlunos = parseInt(form.num_alunos) || 15;
-        const focos = (form.focos && form.focos.length>0) ? form.focos : [form.foco || 'LPO + Condicionamento'];
+        const focos = (form.focos && form.focos.length>0) ? form.focos : [form.foco || 'LPO'];
         const focoPrincipal = focos[0];
         const duracaoAlvo = parseInt(form.duracao) || 55;
 
@@ -1279,7 +1279,7 @@
         const wodMin = duracaoAlvo - aquecMin - skillMin - cooldownMin;
 
         const metAquec = AQUECIMENTOS[form.metodologia] || AQUECIMENTOS['crossfit'];
-        const aquecOpts = metAquec[focoPrincipal] || metAquec['LPO + Condicionamento'] || Object.values(metAquec)[0];
+        const aquecOpts = metAquec[focoPrincipal] || metAquec['LPO'] || Object.values(metAquec)[0];
         const aquecDesc = aquecOpts[Math.floor(Math.random() * aquecOpts.length)];
         const aquecimento = { descricao: aquecDesc, duracao_min: aquecMin };
 
@@ -1350,9 +1350,9 @@
         setSaved(false); setEditando(false); setShowBenchmarks(false);
         const duracaoAlvo = parseInt(form.duracao) || 55;
         const aquecMin = Math.round(duracaoAlvo * 0.2);
-        const foco = (form.focos && form.focos[0]) || form.foco || 'LPO + Condicionamento';
+        const foco = (form.focos && form.focos[0]) || form.foco || 'LPO';
         const metAquec = AQUECIMENTOS[form.metodologia] || AQUECIMENTOS['crossfit'];
-        const aquecOpts = metAquec[foco] || metAquec['LPO + Condicionamento'] || Object.values(metAquec)[0];
+        const aquecOpts = metAquec[foco] || metAquec['LPO'] || Object.values(metAquec)[0];
         const aquecDesc = aquecOpts[Math.floor(Math.random() * aquecOpts.length)];
         const cooldownMin = 5;
         const skillMin = Math.max(duracaoAlvo - aquecMin - (bm.tempo_est || 15) - cooldownMin, 8);
@@ -1382,7 +1382,7 @@
       // Criar treino do zero — em branco, coach preenche tudo manualmente
       const criarManual = () => {
         setSaved(false); setEditando(true); setShowBenchmarks(false);
-        const foco = (form.focos && form.focos[0]) || form.foco || 'LPO + Condicionamento';
+        const foco = (form.focos && form.focos[0]) || form.foco || 'LPO';
         const novo = {
           academia_id: ACADEMIA_ID, criado_por: null,
           data_treino: form.data, metodologia: form.metodologia,
@@ -2643,7 +2643,7 @@
           'base': 'Resistência',
           'força': 'Força Pura',
           'forca': 'Força Pura',
-          'pico': 'LPO + Condicionamento',
+          'pico': 'LPO',
           'hiper': 'Força Pura',
           'metcon': 'Resistência',
           'taper': 'Mobilidade + Técnica',
@@ -2651,13 +2651,13 @@
           'deload': 'Mobilidade + Técnica',
           'skill': 'Ginástica',
           'técnico': 'Ginástica',
-          'open': 'LPO + Condicionamento',
+          'open': 'LPO',
           'adaptação': 'Mobilidade + Técnica',
           'acumulação': 'Resistência',
           'intensificação': 'Força Pura',
           'recuperação': 'Mobilidade + Técnica',
         };
-        const focoDetectado = Object.entries(focoMap).find(([k]) => (semana.fase||'').toLowerCase().includes(k) || (semana.foco_semana||'').toLowerCase().includes(k))?.[1] || 'LPO + Condicionamento';
+        const focoDetectado = Object.entries(focoMap).find(([k]) => (semana.fase||'').toLowerCase().includes(k) || (semana.foco_semana||'').toLowerCase().includes(k))?.[1] || 'LPO';
         const numAlunos = 15;
         const equipDisp = CATALOGO_EQUIPAMENTOS.filter(c => (ctx.estoque[c.id]||0) > 0).map(c => ({id:c.id, nome:c.nome, quantidade:ctx.estoque[c.id]}));
         const sugestoes = [];
@@ -2672,14 +2672,14 @@
       const criarTreinoDoDia = async (data_treino, semana) => {
         try {
           const focoMap = {
-            'base': 'Resistência', 'força': 'Força Pura', 'forca': 'Força Pura', 'pico': 'LPO + Condicionamento',
+            'base': 'Resistência', 'força': 'Força Pura', 'forca': 'Força Pura', 'pico': 'LPO',
             'hiper': 'Força Pura', 'metcon': 'Resistência', 'taper': 'Mobilidade + Técnica',
             'deload': 'Mobilidade + Técnica', 'recupera': 'Mobilidade + Técnica', 'skill': 'Ginástica',
             'técnic': 'Ginástica', 'acumulação': 'Resistência', 'intensific': 'Força Pura',
           };
           const fase = (semana.fase||'').toLowerCase();
           const focoSemana = (semana.foco_semana||'').toLowerCase();
-          const foco = Object.entries(focoMap).find(([k]) => fase.includes(k) || focoSemana.includes(k))?.[1] || 'LPO + Condicionamento';
+          const foco = Object.entries(focoMap).find(([k]) => fase.includes(k) || focoSemana.includes(k))?.[1] || 'LPO';
           const numAlunos = 15;
           // Equipamentos cadastrados (pode ser vazio — gerarWodInteligente aceita)
           const equipDisp = CATALOGO_EQUIPAMENTOS.filter(c => (ctx.estoque[c.id]||0) > 0).map(c => ({id:c.id, nome:c.nome, quantidade:ctx.estoque[c.id]}));
@@ -2698,7 +2698,7 @@
 
           const modalidade = periodo.modalidade || 'crossfit';
           const metAquec = AQUECIMENTOS[modalidade] || AQUECIMENTOS['crossfit'];
-          const aquecOpts = metAquec[foco] || metAquec['LPO + Condicionamento'] || Object.values(metAquec)[0];
+          const aquecOpts = metAquec[foco] || metAquec['LPO'] || Object.values(metAquec)[0];
           const aquecDesc = Array.isArray(aquecOpts) && aquecOpts.length > 0 ? aquecOpts[0] : '3 Rounds: 200m corrida + 10 air squats + mobilidade geral';
           const skillOpts = SKILLS[foco] || SKILLS['Força Pura'];
           const skillBase = skillOpts && skillOpts.length > 0 ? skillOpts[Math.floor(Math.random() * skillOpts.length)] : {nome:'Técnica', series:[{set:1,reps:'3min',pct:0}]};
