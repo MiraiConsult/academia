@@ -641,10 +641,10 @@
       };
 
       return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{background:'#0d1a0b'}}>
-          <div style={{maxWidth:960, width:'100%'}}>
+        <div className="min-h-screen flex flex-col items-center justify-center p-6" style={{background:'var(--bg, #0d1a0b)'}}>
+          <div style={{maxWidth: DEMO_MODE ? 960 : 440, width:'100%'}}>
             {/* Header */}
-            <div className="text-center mb-12">
+            <div className="text-center mb-8 md:mb-12">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                   <Icon name="bolt" className="text-bg-dark" size={22}/>
@@ -654,9 +654,9 @@
               <p className="text-slate-400">Coach Virtual Estratégico — Plataforma de Gestão Fitness com IA</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className={`grid grid-cols-1 ${DEMO_MODE ? 'lg:grid-cols-2' : ''} gap-8`}>
               {/* Login Form */}
-              <div className="card p-8">
+              <div className="card p-6 md:p-8">
                 <h2 className="font-display font-bold text-xl mb-6 flex items-center gap-2">
                   <Icon name="login" className="text-primary" />Acessar sua Conta
                 </h2>
