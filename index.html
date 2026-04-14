@@ -1206,7 +1206,7 @@
       );
     };
 
-    const GerarTreino = ({ toast, filtro, treinoInicial, dataFixa, onSaved }) => {
+    const GerarTreino = ({ toast, filtro, treinoInicial, dataFixa, onSaved, user }) => {
       const ctx = useAcademia();
       const [form, setForm] = useState({ metodologia: 'crossfit', data: dataFixa || hoje(), num_alunos: 15, focos: ['LPO + Condicionamento'], foco: 'LPO + Condicionamento', modo_equipe: 'solo', duracao: 55, destino: 'turma', aluno_id: '' });
       const [treino, setTreino] = useState(treinoInicial || null);
@@ -1217,6 +1217,9 @@
       const [academia, setAcademia] = useState(null);
       const [showList, setShowList] = useState(false);
       const [showBenchmarks, setShowBenchmarks] = useState(false);
+      const [showImportBatch, setShowImportBatch] = useState(false);
+      const [importBatchText, setImportBatchText] = useState('');
+      const [importBatchDate, setImportBatchDate] = useState(hoje());
       const [editando, setEditando] = useState(false);
       const [exercicioModal, setExercicioModal] = useState(null);
 
@@ -1376,6 +1379,128 @@
         toast(`WOD "${bm.nome}" carregado! Edite conforme necessário.`, 'success');
       };
 
+      // Criar treino do zero — em branco, coach preenche tudo manualmente
+      const criarManual = () => {
+        setSaved(false); setEditando(true); setShowBenchmarks(false);
+        const foco = (form.focos && form.focos[0]) || form.foco || 'LPO + Condicionamento';
+        const novo = {
+          academia_id: ACADEMIA_ID, criado_por: null,
+          data_treino: form.data, metodologia: form.metodologia,
+          nome: 'Novo Treino', num_alunos: parseInt(form.num_alunos) || 15,
+          foco, focos: [foco], restritcoes: '',
+          modo_equipe: 'solo', tamanho_equipe: 1, modo_duplas: false,
+          aquecimento: { descricao: '', duracao_min: 10 },
+          skill: { nome: '', series: [{set:1,reps:'',pct:0}], duracao_min: 15 },
+          wod: { nome: '', formato: '', movimentos: [], tempo_wod_min: 20 },
+          cooldown: { descricao: '' },
+          adaptacoes: { iniciante: '', avancado: '' },
+          tempo_previsto_min: parseInt(form.duracao) || 55,
+          intensidade: 'media', logistica_nota: '', status: 'rascunho',
+        };
+        setTreino(novo);
+        toast('Treino em branco. Preencha os campos e clique em Salvar.', 'success');
+      };
+
+      // Parser de treinos em texto livre — múltiplos treinos separados por "---" ou data
+      const parseTreinosLote = (texto) => {
+        const blocos = texto.split(/\n\s*---+\s*\n|\n(?=##\s|\n=====)/g).map(b => b.trim()).filter(Boolean);
+        return blocos.map((bloco, idx) => {
+          const linhas = bloco.split('\n').map(l => l.trim());
+          let nome = `Treino ${idx + 1}`;
+          let dataTreino = null;
+          let formato = 'For Time';
+          const movimentos = [];
+          let aquecimento = '';
+          let skill = '';
+          let secao = null;
+
+          linhas.forEach(linha => {
+            if (!linha) return;
+            const baixo = linha.toLowerCase();
+
+            // Detectar seções
+            if (/^(##\s*)?nome[:\s]/i.test(linha) || /^#\s/.test(linha)) {
+              nome = linha.replace(/^(##|#|nome:|nome\s*-)\s*/i, '').trim() || nome;
+              return;
+            }
+            if (/^(data|dia)[:\s]/i.test(linha)) {
+              const m = linha.match(/(\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}|\d{2}-\d{2}-\d{4})/);
+              if (m) {
+                let s = m[1].replace(/\//g,'-');
+                if (s.length === 10 && s[2] === '-') s = s.split('-').reverse().join('-');
+                dataTreino = s;
+              }
+              return;
+            }
+            if (/^aquec/i.test(linha) || baixo.startsWith('warm')) { secao = 'aquec'; return; }
+            if (/^skill/i.test(linha) || /^técnica/i.test(linha)) { secao = 'skill'; return; }
+            if (/^wod/i.test(linha) || /^metcon/i.test(linha) || /^treino/i.test(linha)) { secao = 'wod'; return; }
+            if (/^(formato|format)[:\s]/i.test(linha)) { formato = linha.split(/[:]/)[1]?.trim() || formato; return; }
+
+            // Conteúdo por seção
+            if (secao === 'aquec') aquecimento += (aquecimento ? '\n' : '') + linha;
+            else if (secao === 'skill') skill += (skill ? '\n' : '') + linha;
+            else if (secao === 'wod' || secao === null) {
+              // Tenta parse de movimento: "21 Thrusters 43kg" ou "21-15-9 Thrusters"
+              const matchMov = linha.match(/^(?:[-•*]\s*)?(\d+(?:[-x]\d+)*|\d+m|\d+\s*reps?)?\s*([A-ZÁÉÍÓÚÇa-záéíóúç][^@]+?)(?:\s*[@—-]\s*(.+))?$/);
+              if (matchMov) {
+                const reps = matchMov[1] || '';
+                const nomeMov = matchMov[2].trim();
+                const carga = matchMov[3] || '';
+                const movMatch = Object.values(MOVIMENTOS).flat().find(m => nomeMov.toLowerCase().includes(m.nome.toLowerCase()) || m.nome.toLowerCase().includes(nomeMov.toLowerCase().split(' ')[0]));
+                const modalidade = movMatch ? (MOVIMENTOS.ginastica.includes(movMatch) ? 'ginastica' : MOVIMENTOS.levantamento.includes(movMatch) ? 'levantamento' : 'monoestrutural') : 'ginastica';
+                movimentos.push({ nome: nomeMov, reps, carga, modalidade });
+              } else if (idx === 0 && !nome.startsWith('Treino')) {
+                // Primeira linha sem padrão pode ser o nome
+                if (nome === `Treino ${idx + 1}`) nome = linha.slice(0, 60);
+              }
+            }
+          });
+
+          return {
+            data_treino: dataTreino,
+            nome: nome.slice(0, 80),
+            aquecimento: { descricao: aquecimento || 'Aquecimento padrão', duracao_min: 10 },
+            skill: skill ? { nome: skill.split('\n')[0].slice(0,60), series: [], duracao_min: 12, nota: skill } : null,
+            wod: { nome, formato, movimentos, tempo_wod_min: 20 },
+          };
+        });
+      };
+
+      const importarTreinosBatch = async () => {
+        if (!importBatchText.trim()) { toast('Cole o texto dos treinos', 'error'); return; }
+        const treinosParseados = parseTreinosLote(importBatchText);
+        if (treinosParseados.length === 0) { toast('Não foi possível identificar treinos no texto.', 'error'); return; }
+        const dataBase = new Date(importBatchDate);
+        const criadoPor = user?.id && typeof user.id === 'string' && user.id.length === 36 ? user.id : null;
+        const inserts = treinosParseados.map((t, idx) => {
+          const dt = t.data_treino ? t.data_treino : (() => {
+            const d = new Date(dataBase); d.setDate(d.getDate() + idx);
+            return d.toISOString().split('T')[0];
+          })();
+          return {
+            academia_id: ACADEMIA_ID, criado_por: criadoPor,
+            data_treino: dt, metodologia: form.metodologia || 'crossfit',
+            nome: t.nome, num_alunos: parseInt(form.num_alunos) || 15,
+            foco: 'Importado', focos: ['Importado'],
+            aquecimento: t.aquecimento,
+            skill: t.skill || { nome: '—', series: [], duracao_min: 0 },
+            wod: t.wod,
+            cooldown: { descricao: '5 min caminhada leve + alongamento' },
+            adaptacoes: { iniciante: 'Reduza cargas conforme necessário.', avancado: 'Mantenha RX.' },
+            tempo_previsto_min: 55,
+            intensidade: 'media', status: 'publicado',
+          };
+        });
+        const { data, error } = await sb.from('treinos').insert(inserts).select();
+        if (error) { console.error(error); toast('Erro ao importar: ' + error.message, 'error'); return; }
+        setTreinos(prev => [...(data||[]), ...prev]);
+        if (data && data.length > 0) setTreino(data[0]);
+        setShowImportBatch(false);
+        setImportBatchText('');
+        toast(`${data.length} treino${data.length>1?'s':''} importado${data.length>1?'s':''} com sucesso!`, 'success');
+      };
+
       // Edição inline dos movimentos do WOD
       const editarMovimento = (idx, campo, valor) => {
         updateTreino(prev => {
@@ -1508,13 +1633,21 @@
             </div>
             )}
 
-            <div className="grid grid-cols-2 gap-2">
-              <button onClick={gerar} disabled={loading} className="btn-primary py-3 rounded-xl flex items-center justify-center gap-1.5 font-display font-bold text-sm">
-                {loading ? <div className="loading-spinner" style={{width:16,height:16,borderWidth:2}}/> : <><Icon name="auto_awesome" size={16}/>GERAR</>}
+            <div className="space-y-2">
+              <button onClick={gerar} disabled={loading} className="btn-primary w-full py-3 rounded-xl flex items-center justify-center gap-1.5 font-display font-bold text-sm">
+                {loading ? <div className="loading-spinner" style={{width:16,height:16,borderWidth:2}}/> : <><Icon name="auto_awesome" size={16}/>GERAR COM IA</>}
               </button>
-              <button onClick={() => setShowBenchmarks(!showBenchmarks)} className="btn-ghost py-3 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold">
-                <Icon name="emoji_events" size={16}/>CLÁSSICOS
-              </button>
+              <div className="grid grid-cols-3 gap-2">
+                <button onClick={criarManual} className="btn-ghost py-2.5 rounded-xl flex items-center justify-center gap-1 text-xs font-bold" title="Criar treino do zero">
+                  <Icon name="edit_note" size={14}/>MANUAL
+                </button>
+                <button onClick={() => setShowImportBatch(true)} className="btn-ghost py-2.5 rounded-xl flex items-center justify-center gap-1 text-xs font-bold" title="Importar vários treinos">
+                  <Icon name="upload_file" size={14}/>IMPORTAR
+                </button>
+                <button onClick={() => setShowBenchmarks(!showBenchmarks)} className="btn-ghost py-2.5 rounded-xl flex items-center justify-center gap-1 text-xs font-bold" title="WODs clássicos">
+                  <Icon name="emoji_events" size={14}/>CLÁSSICOS
+                </button>
+              </div>
             </div>
 
             {/* Benchmarks */}
@@ -1829,6 +1962,35 @@
 
           {/* Modal de exercício */}
           {exercicioModal && <ExercicioModal nome={exercicioModal} onClose={() => setExercicioModal(null)}/>}
+
+          {/* Modal de importação em lote de treinos */}
+          <Modal open={showImportBatch} onClose={()=>setShowImportBatch(false)} title="Importar Treinos em Lote">
+            <div className="space-y-4">
+              <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs text-blue-300">
+                <Icon name="info" size={14} className="inline mr-1.5"/>
+                <strong>Cole seus treinos no formato livre.</strong> Separe múltiplos treinos com <code className="px-1 bg-blue-500/20 rounded">---</code> em uma linha. Cada treino pode ter:
+                <ul className="mt-2 ml-4 list-disc space-y-0.5 text-blue-200/80">
+                  <li><code>Data: 2026-04-15</code> ou <code>Data: 15/04/2026</code></li>
+                  <li><code>Nome: Fran</code></li>
+                  <li><code>Aquecimento:</code> seguido de descrição</li>
+                  <li><code>Skill:</code> seguido de descrição</li>
+                  <li><code>WOD:</code> seguido de movimentos: <code>21 Thrusters 43kg</code></li>
+                </ul>
+              </div>
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Data inicial (se treinos não tiverem data)</label>
+                <input type="date" value={importBatchDate} onChange={e=>setImportBatchDate(e.target.value)}/>
+              </div>
+              <div><label className="text-sm text-slate-400 mb-1.5 block">Texto dos Treinos</label>
+                <textarea value={importBatchText} onChange={e=>setImportBatchText(e.target.value)}
+                  placeholder={`Exemplo:\n\nNome: Fran\nData: 2026-04-15\nWOD:\n21 Thrusters 43kg\n21 Pull-ups\n15 Thrusters 43kg\n15 Pull-ups\n9 Thrusters 43kg\n9 Pull-ups\n\n---\n\nNome: Helen\nData: 2026-04-16\nWOD:\nRun 400m\n21 Kettlebell Swings 24kg\n12 Pull-ups\n(3 rounds)\n\n---\n\nNome: Treino do dia\nData: 2026-04-17\nAquecimento:\n3 Rounds: 200m corrida + 10 air squats\nSkill: Back Squat 5x5 @ 80%\nWOD:\nAMRAP 12 min\n10 Wall Balls\n10 Box Jumps\n10 Burpees`}
+                  rows={14} style={{resize:'vertical', fontFamily:'monospace', fontSize:'12px'}}/>
+              </div>
+              <div className="flex gap-3 mt-2">
+                <button onClick={()=>setShowImportBatch(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-slate-400 hover:text-white transition-colors">Cancelar</button>
+                <button onClick={importarTreinosBatch} className="flex-1 btn-primary py-2.5 rounded-xl">Importar Todos</button>
+              </div>
+            </div>
+          </Modal>
         </div>
       );
     };
@@ -4330,7 +4492,7 @@
 
       const pageMap = {
         dashboard: isCoach ? <DashboardCoach setPage={setPage} toast={toast} filtro={filtro}/> : <DashboardDono setPage={setPage}/>,
-        gerar: <GerarTreino toast={toast} filtro={filtro}/>,
+        gerar: <GerarTreino toast={toast} filtro={filtro} user={user}/>,
         analise: <Analise toast={toast} filtro={filtro}/>,
         periodizacao: <Periodizacao toast={toast} filtro={filtro} setPage={setPage} user={user}/>,
         seguranca: <Seguranca toast={toast} filtro={filtro}/>,
