@@ -2797,12 +2797,18 @@
     // ─── Segurança ─────────────────────────────────────────────────────────────
     const Seguranca = ({ toast, filtro }) => {
       const [alertas, setAlertas] = useState([]);
+      const [treinos, setTreinos] = useState([]);
       const [loading, setLoading] = useState(true);
 
       useEffect(() => {
-        sb.from('alertas_seguranca').select('*, treinos(nome,data_treino)').eq('academia_id', ACADEMIA_ID)
-          .order('created_at', {ascending:false})
-          .then(({data}) => { setAlertas(data||[]); setLoading(false); });
+        Promise.all([
+          sb.from('alertas_seguranca').select('*, treinos(nome,data_treino)').eq('academia_id', ACADEMIA_ID).order('created_at', {ascending:false}),
+          sb.from('treinos').select('*').eq('academia_id', ACADEMIA_ID).order('data_treino', {ascending:false}).limit(30),
+        ]).then(([{data: a}, {data: t}]) => {
+          setAlertas(a || []);
+          setTreinos(t || []);
+          setLoading(false);
+        });
       }, []);
 
       const resolver = async (id) => {
@@ -2811,20 +2817,106 @@
         toast('Alerta marcado como resolvido.','success');
       };
 
-      const grupos_risco = [
-        {nome:'Ombros',nivel:85,cor:'bg-red-500'},{nome:'Lombar',nivel:72,cor:'bg-red-400'},
-        {nome:'Joelhos',nivel:45,cor:'bg-yellow-500'},{nome:'Core',nivel:38,cor:'bg-primary'},
-        {nome:'Quadris',nivel:30,cor:'bg-primary'},{nome:'Tornozelos',nivel:22,cor:'bg-primary'},
-      ];
+      // Calcular carga muscular baseado nos movimentos dos treinos reais
+      const analise = useMemo(() => {
+        if (treinos.length === 0) return null;
+
+        // Mapeamento de grupo muscular por palavra-chave nos movimentos
+        const contagem = { Ombros:0, Lombar:0, Joelhos:0, Core:0, Quadris:0, Tornozelos:0 };
+        const movPorGrupo = {
+          Ombros: ['press','snatch','jerk','thruster','hspu','handstand','overhead','push','wall ball','muscle-up'],
+          Lombar: ['deadlift','clean','snatch','kettlebell swing','good morning','row','thruster'],
+          Joelhos: ['squat','lunge','box jump','wall ball','thruster','clean','snatch','pistol','step'],
+          Core: ['toes-to-bar','sit-up','plank','ghd','knees','v-up','hollow','turkish','l-sit'],
+          Quadris: ['squat','deadlift','kettlebell swing','clean','snatch','lunge','wall ball'],
+          Tornozelos: ['run','row','double under','bike','box jump','ski','sprint'],
+        };
+
+        treinos.forEach(t => {
+          const movs = t.wod?.movimentos || [];
+          movs.forEach(m => {
+            const nome = (m.nome || '').toLowerCase();
+            Object.entries(movPorGrupo).forEach(([grupo, palavras]) => {
+              if (palavras.some(p => nome.includes(p))) contagem[grupo]++;
+            });
+          });
+        });
+
+        // Normalizar para %
+        const max = Math.max(...Object.values(contagem), 1);
+        const grupos = Object.entries(contagem).map(([nome, cnt]) => ({
+          nome,
+          nivel: Math.round((cnt / max) * 100),
+          count: cnt,
+        })).sort((a,b) => b.nivel - a.nivel);
+
+        // Calcular nota de segurança: base 100, penaliza grupos acima de 80%, bonus se deloads presentes
+        let nota = 100;
+        grupos.forEach(g => {
+          if (g.nivel > 80) nota -= 10;
+          else if (g.nivel > 70) nota -= 5;
+        });
+        nota -= alertas.filter(a => !a.resolvido).length * 5;
+        nota = Math.max(0, Math.min(100, nota));
+
+        // Detectar combinações perigosas por sequência de dias
+        const perigosas = [];
+        const sorted = [...treinos].sort((a,b) => a.data_treino < b.data_treino ? -1 : 1);
+        for (let i = 0; i < sorted.length - 1; i++) {
+          const t1 = sorted[i], t2 = sorted[i+1];
+          if (!t1.data_treino || !t2.data_treino) continue;
+          const d1 = new Date(t1.data_treino), d2 = new Date(t2.data_treino);
+          const diff = (d2 - d1) / (86400000);
+          if (diff > 2) continue;
+          const movs1 = (t1.wod?.movimentos || []).map(m => (m.nome||'').toLowerCase()).join(' ');
+          const movs2 = (t2.wod?.movimentos || []).map(m => (m.nome||'').toLowerCase()).join(' ');
+          if (/deadlift/.test(movs1) && /(pull-up|muscle-up|row)/.test(movs2)) {
+            perigosas.push({
+              d: new Date(t1.data_treino).toLocaleDateString('pt-BR',{weekday:'short'}) + ' + ' + new Date(t2.data_treino).toLocaleDateString('pt-BR',{weekday:'short'}),
+              t: 'Deadlift seguido por puxada',
+              l: 'Evitar puxada pesada logo após DL',
+            });
+          }
+          if (/(overhead|press|jerk|hspu)/.test(movs1) && /(press|hspu|handstand|muscle-up)/.test(movs2)) {
+            perigosas.push({
+              d: new Date(t1.data_treino).toLocaleDateString('pt-BR',{weekday:'short'}) + ' + ' + new Date(t2.data_treino).toLocaleDateString('pt-BR',{weekday:'short'}),
+              t: 'Sobrecarga de ombro consecutiva',
+              l: 'Evitar press/HSPU em dias seguidos',
+            });
+          }
+        }
+
+        return { grupos, nota, perigosas: perigosas.slice(0, 4) };
+      }, [treinos, alertas]);
 
       if (loading) return <Loading/>;
+
+      // Estado vazio — sem treinos cadastrados
+      if (treinos.length === 0) {
+        return (
+          <div className="p-8 fade-in">
+            <div className="card p-12 text-center max-w-2xl mx-auto">
+              <Icon name="shield" className="text-primary/20" size={56}/>
+              <h3 className="font-display font-bold text-xl mt-4 mb-2">Análise de segurança indisponível</h3>
+              <p className="text-slate-400 text-sm mb-5 max-w-md mx-auto">A IA precisa de treinos cadastrados para analisar carga muscular, identificar sobrecargas e detectar combinações perigosas.</p>
+              <p className="text-xs text-slate-500">Gere e salve pelo menos alguns treinos para habilitar a análise de segurança.</p>
+            </div>
+          </div>
+        );
+      }
+
+      const grupos_risco = analise.grupos.map(g => ({
+        ...g,
+        cor: g.nivel > 70 ? 'bg-red-500' : g.nivel > 50 ? 'bg-yellow-500' : 'bg-primary',
+      }));
+
       return (
         <div className="p-8 space-y-6 fade-in">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
             {[
               {l:'Alertas Ativos', v: alertas.filter(a=>!a.resolvido).length, i:'warning', c:'text-red-400', bg:'bg-red-500/10'},
               {l:'Resolvidos', v: alertas.filter(a=>a.resolvido).length, i:'check_circle', c:'text-primary', bg:'bg-primary/10'},
-              {l:'Nota de Segurança', v: '74/100', i:'shield', c:'text-yellow-400', bg:'bg-yellow-500/10'},
+              {l:'Nota de Segurança', v: `${analise.nota}/100`, i:'shield', c: analise.nota >= 80 ? 'text-primary' : analise.nota >= 60 ? 'text-yellow-400' : 'text-red-400', bg: analise.nota >= 80 ? 'bg-primary/10' : analise.nota >= 60 ? 'bg-yellow-500/10' : 'bg-red-500/10'},
             ].map(({l,v,i,c,bg}) => (
               <div key={l} className={`card p-5 flex items-center gap-4 ${bg} border-none`}>
                 <Icon name={i} className={c} size={28}/>
@@ -2839,13 +2931,14 @@
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Mapa de calor */}
             <div className="card p-6">
-              <h3 className="font-display font-bold text-lg mb-5">Mapa de Carga Muscular</h3>
+              <h3 className="font-display font-bold text-lg mb-1">Mapa de Carga Muscular</h3>
+              <p className="text-xs text-slate-400 mb-5">Baseado em {treinos.length} treinos analisados</p>
               <div className="space-y-3">
-                {grupos_risco.map(({nome,nivel,cor}) => (
+                {grupos_risco.map(({nome,nivel,cor,count}) => (
                   <div key={nome}>
                     <div className="flex justify-between text-sm mb-1">
                       <span className="font-medium">{nome}</span>
-                      <span className={`font-bold ${nivel>70?'text-red-400':nivel>50?'text-yellow-400':'text-primary'}`}>{nivel}%</span>
+                      <span className={`font-bold ${nivel>70?'text-red-400':nivel>50?'text-yellow-400':'text-primary'}`}>{nivel}% <span className="text-xs text-slate-500 ml-1">({count}x)</span></span>
                     </div>
                     <div className="progress-bar"><div className={`progress-fill ${cor}`} style={{width:`${nivel}%`}}/></div>
                   </div>
@@ -2885,26 +2978,36 @@
             </div>
           </div>
 
-          {/* Combinações perigosas */}
-          <div className="card-ai p-6">
-            <h3 className="font-display font-bold text-lg mb-4 flex items-center gap-2">
-              <Icon name="dangerous" className="text-red-400" size={20}/>Combinações Perigosas Detectadas
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {[
-                {d:'Seg + Qua', t:'Deadlift + Pull-ups seguidos', l:'Evitar puxada pesada no dia seguinte ao DL'},
-                {d:'Ter + Qui', t:'Overhead Press + HSPU', l:'Sobrecarga de ombro em dias consecutivos'},
-              ].map(({d,t,l}) => (
-                <div key={d} className="p-4 rounded-xl bg-red-500/5 border border-red-500/15">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="tag tag-red">{d}</span>
-                    <span className="text-sm font-bold">{t}</span>
+          {/* Combinações perigosas — apenas se detectadas */}
+          {analise.perigosas.length > 0 && (
+            <div className="card-ai p-6">
+              <h3 className="font-display font-bold text-lg mb-1 flex items-center gap-2">
+                <Icon name="dangerous" className="text-red-400" size={20}/>Combinações Perigosas Detectadas
+              </h3>
+              <p className="text-xs text-slate-400 mb-4">Sequências de treinos com sobrecarga potencial</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {analise.perigosas.map((p, i) => (
+                  <div key={i} className="p-4 rounded-xl bg-red-500/5 border border-red-500/15">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="tag tag-red">{p.d}</span>
+                      <span className="text-sm font-bold">{p.t}</span>
+                    </div>
+                    <p className="text-xs text-slate-400 flex items-center gap-1"><Icon name="lightbulb" className="text-yellow-400" size={12}/>{p.l}</p>
                   </div>
-                  <p className="text-xs text-slate-400 flex items-center gap-1"><Icon name="lightbulb" className="text-yellow-400" size={12}/>{l}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {analise.perigosas.length === 0 && (
+            <div className="card p-6 flex items-center gap-4">
+              <Icon name="verified" className="text-primary" size={32}/>
+              <div>
+                <p className="font-bold">Nenhuma combinação perigosa detectada</p>
+                <p className="text-xs text-slate-400 mt-0.5">A IA não encontrou sequências de treinos com sobrecarga potencial.</p>
+              </div>
+            </div>
+          )}
         </div>
       );
     };
