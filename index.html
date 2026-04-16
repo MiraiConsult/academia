@@ -292,34 +292,55 @@
       ],
     };
 
-    // Movimentos Hyrox-específicos (não se sobrepõem ao CrossFit)
+    // Movimentos Hyrox — baseado no Manual Hyrox + Frontiers Physiology (Silva-Santos et al. 2025)
+    // Formato competição: 8km corrida total + 8 estações funcionais alternando
     const MOVIMENTOS_HYROX = {
+      // "Ginástica" aqui = movimentos bodyweight/explosivos (burpees, jumps, lunges)
       ginastica: [
-        {nome:'Burpee Broad Jumps', grupo:'cardio', equip:[], carga:false},
-        {nome:'Wall Ball Shots', grupo:'pernas', equip:['wall ball'], carga:true, rx_m:'9kg', rx_f:'6kg'},
-        {nome:'Sandbag Lunges', grupo:'pernas', equip:['sandbag'], carga:true, rx_m:'20kg', rx_f:'10kg'},
+        {nome:'Burpee Broad Jumps', grupo:'cardio', equip:[], carga:false, rx_m:'80m (4×20m)', rx_f:'80m (4×20m)', hyrox_station:true},
+        {nome:'Wall Ball Shots', grupo:'pernas', equip:['wall ball'], carga:true, rx_m:'100 reps @ 6kg', rx_f:'75 reps @ 4kg', hyrox_station:true},
+        {nome:'Sandbag Lunges', grupo:'pernas', equip:['sandbag'], carga:true, rx_m:'100m @ 20kg (4×25m)', rx_f:'100m @ 10kg (4×25m)', hyrox_station:true},
         {nome:'Walking Lunges', grupo:'pernas', equip:[], carga:false},
         {nome:'Box Jump Overs', grupo:'pernas', equip:['box'], carga:false},
+        {nome:'Step-ups', grupo:'pernas', equip:['box'], carga:false},
+        {nome:'Lateral Bounds', grupo:'pernas', equip:[], carga:false},
       ],
+      // "Levantamento" aqui = estações de resistência/carga Hyrox
       levantamento: [
-        {nome:'Sled Push', grupo:'pernas', equip:['sled'], carga:true, rx_m:'152kg', rx_f:'102kg'},
-        {nome:'Sled Pull', grupo:'puxar', equip:['sled'], carga:true, rx_m:'103kg', rx_f:'78kg'},
-        {nome:'Farmer Carry', grupo:'puxar', equip:['kettlebell'], carga:true, rx_m:'24/24kg', rx_f:'16/16kg'},
+        {nome:'Sled Push', grupo:'pernas', equip:['sled'], carga:true, rx_m:'50m @ 152kg (4×12.5m)', rx_f:'50m @ 102kg (4×12.5m)', hyrox_station:true},
+        {nome:'Sled Pull', grupo:'puxar', equip:['sled'], carga:true, rx_m:'50m @ 103kg (4×12.5m)', rx_f:'50m @ 78kg (4×12.5m)', hyrox_station:true},
+        {nome:'Farmers Carry', grupo:'puxar', equip:['kettlebell'], carga:true, rx_m:'200m @ 2×24kg', rx_f:'200m @ 2×16kg', hyrox_station:true},
         {nome:'Sandbag Carry', grupo:'core', equip:['sandbag'], carga:true, rx_m:'30kg', rx_f:'20kg'},
         {nome:'Kettlebell Swings', grupo:'puxar', equip:['kettlebell'], carga:true, rx_m:'24kg', rx_f:'16kg'},
-        {nome:'Dumbbell Snatch', grupo:'lpo', equip:['dumbbell'], carga:true, rx_m:'22kg', rx_f:'15kg'},
+        {nome:'Dumbbell Snatch', grupo:'lpo', equip:['dumbbell'], carga:true, rx_m:'22.5kg', rx_f:'15kg'},
+        {nome:'Thrusters (DB)', grupo:'pernas', equip:['dumbbell'], carga:true, rx_m:'2×15kg', rx_f:'2×10kg'},
+        {nome:'Devils Press', grupo:'empurrar', equip:['dumbbell'], carga:true, rx_m:'2×15kg', rx_f:'2×10kg'},
       ],
+      // "Monoestrutural" aqui = corridas (core Hyrox) + ergômetros das 2 estações oficiais
       monoestrutural: [
-        {nome:'Run 1000m', grupo:'cardio', equip:[], carga:false, tempo_seg:300},
+        {nome:'Run 1000m', grupo:'cardio', equip:[], carga:false, tempo_seg:300, hyrox_station:true},
         {nome:'Run 500m', grupo:'cardio', equip:[], carga:false, tempo_seg:150},
         {nome:'Run 400m', grupo:'cardio', equip:[], carga:false, tempo_seg:120},
-        {nome:'Row 1000m', grupo:'cardio', equip:['remo'], carga:false, tempo_seg:240},
+        {nome:'Run 2000m', grupo:'cardio', equip:[], carga:false, tempo_seg:600},
+        {nome:'Row 1000m', grupo:'cardio', equip:['remo'], carga:false, tempo_seg:240, hyrox_station:true},
         {nome:'Row 500m', grupo:'cardio', equip:['remo'], carga:false, tempo_seg:120},
-        {nome:'Ski Erg 1000m', grupo:'cardio', equip:['ski erg'], carga:false, tempo_seg:250},
+        {nome:'Ski Erg 1000m', grupo:'cardio', equip:['ski erg'], carga:false, tempo_seg:250, hyrox_station:true},
         {nome:'Ski Erg 500m', grupo:'cardio', equip:['ski erg'], carga:false, tempo_seg:130},
-        {nome:'Bike 1000m', grupo:'cardio', equip:['assault bike'], carga:false, tempo_seg:150},
+        {nome:'Bike 2000m', grupo:'cardio', equip:['assault bike'], carga:false, tempo_seg:300},
       ],
     };
+
+    // As 8 estações oficiais Hyrox, na ordem oficial (sempre alternando com 1km Run)
+    const HYROX_STATIONS_ORDEM = [
+      {estacao:'Ski Erg 1000m', cat:'monoestrutural', rx_m:'1000m', rx_f:'1000m'},
+      {estacao:'Sled Push', cat:'levantamento', rx_m:'50m @ 152kg', rx_f:'50m @ 102kg'},
+      {estacao:'Sled Pull', cat:'levantamento', rx_m:'50m @ 103kg', rx_f:'50m @ 78kg'},
+      {estacao:'Burpee Broad Jumps', cat:'ginastica', rx_m:'80m', rx_f:'80m'},
+      {estacao:'Row 1000m', cat:'monoestrutural', rx_m:'1000m', rx_f:'1000m'},
+      {estacao:'Farmers Carry', cat:'levantamento', rx_m:'200m @ 2×24kg', rx_f:'200m @ 2×16kg'},
+      {estacao:'Sandbag Lunges', cat:'ginastica', rx_m:'100m @ 20kg', rx_f:'100m @ 10kg'},
+      {estacao:'Wall Ball Shots', cat:'ginastica', rx_m:'100 reps @ 6kg', rx_f:'75 reps @ 4kg'},
+    ];
 
     // Movimentos Bootcamp-específicos (bodyweight + halteres leves)
     const MOVIMENTOS_BOOTCAMP = {
@@ -418,29 +439,31 @@
         ],
       },
       'hyrox': {
+        // Aquecimentos Hyrox: baseados no manual oficial + Silva-Santos et al. 2025
+        // Estrutura: General warm-up (cardio leve) → Specific warm-up (transições estação→corrida) → Ativação
         'LPO': [
-          '5min corrida leve + 2 Rounds: 10 air squats + 10 walking lunges + 10 KB swings leves + mobilidade de quadril',
-          '3min row leve + 2 Rounds: 10 lunges + 10 burpees leves + 10 farmer carry steps + mobilidade de ombro',
+          '5min Row Z1 + 3min Run Z2 + 2 Rounds: 10 air squats + 10 walking lunges + 10 KB swings leves (12kg) + 10 band pull-aparts + mobilidade de quadril 2min',
+          '3min Ski Erg Z1 + 3min Run Z2 + 2 Rounds: 10 goblet squats (KB leve) + 10 RDL com KB + 10 scap pulls + mobilidade de ombro 2min',
         ],
         'Ginástica': [
-          '3 Rounds: 200m corrida + 10 push-ups + 10 lunges + 10 sit-ups + mobilidade geral',
-          '2 Rounds: 1min corrida + 10 air squats + 10 mountain climbers + 30s prancha + mobilidade',
+          'RAMP Protocol (Hyrox style): 3min Run Z1 + 2 Rounds: 10 inchworms + 10 lunges com twist + 10 glute bridges + 10 push-ups + 30s plank. Total ~10min.',
+          '400m Run progressivo + 2 Rounds: 10 air squats + 10 reverse lunges + 10 mountain climbers + 10 push-ups + 10 broad jumps pequenos + mobilidade',
         ],
         'Resistência': [
-          '8min corrida progressiva (leve → moderado) + 2 Rounds: 10 air squats + 10 lunges + 10 burpees leves',
-          '5min bike leve + 3min corrida leve + 2 Rounds: 10 lunges + 10 jumping jacks + mobilidade dinâmica',
+          '10min corrida Z1-Z2 progressiva + 2 Rounds: 10 high knees + 10 butt kickers + 10 skips + 10 walking lunges + 10 sled drags simulados (sem carga). Finaliza com 3×30s pickup ao ritmo de prova.',
+          '5min Run Z1 + 3min Row Z1 + 2 Rounds: 10 A-skips + 10 B-skips + 10 carioca + 10 bounds + 10 lunges dinâmicos + 3×50m pickup',
         ],
         'Força Pura': [
-          '5min corrida leve + 2 Rounds: 10 KB deadlifts leves + 10 wall balls leves + 10 lunges + mobilidade',
-          '3min row leve + 2 Rounds: 10 air squats + 10 push-ups + 10 glute bridges + band pull-aparts',
+          '5min Row Z1 progressivo + 2 Rounds: 10 goblet squats + 10 KB RDL + 10 wall balls leves (4/6kg) + 10 band face pulls + mobilidade de quadril e coluna torácica',
+          '3min Ski Erg + 2 Rounds: 10 empty bar squats ou goblet + 10 empty bar press ou DB press + 10 Farmer carry 20m leve + mobilidade completa',
         ],
         'Metabólico': [
-          '8min corrida progressiva (caminhada → trote → ritmo de prova) + 2 Rounds: 10 high knees + 10 butt kickers + 10 air squats',
-          '3min Ski Erg leve + 3min Row leve + 2 Rounds: 10 lunges + 10 jumping jacks + mobilidade de tornozelo',
+          'HYROX RAMP: 800m Run progressivo (Z1→Z2) + 2 Rounds: 10 jumping jacks + 10 high knees + 10 air squats + 10 lunges + 10 push-ups + 10 burpees leves. 3×20s @ ritmo de prova + 40s easy.',
+          '5min alternando 60s Row + 60s Run em Z1-Z2 + 2 Rounds: 10 A-skips + 10 broad jumps pequenos + 10 mountain climbers + mobilidade dinâmica',
         ],
         'Mobilidade + Técnica': [
-          '5min caminhada progressiva + Foam Roller + 2 Rounds: 10 hip openers + 10 ankle rotations + 10 lunges com rotação de tronco',
-          '3min bike leve + mobilidade completa: quadril, tornozelo, ombro, coluna torácica + 10 deep squats holds',
+          '5min Run Z1 + Foam Roller (quadríceps, panturrilhas, glúteos, coluna torácica) + 2 Rounds: 10 World\'s Greatest Stretch + 10 hip circles + 10 ankle circles + 10 deep squat holds + 5 sled push técnicos (carga leve) + 5 burpee broad jumps técnicos',
+          '3min Bike Z1 + mobilidade ativa: 10 cat-cow + 10 scorpions + 10 downward dog→lunge + 10 OHP com PVC + 10 farmer carry técnico 20m + 5 wall ball técnicos',
         ],
       },
     };
@@ -473,6 +496,44 @@
         {nome:'Overhead Squat (Técnica)', series:[{set:1,reps:5,pct:40},{set:2,reps:5,pct:45},{set:3,reps:5,pct:50}], nota:'Foco em posição e mobilidade'},
         {nome:'Snatch Balance', series:[{set:1,reps:3,pct:40},{set:2,reps:3,pct:45},{set:3,reps:3,pct:50}], nota:'Velocidade sob a barra'},
       ],
+    };
+
+    // Skills Hyrox — baseado em Silva-Santos et al. 2025 e manual oficial
+    // Foca em: intervalos de corrida, HIIT com estações, transição corrida-estação,
+    // strength endurance para sled, técnica específica das 8 estações
+    const SKILLS_HYROX = {
+      'LPO': [ // "LPO" em Hyrox = strength endurance com DB/KB
+        {nome:'DB Thrusters Strength-Endurance', series:[{set:1,reps:'10 @ 2×15kg',pct:0},{set:2,reps:'10 @ 2×15kg',pct:0},{set:3,reps:'10 @ 2×15kg',pct:0},{set:4,reps:'10 @ 2×15kg',pct:0}], nota:'Descanso 1:00 entre sets. Simula carga de competição.'},
+        {nome:'KB Swing Clusters', series:[{set:1,reps:'15 @ 24kg',pct:0},{set:2,reps:'15 @ 24kg',pct:0},{set:3,reps:'15 @ 24kg',pct:0},{set:4,reps:'15 @ 24kg',pct:0}], nota:'Potência explosiva de quadril. 45s rest.'},
+      ],
+      'Ginástica': [
+        {nome:'Burpee Broad Jump Technique', series:[{set:1,reps:'10m',pct:0},{set:2,reps:'10m',pct:0},{set:3,reps:'10m',pct:0},{set:4,reps:'10m',pct:0}], nota:'Foco em mecânica de salto + retorno rápido. 60s rest.'},
+        {nome:'Wall Ball Pacing', series:[{set:1,reps:'25 unbroken',pct:0},{set:2,reps:'25 unbroken',pct:0},{set:3,reps:'25 unbroken',pct:0},{set:4,reps:'25 unbroken',pct:0}], nota:'Target 10ft (3m) homens / 9ft (2.7m) mulheres. 60s rest.'},
+      ],
+      'Resistência': [ // Base aeróbia — zona 2 prolongada
+        {nome:'Run Threshold Intervals', series:[{set:1,reps:'1000m @80%',pct:80},{set:2,reps:'1000m @82%',pct:82},{set:3,reps:'1000m @85%',pct:85},{set:4,reps:'1000m @85%',pct:85}], nota:'Descanso 2:00. Pace de prova Hyrox.'},
+        {nome:'Row + Run Ladder', series:[{set:1,reps:'500m Row + 400m Run',pct:0},{set:2,reps:'500m Row + 400m Run',pct:0},{set:3,reps:'500m Row + 400m Run',pct:0}], nota:'Transição rápida. Simula fadiga de estação→corrida.'},
+      ],
+      'Força Pura': [ // Strength para sled + farmers
+        {nome:'Sled Push Heavy', series:[{set:1,reps:'25m heavy',pct:0},{set:2,reps:'25m heavy',pct:0},{set:3,reps:'25m heavy',pct:0},{set:4,reps:'25m heavy',pct:0}], nota:'Carga pesada — força funcional para estação 2.'},
+        {nome:'Farmers Carry Endurance', series:[{set:1,reps:'100m @2×32kg',pct:0},{set:2,reps:'100m @2×32kg',pct:0},{set:3,reps:'100m @2×32kg',pct:0}], nota:'Peso acima do RX para overload.'},
+        {nome:'Goblet Squat Heavy', series:[{set:1,reps:'10 @ 32kg',pct:0},{set:2,reps:'8 @ 32kg',pct:0},{set:3,reps:'6 @ 32kg',pct:0},{set:4,reps:'6 @ 32kg',pct:0}], nota:'Base de força para lunges.'},
+      ],
+      'Metabólico': [ // HIIT Hyrox-específico: transições e VO2max
+        {nome:'HYROX Sim Mini (2 rounds)', series:[{set:1,reps:'500m Run + 25 Wall Ball',pct:0},{set:2,reps:'500m Run + 25 Wall Ball',pct:0}], nota:'Rest 2:00 entre rounds. Simula transição de competição.'},
+        {nome:'4×4 VO2max Intervals', series:[{set:1,reps:'4min @ 90-95%',pct:92},{set:2,reps:'4min @ 90-95%',pct:92},{set:3,reps:'4min @ 90-95%',pct:92},{set:4,reps:'4min @ 90-95%',pct:92}], nota:'Norwegian 4×4. Rest 3:00. Máximo VO2max.'},
+        {nome:'Sprint Intervals 30:30', series:[{set:1,reps:'30s ON / 30s OFF',pct:95},{set:2,reps:'30s ON / 30s OFF',pct:95},{set:3,reps:'30s ON / 30s OFF',pct:95},{set:4,reps:'30s ON / 30s OFF',pct:95}], nota:'Tabata-style na corrida. 4 min total/set.'},
+      ],
+      'Mobilidade + Técnica': [
+        {nome:'Sled Technique', series:[{set:1,reps:'12.5m low load',pct:0},{set:2,reps:'12.5m low load',pct:0},{set:3,reps:'12.5m low load',pct:0}], nota:'Foco em posição do corpo, passos curtos, cabeça neutra.'},
+        {nome:'Lunges com Bag Técnica', series:[{set:1,reps:'25m @ 10kg',pct:0},{set:2,reps:'25m @ 10kg',pct:0},{set:3,reps:'25m @ 10kg',pct:0}], nota:'Passos controlados, joelho alinhado, postura ereta.'},
+      ],
+    };
+
+    // Retorna skills apropriadas para a modalidade e foco
+    const getSkillsPorModalidade = (modalidade, foco) => {
+      if (modalidade === 'hyrox') return SKILLS_HYROX[foco] || SKILLS_HYROX['Metabólico'];
+      return SKILLS[foco] || SKILLS['Força Pura'];
     };
 
     const WOD_FORMATOS = ['AMRAP','For Time','EMOM','Tabata','Chipper','RFT'];
@@ -707,10 +768,114 @@
         cfg = merged;
       }
 
-      // Se Hyrox: WOD Hyrox usa sempre Chipper/For Time (8 estações)
+      // ========== HYROX: gerador específico (overrides default logic) ==========
+      // Baseado em Silva-Santos et al. 2025 + Manual Hyrox Oficial 2020
+      // Estrutura: alternar 1 corrida + 1 estação. Sempre começa com corrida.
       if (modalidade === 'hyrox') {
-        cfg = {...cfg, formatosPref: ['Chipper','For Time','RFT']};
+        const tempoHyrox = tempoAlvo > 0 ? tempoAlvo : 20;
+        // Quantas estações cabem no tempo? 1 rodada (run+station) ≈ 5-8 min
+        // tempo 8min: 1 estação, 15min: 2-3 estações, 25min: 4 estações, 45+min: 8 estações (sim completa)
+        let numEstacoes;
+        if (tempoHyrox < 10) numEstacoes = 1;
+        else if (tempoHyrox < 18) numEstacoes = 2;
+        else if (tempoHyrox < 30) numEstacoes = 3;
+        else if (tempoHyrox < 45) numEstacoes = 4;
+        else if (tempoHyrox < 70) numEstacoes = 6;
+        else numEstacoes = 8; // simulação completa
+
+        // Distância de corrida por rodada: ajusta ao nível
+        const distRun = nivel === 'iniciante' ? 400 : nivel === 'avançado' ? 1000 : 600;
+        // Escala de carga por nível para estações
+        const escalaCarga = nivel === 'iniciante' ? 0.55 : nivel === 'avançado' ? 1.0 : 0.75;
+        const labelNivel = nivel === 'iniciante' ? 'Iniciante (Scaled)' : nivel === 'avançado' ? 'RX' : 'Intermediário';
+
+        // Se numEstacoes === 8: usa a ordem oficial completa
+        let estacoesSelecionadas;
+        if (numEstacoes === 8) {
+          estacoesSelecionadas = [...HYROX_STATIONS_ORDEM];
+        } else {
+          // Distribui equilibrado: alterna cat (Ski, Sled, Burpee, Row, Farmer, Lunge, WallBall)
+          // Prioriza variedade — 1 mono, 1 levant, 1 ginastica alternando
+          const porCat = {
+            monoestrutural: HYROX_STATIONS_ORDEM.filter(s => s.cat === 'monoestrutural'),
+            levantamento: HYROX_STATIONS_ORDEM.filter(s => s.cat === 'levantamento'),
+            ginastica: HYROX_STATIONS_ORDEM.filter(s => s.cat === 'ginastica'),
+          };
+          const ordem = ['monoestrutural','levantamento','ginastica','levantamento','ginastica','levantamento','ginastica','monoestrutural'];
+          estacoesSelecionadas = [];
+          const used = new Set();
+          for (let i = 0; i < numEstacoes; i++) {
+            const cat = ordem[i] || 'levantamento';
+            const opcoes = porCat[cat].filter(s => !used.has(s.estacao));
+            const pool = opcoes.length > 0 ? opcoes : porCat[cat];
+            const pick = pool[Math.floor(Math.random() * pool.length)];
+            if (pick) {
+              estacoesSelecionadas.push(pick);
+              used.add(pick.estacao);
+            }
+          }
+        }
+
+        // Aplicar escala de carga (iniciante/avançado)
+        const aplicarEscala = (rx, cat) => {
+          if (!rx) return rx;
+          // Extrai número (kg) e aplica escala
+          const m = rx.match(/(\d+)\s*kg/i);
+          if (!m) return rx;
+          const kg = parseInt(m[1]);
+          const scaled = Math.round(kg * escalaCarga);
+          return rx.replace(/\d+\s*kg/i, scaled + 'kg');
+        };
+
+        // Monta movimentos alternando: Run + Station
+        const movimentos = [];
+        estacoesSelecionadas.forEach((est, idx) => {
+          // 1) Corrida
+          movimentos.push({
+            nome: `Run ${distRun}m`,
+            reps: 1,
+            carga: '',
+            modalidade: 'monoestrutural',
+          });
+          // 2) Estação
+          movimentos.push({
+            nome: est.estacao,
+            reps: 1,
+            carga: `${aplicarEscala(est.rx_m, est.cat)} (M) / ${aplicarEscala(est.rx_f, est.cat)} (F)`,
+            modalidade: est.cat,
+          });
+        });
+
+        // Formato: For Time (tempo total ou Time Cap)
+        const formatoHyroxStr = numEstacoes === 8
+          ? `HYROX Simulation — For Time (TC ${tempoHyrox} min)`
+          : `HYROX Style — ${numEstacoes} estações + ${numEstacoes} corridas de ${distRun}m (TC ${tempoHyrox} min)`;
+
+        // Logística simplificada: checa se tem sled, row, ski, wall ball
+        const precisaSled = estacoesSelecionadas.some(e => /Sled/i.test(e.estacao));
+        const precisaRow = estacoesSelecionadas.some(e => /Row/i.test(e.estacao));
+        const precisaSki = estacoesSelecionadas.some(e => /Ski/i.test(e.estacao));
+        const avisosLogistica = [];
+        if (precisaSled) {
+          const sledDisp = equipamentos.find(e => /sled/i.test(e.nome || ''))?.quantidade || 0;
+          if (sledDisp === 0) avisosLogistica.push('Sem trenó disponível — considere substituir Sled por Heavy Walking Lunges com KB');
+        }
+        if (precisaRow && !equipamentos.find(e => /remo/i.test(e.nome || ''))) avisosLogistica.push('Sem remo disponível');
+        if (precisaSki && !equipamentos.find(e => /ski/i.test(e.nome || ''))) avisosLogistica.push('Sem Ski Erg disponível — substitua por 2min corrida');
+
+        const nomesHyrox = ['Hyrox Sim', 'Compromised Running', 'Station Builder', 'Hyrox Forge', 'Run & Grind', 'Endurance Engine', 'Hyrox Split', 'Power Hyrox'];
+        return {
+          nome: numEstacoes === 8 ? 'HYROX Simulation' : nomesHyrox[Math.floor(Math.random() * nomesHyrox.length)],
+          formato: formatoHyroxStr,
+          movimentos,
+          tempo_wod_min: tempoHyrox,
+          logistica_nota: avisosLogistica.join(' · '),
+          hyrox_structure: true,
+          hyrox_estacoes: numEstacoes,
+          hyrox_nivel: labelNivel,
+        };
       }
+      // ========== FIM HYROX ==========
 
       // ESCOLHA DO FORMATO E VOLUME BASEADA NA DURAÇÃO
       // Regras:
@@ -1346,7 +1511,7 @@
                     const equipDisp = CATALOGO_EQUIPAMENTOS.filter(c => (ESTOQUE_EQUIPAMENTOS[c.id]||0) > 0).map(c => ({id:c.id, nome:c.nome, quantidade:ESTOQUE_EQUIPAMENTOS[c.id]}));
                     const novoWod = gerarWodInteligente(foco, numAlunos, equipDisp, '', false, {modalidade: met, nivel: 'intermediário', tempoAlvo: 20, focos: [foco]});
                     const aquecOpts = (AQUECIMENTOS[met] || AQUECIMENTOS['crossfit'])[foco] || Object.values(AQUECIMENTOS['crossfit'])[0];
-                    const skillOpts = SKILLS[foco] || SKILLS['Força Pura'];
+                    const skillOpts = getSkillsPorModalidade(met, foco);
                     const skillBase = skillOpts[Math.floor(Math.random() * skillOpts.length)];
                     const atualizacao = {
                       nome: novoWod.nome,
@@ -1557,7 +1722,7 @@
 
         // Skill: escolhe de um dos focos selecionados
         const skillFoco = focos[Math.floor(Math.random() * focos.length)];
-        const skillOpts = SKILLS[skillFoco] || SKILLS['Força Pura'];
+        const skillOpts = getSkillsPorModalidade(form.metodologia, skillFoco);
         const skillBase = skillOpts[Math.floor(Math.random() * skillOpts.length)];
         const skill = { ...skillBase, duracao_min: skillMin };
 
@@ -1640,7 +1805,7 @@
         const cooldownMin = 5;
         const skillMin = Math.max(duracaoAlvo - aquecMin - (bm.tempo_est || 15) - cooldownMin, 8);
 
-        const skillOpts = SKILLS[foco] || SKILLS['Força Pura'];
+        const skillOpts = getSkillsPorModalidade(form.metodologia, foco);
         const skillBase = skillOpts[Math.floor(Math.random() * skillOpts.length)];
 
         const novo = {
@@ -3141,7 +3306,7 @@
           const metAquec = AQUECIMENTOS[modalidade] || AQUECIMENTOS['crossfit'];
           const aquecOpts = metAquec[foco] || metAquec['LPO'] || Object.values(metAquec)[0];
           const aquecDesc = Array.isArray(aquecOpts) && aquecOpts.length > 0 ? aquecOpts[0] : '3 Rounds: 200m corrida + 10 air squats + mobilidade geral';
-          const skillOpts = SKILLS[foco] || SKILLS['Força Pura'];
+          const skillOpts = getSkillsPorModalidade(modalidade, foco);
           const skillBase = skillOpts && skillOpts.length > 0 ? skillOpts[Math.floor(Math.random() * skillOpts.length)] : {nome:'Técnica', series:[{set:1,reps:'3min',pct:0}]};
 
           const criadoPor = user?.id && typeof user.id === 'string' && user.id.length === 36 ? user.id : null;
