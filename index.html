@@ -188,6 +188,39 @@
       {id:'outros', nome:'Outros', icone:'category'},
     ];
 
+    // Define quais categorias/itens são relevantes por modalidade
+    // Hyrox: sem barras olímpicas, sem anilhas pesadas, sem argolas/GHD/cordas escalada (ginástica avançada)
+    // Bootcamp: sem barras, sem anilhas, sem argolas, sem cordas escalada, sem GHD, sem ergômetros grandes
+    const EQUIP_POR_MODALIDADE = {
+      crossfit: (eq) => true, // tudo
+      hyrox: (eq) => {
+        const cat = eq.categoria;
+        // Exclui barras, anilhas, ginástica avançada (mantém só pull-up bar opcional)
+        if (cat === 'barras' || cat === 'anilhas') return false;
+        if (cat === 'ginastica' && eq.id !== 'eq-pullup') return false;
+        // Hyrox-específico: sled, sandbag, wall ball, kettlebell, dumbbell, box, ergômetros
+        return true;
+      },
+      bootcamp: (eq) => {
+        const cat = eq.categoria;
+        // Bodyweight + halteres leves + kb + medicine ball + box
+        if (cat === 'barras' || cat === 'anilhas') return false;
+        if (cat === 'ginastica' && eq.id !== 'eq-pullup') return false;
+        if (cat === 'ergometros') return false; // geralmente bootcamp não tem
+        // Dumbbells e kettlebells: só os mais leves
+        if (cat === 'dumbbells' && ['eq-db-20','eq-db-22','eq-db-25'].includes(eq.id)) return false;
+        if (cat === 'kettlebells' && ['eq-kb-24','eq-kb-32'].includes(eq.id)) return false;
+        if (cat === 'medballs' && eq.id === 'eq-wb-14') return false;
+        if (eq.id === 'eq-sled' || eq.id === 'eq-yoke') return false;
+        return true;
+      },
+    };
+
+    const filtrarCatalogoPorModalidade = (modalidade) => {
+      const pred = EQUIP_POR_MODALIDADE[modalidade] || EQUIP_POR_MODALIDADE.crossfit;
+      return CATALOGO_EQUIPAMENTOS.filter(pred);
+    };
+
     // Estoque global em memória (formato: { [equip_id]: quantidade })
     let ESTOQUE_EQUIPAMENTOS = {};
 
@@ -1440,12 +1473,13 @@
       const [editando, setEditando] = useState(false);
       const [exercicioModal, setExercicioModal] = useState(null);
 
-      // Equipamentos derivados do estoque do context
+      // Equipamentos derivados do estoque do context, filtrado pela modalidade selecionada
       const equipamentos = useMemo(() => {
+        const estoqueMod = ctx.estoque?.[form.metodologia] || {};
         return CATALOGO_EQUIPAMENTOS
-          .filter(c => (ctx.estoque[c.id] || 0) > 0)
-          .map(c => ({ id: c.id, nome: c.nome, quantidade: ctx.estoque[c.id] }));
-      }, [ctx.estoque]);
+          .filter(c => (estoqueMod[c.id] || 0) > 0)
+          .map(c => ({ id: c.id, nome: c.nome, quantidade: estoqueMod[c.id] }));
+      }, [ctx.estoque, form.metodologia]);
 
       useEffect(() => {
         Promise.all([
@@ -3064,7 +3098,8 @@
         };
         const focoDetectado = Object.entries(focoMap).find(([k]) => (semana.fase||'').toLowerCase().includes(k) || (semana.foco_semana||'').toLowerCase().includes(k))?.[1] || 'LPO';
         const numAlunos = 15;
-        const equipDisp = CATALOGO_EQUIPAMENTOS.filter(c => (ctx.estoque[c.id]||0) > 0).map(c => ({id:c.id, nome:c.nome, quantidade:ctx.estoque[c.id]}));
+        const estoqueMod = ctx.estoque?.[periodo?.modalidade || 'crossfit'] || {};
+        const equipDisp = CATALOGO_EQUIPAMENTOS.filter(c => (estoqueMod[c.id]||0) > 0).map(c => ({id:c.id, nome:c.nome, quantidade:estoqueMod[c.id]}));
         const sugestoes = [];
         for (let i = 0; i < 3; i++) {
           const w = gerarWodInteligente(focoDetectado, numAlunos, equipDisp, '', false, {modalidade: periodo?.modalidade || 'crossfit', nivel: 'intermediário', tempoAlvo: 20, focos: [focoDetectado]});
@@ -3087,7 +3122,8 @@
           const foco = Object.entries(focoMap).find(([k]) => fase.includes(k) || focoSemana.includes(k))?.[1] || 'LPO';
           const numAlunos = 15;
           // Equipamentos cadastrados (pode ser vazio — gerarWodInteligente aceita)
-          const equipDisp = CATALOGO_EQUIPAMENTOS.filter(c => (ctx.estoque[c.id]||0) > 0).map(c => ({id:c.id, nome:c.nome, quantidade:ctx.estoque[c.id]}));
+          const estoqueMod = ctx.estoque?.[periodo?.modalidade || 'crossfit'] || {};
+        const equipDisp = CATALOGO_EQUIPAMENTOS.filter(c => (estoqueMod[c.id]||0) > 0).map(c => ({id:c.id, nome:c.nome, quantidade:estoqueMod[c.id]}));
           const wod = gerarWodInteligente(foco, numAlunos, equipDisp, '', false, {modalidade: periodo.modalidade || 'crossfit', nivel: 'intermediário', tempoAlvo: 20, focos: [foco]});
 
           // Garantir que WOD tenha movimentos — fallback bodyweight
@@ -4230,12 +4266,17 @@
     // ─── Cadastro de Equipamentos ──────────────────────────────────────────
     const CadastroEquipamentos = ({ toast }) => {
       const ctx = useAcademia();
-      const [estoque, setEstoque] = useState({...ctx.estoque});
+      const [modalidade, setModalidade] = useState('crossfit');
+      const [estoque, setEstoque] = useState({...(ctx.estoque?.[modalidade] || {})});
       const [categoriaAtiva, setCategoriaAtiva] = useState('todas');
       const [busca, setBusca] = useState('');
       const [dirty, setDirty] = useState(false);
 
-      useEffect(() => { setEstoque({...ctx.estoque}); setDirty(false); }, [ctx.estoque]);
+      // Quando troca de modalidade, carrega o estoque correspondente
+      useEffect(() => {
+        setEstoque({...(ctx.estoque?.[modalidade] || {})});
+        setDirty(false);
+      }, [ctx.estoque, modalidade]);
 
       const atualizar = (id, valor) => {
         const qtd = parseInt(valor) || 0;
@@ -4249,13 +4290,15 @@
       };
 
       const salvar = async () => {
-        const { error } = await ctx.saveEstoque(estoque);
+        const { error } = await ctx.saveEstoque(estoque, modalidade);
         if (error) { toast('Erro ao salvar: '+error.message, 'error'); return; }
         setDirty(false);
-        toast('Equipamentos salvos!','success');
+        toast(`Equipamentos de ${metLabels[modalidade]} salvos!`,'success');
       };
 
-      const equipFiltrados = CATALOGO_EQUIPAMENTOS.filter(eq => {
+      // Catálogo filtrado pela modalidade atual
+      const catalogoModalidade = filtrarCatalogoPorModalidade(modalidade);
+      const equipFiltrados = catalogoModalidade.filter(eq => {
         if (categoriaAtiva !== 'todas' && eq.categoria !== categoriaAtiva) return false;
         if (busca && !eq.nome.toLowerCase().includes(busca.toLowerCase())) return false;
         return true;
@@ -4264,25 +4307,44 @@
       const totalDisponiveis = Object.values(estoque).filter(v => v > 0).length;
       const totalItens = Object.values(estoque).reduce((s,v)=>s+(v||0),0);
 
+      const trocarModalidade = (nova) => {
+        if (dirty && !confirm('Há alterações não salvas. Trocar de modalidade sem salvar?')) return;
+        setModalidade(nova);
+      };
+
       return (
         <div className="p-8 space-y-6 fade-in">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="font-display font-bold text-xl">Equipamentos da Academia</h2>
-              <p className="text-slate-400 text-sm mt-1">Marque os equipamentos disponíveis e informe a quantidade. A IA usará essas informações para gerar treinos compatíveis.</p>
+              <p className="text-slate-400 text-sm mt-1">Cada modalidade pode ter sua própria sala/estoque. Marque os disponíveis e informe a quantidade por modalidade.</p>
             </div>
             <button onClick={salvar} className={`px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-bold ${dirty?'btn-primary':'btn-ghost opacity-60'}`}>
-              <Icon name="save" size={18}/>{dirty ? 'Salvar Alterações' : 'Tudo salvo'}
+              <Icon name="save" size={18}/>{dirty ? `Salvar ${metLabels[modalidade]}` : 'Tudo salvo'}
             </button>
+          </div>
+
+          {/* Tabs de modalidade */}
+          <div className="flex items-center gap-1 bg-bg-card rounded-xl p-1 border border-white/5 w-fit">
+            {[{v:'crossfit',l:'CrossFit',i:'fitness_center'},{v:'hyrox',l:'Hyrox',i:'timer'},{v:'bootcamp',l:'Bootcamp',i:'groups'}].map(({v,l,i})=>{
+              const count = Object.values(ctx.estoque?.[v] || {}).filter(q=>q>0).length;
+              return (
+                <button key={v} onClick={()=>trocarModalidade(v)}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${modalidade===v?'bg-primary/15 text-primary':'text-slate-400 hover:text-white'}`}>
+                  <Icon name={i} size={18}/>{l}
+                  <span className="text-xs opacity-60">({count})</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* KPIs */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              {l:'Tipos Disponíveis', v:totalDisponiveis, i:'inventory_2', c:'text-primary'},
+              {l:`Tipos em ${metLabels[modalidade]}`, v:totalDisponiveis, i:'inventory_2', c:'text-primary'},
               {l:'Total de Itens', v:totalItens, i:'inventory', c:'text-blue-400'},
               {l:'Categorias', v:CATEGORIAS_EQUIP.length, i:'category', c:'text-yellow-400'},
-              {l:'Catálogo Total', v:CATALOGO_EQUIPAMENTOS.length, i:'list', c:'text-purple-400'},
+              {l:`Catálogo ${metLabels[modalidade]}`, v:catalogoModalidade.length, i:'list', c:'text-purple-400'},
             ].map(({l,v,i,c})=>(
               <div key={l} className="card p-4 flex items-center gap-3">
                 <Icon name={i} className={c} size={24}/>
@@ -4913,7 +4975,8 @@
       useEffect(() => { TURMAS = turmas; }, [turmas]);
       useEffect(() => { ALUNOS = alunos; }, [alunos]);
       useEffect(() => { FOCOS_SESSAO = focos; }, [focos]);
-      useEffect(() => { ESTOQUE_EQUIPAMENTOS = estoque; }, [estoque]);
+      // Sincroniza global com o estoque do CrossFit (default, para compat)
+      useEffect(() => { ESTOQUE_EQUIPAMENTOS = estoque.crossfit || {}; }, [estoque]);
 
       // Carregar tudo na inicialização
       const reload = async () => {
@@ -4926,8 +4989,13 @@
         setTurmas(rTurmas.data || []);
         setAlunos(rAlunos.data || []);
         setFocos((rFocos.data && rFocos.data.length) ? rFocos.data : []);
-        const estMap = {};
-        (rEstoque.data || []).forEach(e => { estMap[e.equip_id] = e.quantidade; });
+        // estoque agora é um mapa { modalidade: { equip_id: quantidade } }
+        const estMap = { crossfit: {}, hyrox: {}, bootcamp: {} };
+        (rEstoque.data || []).forEach(e => {
+          const mod = e.modalidade || 'crossfit';
+          if (!estMap[mod]) estMap[mod] = {};
+          estMap[mod][e.equip_id] = e.quantidade;
+        });
         setEstoque(estMap);
         setLoaded(true);
       };
@@ -5004,19 +5072,20 @@
       };
 
       // Estoque de Equipamentos (upsert em lote)
-      const saveEstoque = async (novoEstoque) => {
-        // Remove zeros/vazios
-        const entries = Object.entries(novoEstoque).filter(([, q]) => q && q > 0);
-        // Deletar tudo e reinserir (mais simples que diff)
-        await sb.from('equipamentos_estoque').delete().eq('academia_id', ACADEMIA_ID);
+      const saveEstoque = async (novoEstoqueMap, modalidade) => {
+        // novoEstoqueMap é { equip_id: qtd } para a modalidade selecionada
+        const mod = modalidade || 'crossfit';
+        const entries = Object.entries(novoEstoqueMap || {}).filter(([, q]) => q && q > 0);
+        // Deleta apenas os da modalidade
+        await sb.from('equipamentos_estoque').delete().eq('academia_id', ACADEMIA_ID).eq('modalidade', mod);
         if (entries.length > 0) {
           const rows = entries.map(([equip_id, quantidade]) => {
             const cat = CATALOGO_EQUIPAMENTOS.find(c => c.id === equip_id);
-            return { academia_id: ACADEMIA_ID, equip_id, nome: cat?.nome || equip_id, quantidade };
+            return { academia_id: ACADEMIA_ID, modalidade: mod, equip_id, nome: cat?.nome || equip_id, quantidade };
           });
           await sb.from('equipamentos_estoque').insert(rows);
         }
-        setEstoque(novoEstoque);
+        setEstoque(prev => ({ ...prev, [mod]: novoEstoqueMap }));
         return { data: true };
       };
 
