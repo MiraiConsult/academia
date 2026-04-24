@@ -2333,17 +2333,17 @@
                   ))}
                 </div>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <label className="text-xs">Movimento</label>
                   <button type="button" onClick={()=>setShowSkillPicker(true)} className="text-xs text-blue-400 font-bold hover:underline flex items-center gap-1"><Icon name="add" size={12}/>Escolher</button>
                 </div>
-                <div className="flex items-center gap-1">
-                  <label className="text-xs">Tempo</label>
-                  <span className="text-blue-400 font-bold text-xs">{form.duracao_skill > 0 ? `${form.duracao_skill}min` : 'auto'}</span>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs shrink-0">Tempo</label>
                   <input type="range" min="0" max={Math.max(5, form.duracao - 15)} value={form.duracao_skill||0}
                     onChange={e=>setForm(f=>({...f,duracao_skill:parseInt(e.target.value)}))}
-                    style={{background:'transparent',border:'none',padding:0,width:'60px',accentColor:'#60a5fa'}}/>
+                    style={{background:'transparent',border:'none',padding:0,flex:1,accentColor:'#60a5fa'}}/>
+                  <span className="text-blue-400 font-bold text-xs shrink-0 w-12 text-right">{form.duracao_skill > 0 ? `${form.duracao_skill}min` : 'auto'}</span>
                 </div>
               </div>
               {form.skill_custom && (
